@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="instituteArray">
+        <item>
+            상관없음
+        </item>
+        <item>
+            교육청
+        </item>
+        <item>
+            평가원
+        </item>
+        <item>
+            수능
+        </item>
+    </string-array>
+    <string-array name="subjectArray">
+        <item>
+            상관없음
+        </item>
+        <item>
+            국어
+        </item>
+        <item>
+            수학(문과)
+        </item>
+        <item>
+            수학(이과)
+        </item>
+            영어
+        <item>
+            사회탐구
+        </item>
+        <item>
+            과학탐구
+        </item>
+    </string-array>
+    <string-array name="probabilityArray">
+        <item>
+            상관없음
+        </item>
+        <item>
+            80%~ 100%
+        </item>
+        <item>
+            60%~ 80%
+        </item>
+        <item>
+            40%~ 60%
+        </item>
+        <item>
+            20%~ 40%
+        </item>
+        <item>
+            20% 이하
+        </item>
+    </string-array>
+    <string-array name="periodArray">
+        <item>
+            상관없음
+        </item>
+    </string-array>
+</resources>

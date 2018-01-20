@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
@@ -19,6 +20,9 @@ public class MainPageFragment extends Fragment {
     private ImageView menuListBtn;
     private ImageView calendarBtn;
     private ImageView checkHistoryBtn;
+    private Spinner subjectSpinner;
+    private Spinner probabilitySpinner;
+    private Spinner instituteSpinner;
 
     @Nullable
     @Override
@@ -37,9 +41,18 @@ public class MainPageFragment extends Fragment {
                 DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
                     @Override
                     public void callbackMethod() {
+                        String subjectOption= (String)subjectSpinner.getSelectedItem();
+                        String probOption= (String)probabilitySpinner.getSelectedItem();
+                        String instOption= (String)instituteSpinner.getSelectedItem();
+
                         //move Activity
+                        Intent intent= new Intent(getActivity(), ExamActivity.class);
+                        intent.putExtra("subj", subjectOption);
+                        intent.putExtra("prob", probOption);
+                        intent.putExtra("inst", instOption);
+
                         dialog.dismiss();
-                        startActivity(new Intent(getActivity(), ExamActivity.class));
+                        startActivity(intent);
                     }
                 };
                 DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
@@ -48,7 +61,15 @@ public class MainPageFragment extends Fragment {
                         dialog.dismiss();
                     }
                 };
-                dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, nag_callback);
+                View childView= getLayoutInflater().inflate(R.layout.dialog_setfilter, null);
+                subjectSpinner= childView.findViewById(R.id.selectSubject);
+                subjectSpinner.setSelection(0);
+                probabilitySpinner= childView.findViewById(R.id.selectProbability);
+                probabilitySpinner.setSelection(0);
+                instituteSpinner= childView.findViewById(R.id.selectInstitute);
+                instituteSpinner.setSelection(0);
+
+                dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, nag_callback, childView);
                 dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
             }
         });
@@ -65,7 +86,7 @@ public class MainPageFragment extends Fragment {
         calendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(getActivity(), CalendarActivity.class));
             }
         });
 
@@ -73,7 +94,7 @@ public class MainPageFragment extends Fragment {
         checkHistoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(getActivity(), CheckHistoryActivity.class));
             }
         });
     }

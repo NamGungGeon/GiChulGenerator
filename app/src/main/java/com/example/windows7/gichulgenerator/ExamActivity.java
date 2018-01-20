@@ -16,6 +16,7 @@ public class ExamActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().hide();
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
         setContentView(R.layout.activity_exam);
     }
 }
