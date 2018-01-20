@@ -23,6 +23,7 @@ public class MainPageFragment extends Fragment {
     private Spinner subjectSpinner;
     private Spinner probabilitySpinner;
     private Spinner instituteSpinner;
+    private Spinner periodSpnner;
 
     @Nullable
     @Override
@@ -44,12 +45,14 @@ public class MainPageFragment extends Fragment {
                         String subjectOption= (String)subjectSpinner.getSelectedItem();
                         String probOption= (String)probabilitySpinner.getSelectedItem();
                         String instOption= (String)instituteSpinner.getSelectedItem();
+                        String periodOption= (String)periodSpnner.getSelectedItem();
 
                         //move Activity
                         Intent intent= new Intent(getActivity(), ExamActivity.class);
                         intent.putExtra("subj", subjectOption);
                         intent.putExtra("prob", probOption);
                         intent.putExtra("inst", instOption);
+                        intent.putExtra("peri", periodOption);
 
                         dialog.dismiss();
                         startActivity(intent);
@@ -68,6 +71,8 @@ public class MainPageFragment extends Fragment {
                 probabilitySpinner.setSelection(0);
                 instituteSpinner= childView.findViewById(R.id.selectInstitute);
                 instituteSpinner.setSelection(0);
+                periodSpnner= childView.findViewById(R.id.selectPeriod);
+                periodSpnner.setSelection(0);
 
                 dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, nag_callback, childView);
                 dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");

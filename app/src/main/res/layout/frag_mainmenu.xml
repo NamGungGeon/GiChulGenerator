@@ -33,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:paddingBottom="40dp"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -45,18 +46,27 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/specialMessage"
+            android:layout_centerHorizontal="true"
+            android:textColor="#000000"
+            android:text="주요 일정 표시"
+            android:textSize="35dp"
+            android:id="@+id/scheduler"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/scheduler"
+            android:layout_centerHorizontal="true"
             android:text="날짜와 푼 문제 갯수 표시"
             android:layout_marginBottom="40dp"/>
     </RelativeLayout>
 
     <Button
         android:layout_width="120dp"
-        android:layout_height="80dp"
+        android:layout_height="120dp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="90dp"
-        android:text="문제 풀러 가기"
         android:id="@+id/goToStudy"
+        android:background="@drawable/gotostudy_icon"
         android:layout_alignParentBottom="true"/>
 </RelativeLayout>

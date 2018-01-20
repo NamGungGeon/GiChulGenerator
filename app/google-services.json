@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "460654701170",
+    "firebase_url": "https://gichulgenerator.firebaseio.com",
+    "project_id": "gichulgenerator",
+    "storage_bucket": "gichulgenerator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460654701170:android:c27fabe4a5297ad3",
+        "android_client_info": {
+          "package_name": "com.example.windows7.gichulgenerator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "460654701170-st0tff9tdrqegk59o2n59emn1u4io8ml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.windows7.gichulgenerator",
+            "certificate_hash": "61cadf4eaa952999406ab38e0dff58f9d15b70bc"
+          }
+        },
+        {
+          "client_id": "460654701170-su8dqlgs4pq463mblhqoo095kkuduikf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYlIZbrEZ3yfNJpQcT_lnowYmWvgknHek"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "460654701170-su8dqlgs4pq463mblhqoo095kkuduikf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
