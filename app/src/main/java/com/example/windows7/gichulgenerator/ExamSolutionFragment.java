@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.StringTokenizer;
 
@@ -16,8 +17,10 @@ import java.util.StringTokenizer;
 public class ExamSolutionFragment extends Fragment {
 
     //해답 파일 명명 규칙
-    //타입_기간(년)_기간(월)_주최기관_과목_문제번호_정답
+    //타입_기간(년)_기간(월)_주최기관_과목_문제번호
     private String solutionFileName= "";
+
+    private TextView solutionTitle;
 
     @Nullable
     @Override
@@ -41,6 +44,11 @@ public class ExamSolutionFragment extends Fragment {
         solutionFileName+= tokenizer.nextToken()+ "_";
         //과목
         solutionFileName+= tokenizer.nextToken()+ "_";
+        //문제번호
+        solutionFileName+= tokenizer.nextToken()+ "_";
+
+        solutionTitle= rootView.findViewById(R.id.solutionTitle);
+        solutionTitle.setText(FirebaseConnection.getInstance().loadData("/answer/2018/sunung/11/imath/7", getContext()));
     }
 
 }

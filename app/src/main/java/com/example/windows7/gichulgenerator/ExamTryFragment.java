@@ -55,8 +55,7 @@ public class ExamTryFragment extends Fragment{
 
     private void init(ViewGroup rootView){
         questionImage= rootView.findViewById(R.id.question);
-        questionImage.setImageDrawable(getQuestion());
-
+        setQuestion();
         selectedSubject= getActivity().getIntent().getStringExtra("subj");
         selectedProb= getActivity().getIntent().getStringExtra("prob");
         selectedInst= getActivity().getIntent().getStringExtra("inst");
@@ -82,10 +81,11 @@ public class ExamTryFragment extends Fragment{
         });
     }
 
-    private Drawable getQuestion(){
+    private void setQuestion(){
         //일단은 임시적으로 설정값은 고려하지 않고 한 이미지로 대체
-        Drawable drawable= getResources().getDrawable(R.drawable.q_2017_11_sunung_imath_7_100, null);
         examFileName= "q_2017_11_sunung_imath_7_100";
+        FirebaseConnection connection= FirebaseConnection.getInstance();
+        connection.loadImage(examFileName, questionImage, getContext());
 
         StringTokenizer tokenizer= new StringTokenizer(examFileName, "_", false);
         examType= tokenizer.nextToken();
@@ -117,8 +117,6 @@ public class ExamTryFragment extends Fragment{
         }else if(examInstitute.equals("gyoyuk")){
             examInstitute= "교육청";
         }
-
-        return drawable;
     }
 
     private String getAnswer(){
