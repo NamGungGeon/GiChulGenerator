@@ -47,8 +47,22 @@ public class ExamSolutionFragment extends Fragment {
         //문제번호
         solutionFileName+= tokenizer.nextToken()+ "_";
 
+        //solution info
         solutionTitle= rootView.findViewById(R.id.solutionTitle);
-        solutionTitle.setText(FirebaseConnection.getInstance().loadData("/answer/2018/sunung/11/imath/7", getContext()));
+
+        // descript action after loading data
+        FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
+            @Override
+            public void success(String data) {
+                solutionTitle.setText(data);
+            }
+
+            @Override
+            public void fail(String errorMessage) {
+                solutionTitle.setText(errorMessage);
+            }
+        };
+        FirebaseConnection.getInstance().loadData("answer/2018/sunung/11/imath/7", callback);
     }
 
 }
