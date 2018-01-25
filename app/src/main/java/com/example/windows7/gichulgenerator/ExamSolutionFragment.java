@@ -6,7 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.StringTokenizer;
 
@@ -20,7 +25,19 @@ public class ExamSolutionFragment extends Fragment {
     //타입_기간(년)_기간(월)_주최기관_과목_문제번호
     private String solutionFileName= "";
 
+    private RelativeLayout loadingContainer;
+    private RelativeLayout solutionContainer;
     private TextView solutionTitle;
+    private ImageView solutionImage;
+    private ImageView recheckExamImage;
+
+    private Button changeImageBtn;
+    private Button addToCheckListBtn;
+    private Button continueTryBtn;
+
+    private final int SOLUTION= 1234;
+    private final int EXAM= 1235;
+    private int imageStatus= SOLUTION;
 
     @Nullable
     @Override
@@ -34,7 +51,7 @@ public class ExamSolutionFragment extends Fragment {
         String examFileName= getActivity().getIntent().getStringExtra("info");
         StringTokenizer tokenizer= new StringTokenizer(examFileName, "_", false);
 
-        solutionFileName+= "q_";
+        solutionFileName+= "a_";
         tokenizer.nextToken();
         //기간(년)
         solutionFileName+= tokenizer.nextToken()+ "_";
@@ -45,24 +62,93 @@ public class ExamSolutionFragment extends Fragment {
         //과목
         solutionFileName+= tokenizer.nextToken()+ "_";
         //문제번호
-        solutionFileName+= tokenizer.nextToken()+ "_";
+        solutionFileName+= tokenizer.nextToken();
 
-        //solution info
+        solutionImage= rootView.findViewById(R.id.solutionImage);
+        FirebaseConnection.getInstance().loadImage(solutionFileName, solutionImage, getContext());
+
         solutionTitle= rootView.findViewById(R.id.solutionTitle);
+
+        loadingContainer= rootView.findViewById(R.id.solutionLoadingContainer);
+        solutionContainer= rootView.findViewById(R.id.solutionContainer);
+
+        recheckExamImage= rootView.findViewById(R.id.recheck_examImage);
+        FirebaseConnection.getInstance().loadImage(getActivity().getIntent().getStringExtra("info"), recheckExamImage, getContext());
+
+        changeImageBtn= rootView.findViewById(R.id.changeImageBtn);
+        changeImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(imageStatus== SOLUTION){
+                    changeImageBtn.setText("해설 다시 확인");
+                    recheckExamImage.setVisibility(View.VISIBLE);
+                    solutionImage.setVisibility(View.GONE);
+                    imageStatus= EXAM;
+                }else if(imageStatus== EXAM){
+                    changeImageBtn.setText("문제 다시 확인");
+                    recheckExamImage.setVisibility(View.GONE);
+                    solutionImage.setVisibility(View.VISIBLE);
+                    imageStatus= SOLUTION;
+                }
+            }
+        });
+        addToCheckListBtn= rootView.findViewById(R.id.addToCheckListBtn);
+        addToCheckListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final DialogMaker dialog= new DialogMaker();
+                View childView= getLayoutInflater().inflate(R.layout.dialog_addtochecklist, null);
+                DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
+                    @Override
+                    public void callbackMethod() {
+                        dialog.dismiss();
+                    }
+                };
+                DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
+                    @Override
+                    public void callbackMethod() {
+                        dialog.dismiss();
+                    }
+                };
+                dialog.setValue("문제를 오답노트에 추가합니다.", "저장", "취소", pos_callback, nag_callback, childView);
+                dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
+            }
+        });
+        continueTryBtn= rootView.findViewById(R.id.continueTryBtn);
+        continueTryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
+            }
+        });
 
         // descript action after loading data
         FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
             public void success(String data) {
-                solutionTitle.setText(data);
+                String rightAnswer= getActivity().getIntent().getStringExtra("answer");
+                if(rightAnswer.equals(data)){
+                    //정답
+                    solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ data+" 입니다.");
+                }else{
+                    //오답
+                    solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ data+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
+                }
+
+                loadingContainer.setVisibility(View.INVISIBLE);
+                solutionContainer.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void fail(String errorMessage) {
-                solutionTitle.setText(errorMessage);
+                Toast.makeText(getContext(), "Error: "+ errorMessage, Toast.LENGTH_LONG).show();
+                getActivity().finish();
             }
         };
         FirebaseConnection.getInstance().loadData("answer/2018/sunung/11/imath/7", callback);
     }
 
+    private void saveToHistoryList(){
+
+    }
 }

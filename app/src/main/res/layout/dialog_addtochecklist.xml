@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="250dp"
+    android:padding="20dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/memoExplain"
+                android:textColor="#000000"
+                android:textSize="18dp"
+                android:text="참고사항 메모"/>
+            <EditText
+                android:padding="10dp"
+                android:layout_below="@+id/memoExplain"
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_height="150dp"
+                android:hint="메모를 입력하세요."
+                android:gravity="top|left"
+                android:background="@drawable/edittext_border"/>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

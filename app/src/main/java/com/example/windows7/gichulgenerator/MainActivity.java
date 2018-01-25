@@ -17,15 +17,6 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageLodingFragment()).commit();
 
-
-        int timer=0;
-        while(true){
-            if(timer>= 3000){
-                getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
-                break;
-            }
-            timer++;
-        }
     }
 
     private long time= 0;

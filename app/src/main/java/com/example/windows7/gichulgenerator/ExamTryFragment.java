@@ -2,6 +2,8 @@ package com.example.windows7.gichulgenerator;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.StringTokenizer;
 
@@ -42,7 +45,15 @@ public class ExamTryFragment extends Fragment{
     private ImageView questionImage;
     private EditText answer_text;
     private RadioGroup answer_radio;
+    private TextView timer;
 
+    private Thread timerThread;
+    private boolean isRunningTimer= true;
+    //0 is sec
+    //1 is min
+    final int timeSaver[]= new int[2];
+
+    private Button regenerateExamBtn;
     private Button submitButton;
 
     @Nullable
@@ -53,16 +64,19 @@ public class ExamTryFragment extends Fragment{
         return rootView;
     }
 
-    private void init(ViewGroup rootView){
+    private void init(final ViewGroup rootView){
+        isRunningTimer= true;
+
         questionImage= rootView.findViewById(R.id.question);
-        setQuestion();
         selectedSubject= getActivity().getIntent().getStringExtra("subj");
         selectedProb= getActivity().getIntent().getStringExtra("prob");
         selectedInst= getActivity().getIntent().getStringExtra("inst");
         selectedPeriod= getActivity().getIntent().getStringExtra("Period");
 
+        setQuestion();
+
         title= rootView.findViewById(R.id.examTitle);
-        title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
+        title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
         probability= rootView.findViewById(R.id.examProbability);
         probability.setText("정답률 "+ examProb+ "%");
 
@@ -71,6 +85,61 @@ public class ExamTryFragment extends Fragment{
 
         answer_text= rootView.findViewById(R.id.answer_text);
         answer_text.setVisibility(View.INVISIBLE);
+
+        timer= rootView.findViewById(R.id.timer);
+
+        final Handler handler= new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle= msg.getData();
+                int min= bundle.getInt("min");
+                int sec= bundle.getInt("sec");
+                timeSaver[0]= sec;
+                timeSaver[1]= min;
+                timer.setText(min + "분 " + sec + "초");
+            }
+        };
+
+        timerThread= new Thread(){
+            @Override
+            public void run() {
+                int sec= -1;
+                int min= 0;
+
+                while(isRunningTimer) {
+                    sec++;
+                    if (sec == 60) {
+                        min++;
+                        sec -= 60;
+                    }
+
+                    Message msg= handler.obtainMessage();
+                    Bundle bundle= new Bundle();
+                    bundle.putInt("min", min);
+                    bundle.putInt("sec", sec);
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+
+
+                    try {
+                        this.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Toast.makeText(getContext(), "스레드 오류: "+e.getMessage(), Toast.LENGTH_LONG).show();
+                        getActivity().finish();
+                        break;
+                    }
+                }
+            }
+        };
+        timerThread.start();
+
+        regenerateExamBtn= rootView.findViewById(R.id.regenerateBtn);
+        regenerateExamBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
+            }
+        });
 
         submitButton= rootView.findViewById(R.id.submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -158,6 +227,7 @@ public class ExamTryFragment extends Fragment{
             @Override
             public void callbackMethod() {
                 //submit user's answer. move solution page
+                isRunningTimer= false;
                 submitSolution(answer);
                 dialog.dismiss();
             }
@@ -173,8 +243,13 @@ public class ExamTryFragment extends Fragment{
     }
 
     private void submitSolution(String answer){
+        if(answer.charAt(answer.length()-1)== '번'){
+            answer= String.valueOf(answer.charAt(0));
+        }
         getActivity().getIntent().putExtra("answer", answer);
         getActivity().getIntent().putExtra("info", examFileName);
+        getActivity().getIntent().putExtra("sec", timeSaver[0]);
+        getActivity().getIntent().putExtra("min", timeSaver[1]);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamSolutionFragment()).commit();
     }
 }

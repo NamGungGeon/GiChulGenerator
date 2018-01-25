@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="100dp">
+    <TextView
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="examTitle"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:id="@+id/checkListItem_examTitle"/>
+    <TextView
+        android:layout_below="@id/checkListItem_examTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkListItem_examInfo"
+        android:text="examInfo"
+        android:textSize="18dp"
+        android:textColor="#A0A0A0"/>
+
+    <TextView
+        android:layout_below="@id/checkListItem_examInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:id="@+id/checkListItem_examMemo"
+        android:text="examMemo"
+        android:textSize="15dp"
+        android:textColor="#A0A0A0"/>
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/checkListItem_goToExam"
+        android:layout_height="60dp" />
+</RelativeLayout>

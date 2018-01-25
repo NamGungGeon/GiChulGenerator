@@ -59,5 +59,29 @@
         <item>
             상관없음
         </item>
+        <item>
+            최근 6년 내
+        </item>
+        <item>
+            최근 3년 내
+        </item>
+        <item>
+            2017
+        </item>
+        <item>
+            2016
+        </item>
+        <item>
+            2015
+        </item>
+        <item>
+            2014
+        </item>
+        <item>
+            2013
+        </item>
+        <item>
+            2012
+        </item>
     </string-array>
 </resources>
