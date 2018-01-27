@@ -1,5 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
+import java.util.StringTokenizer;
+
 /**
  * Created by WINDOWS7 on 2018-01-25.
  */
@@ -28,6 +30,24 @@ public class ExamInfo {
         this.time = time;
         this.memo = memo;
     }
+    public ExamInfo(String examFileName, String inputAnswer, String rightAnswer, String time, String memo ){
+        StringTokenizer token= new StringTokenizer(examFileName, "_", false);
+
+        String type= token.nextToken();
+        period_y= token.nextToken();
+        period_m= token.nextToken();
+        institute= token.nextToken();
+        subject= token.nextToken();
+        number= token.nextToken();
+        potential= token.nextToken();
+
+        this.inputAnswer = inputAnswer;
+        this.rightAnswer = rightAnswer;
+        this.time = time;
+        this.memo = memo;
+    }
+
+    public ExamInfo(){}
 
     public String getInstitute() {
         return institute;

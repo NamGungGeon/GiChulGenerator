@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,6 +28,7 @@ public class ExamSolutionFragment extends Fragment {
 
     private RelativeLayout loadingContainer;
     private RelativeLayout solutionContainer;
+    private TextView examInfo;
     private TextView solutionTitle;
     private ImageView solutionImage;
     private ImageView recheckExamImage;
@@ -39,6 +41,9 @@ public class ExamSolutionFragment extends Fragment {
     private final int EXAM= 1235;
     private int imageStatus= SOLUTION;
 
+    private String inputAnswer;
+    private String rightAnswer;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +53,7 @@ public class ExamSolutionFragment extends Fragment {
     }
 
     private void init(ViewGroup rootView){
-        String examFileName= getActivity().getIntent().getStringExtra("info");
+        String examFileName= getActivity().getIntent().getStringExtra("examFileName");
         StringTokenizer tokenizer= new StringTokenizer(examFileName, "_", false);
 
         solutionFileName+= "a_";
@@ -64,6 +69,9 @@ public class ExamSolutionFragment extends Fragment {
         //문제번호
         solutionFileName+= tokenizer.nextToken();
 
+        examInfo= rootView.findViewById(R.id.solution_examInfo);
+        examInfo.setText(getActivity().getIntent().getStringExtra("examInfo"));
+
         solutionImage= rootView.findViewById(R.id.solutionImage);
         FirebaseConnection.getInstance().loadImage(solutionFileName, solutionImage, getContext());
 
@@ -73,7 +81,7 @@ public class ExamSolutionFragment extends Fragment {
         solutionContainer= rootView.findViewById(R.id.solutionContainer);
 
         recheckExamImage= rootView.findViewById(R.id.recheck_examImage);
-        FirebaseConnection.getInstance().loadImage(getActivity().getIntent().getStringExtra("info"), recheckExamImage, getContext());
+        FirebaseConnection.getInstance().loadImage(getActivity().getIntent().getStringExtra("examFileName"), recheckExamImage, getContext());
 
         changeImageBtn= rootView.findViewById(R.id.changeImageBtn);
         changeImageBtn.setOnClickListener(new View.OnClickListener() {
@@ -97,10 +105,14 @@ public class ExamSolutionFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final DialogMaker dialog= new DialogMaker();
-                View childView= getLayoutInflater().inflate(R.layout.dialog_addtochecklist, null);
+                final View childView= getLayoutInflater().inflate(R.layout.dialog_addtochecklist, null);
                 DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
                     @Override
                     public void callbackMethod() {
+                        EditText memoBox= childView.findViewById(R.id.memoBox);
+                        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
+                        CheckList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examFileName"),
+                                inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                         dialog.dismiss();
                     }
                 };
@@ -125,14 +137,15 @@ public class ExamSolutionFragment extends Fragment {
         // descript action after loading data
         FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
-            public void success(String data) {
-                String rightAnswer= getActivity().getIntent().getStringExtra("answer");
-                if(rightAnswer.equals(data)){
+            public void success(Object data) {
+                inputAnswer= getActivity().getIntent().getStringExtra("answer");
+                rightAnswer= (String)data;
+                if(inputAnswer.equals(rightAnswer)){
                     //정답
                     solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ data+" 입니다.");
                 }else{
                     //오답
-                    solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ data+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
+                    solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ data+" 이지만, 정답은 "+ inputAnswer+ " 입니다.");
                 }
 
                 loadingContainer.setVisibility(View.INVISIBLE);
@@ -146,9 +159,5 @@ public class ExamSolutionFragment extends Fragment {
             }
         };
         FirebaseConnection.getInstance().loadData("answer/2018/sunung/11/imath/7", callback);
-    }
-
-    private void saveToHistoryList(){
-
     }
 }

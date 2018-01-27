@@ -1,64 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/checkHistoryTitle"
-        android:layout_alignParentTop="true"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:textAlignment="center"
-        android:textSize="25dp"
-        android:layout_margin="15dp"
-        android:text="기록 관리"/>
-    <LinearLayout
-        android:layout_below="@id/checkHistoryTitle"
-        android:id="@+id/checkHistoryMenuList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:id="@+id/checkHistory_loadingContainer"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_centerInParent="true"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/checkHistory_progressBar"/>
         <TextView
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="#000000"
             android:textAlignment="center"
-            android:gravity="center"
             android:textSize="18dp"
-            android:text="문제 기록"
-            android:background="@drawable/button_border"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp" />
-        <TextView
-            android:layout_weight="1"
-            android:textColor="#000000"
-            android:background="@drawable/button_border"
-            android:gravity="center"
-            android:text="오답노트"
-            android:textAlignment="center"
-            android:textSize="18dp"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp" />
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_below="@id/checkHistoryMenuList"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/checkHistory_progressBar"
+            android:text="서버에서 데이터를 가져오는 중입니다."
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/checkHistory_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ViewFlipper
-            android:background="@drawable/button_border"
+        <TextView
+            android:id="@+id/checkHistoryTitle"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:layout_margin="15dp"
+            android:text="기록 관리"/>
+        <LinearLayout
+            android:layout_below="@id/checkHistoryTitle"
+            android:id="@+id/checkHistoryMenuList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_weight="1"
+                android:textColor="#000000"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:id="@+id/checkHistory_historyBtn"
+                android:textSize="18dp"
+                android:text="문제 기록"
+                android:background="@drawable/button_border"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp" />
+            <TextView
+                android:layout_weight="1"
+                android:textColor="#000000"
+                android:id="@+id/checkHistory_checklistBtn"
+                android:background="@drawable/button_border"
+                android:gravity="center"
+                android:text="오답노트"
+                android:textAlignment="center"
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_below="@id/checkHistoryMenuList"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ListView
-                android:id="@+id/historyList"
+            <ViewFlipper
+                android:background="@drawable/button_border"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </ListView>
-            <ListView
-                android:id="@+id/checkList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </ListView>
-        </ViewFlipper>
-    </ScrollView>
-</RelativeLayout>
+                android:id="@+id/checkHistory_flipper"
+                android:layout_height="match_parent">
+                <ListView
+                    android:id="@+id/historyList"
+                    android:layout_width="match_parent"
+                    android:divider="#AAAAAA"
+                    android:dividerHeight="1.5dp"
+                    android:layout_height="wrap_content">
+                </ListView>
+                <ListView
+                    android:id="@+id/checkList"
+                    android:divider="#AAAAAA"
+                    android:dividerHeight="1.5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </ListView>
+            </ViewFlipper>
+        </ScrollView>
+    </RelativeLayout>
+</FrameLayout>

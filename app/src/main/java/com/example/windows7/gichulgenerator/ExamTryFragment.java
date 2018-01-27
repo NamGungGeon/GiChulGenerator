@@ -247,7 +247,8 @@ public class ExamTryFragment extends Fragment{
             answer= String.valueOf(answer.charAt(0));
         }
         getActivity().getIntent().putExtra("answer", answer);
-        getActivity().getIntent().putExtra("info", examFileName);
+        getActivity().getIntent().putExtra("examInfo", title.getText());
+        getActivity().getIntent().putExtra("examFileName", examFileName);
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
         getActivity().getIntent().putExtra("min", timeSaver[1]);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamSolutionFragment()).commit();

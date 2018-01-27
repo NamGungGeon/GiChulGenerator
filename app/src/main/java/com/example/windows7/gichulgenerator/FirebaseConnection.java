@@ -13,6 +13,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 /**
  * Created by WINDOWS7 on 2018-01-21.
@@ -40,7 +42,7 @@ public class FirebaseConnection {
     }
 
     public interface Callback{
-        void success(String data);
+        void success(Object data);
         void fail(String errorMessage);
     }
 
@@ -53,7 +55,7 @@ public class FirebaseConnection {
         }
 
         // Read from the database
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 callback.success(dataSnapshot.getValue().toString());
@@ -71,6 +73,39 @@ public class FirebaseConnection {
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
         Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).into(imageView);
+    }
+
+    public void loadExamInfoList(String path, final Callback callback){
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        StringTokenizer token= new StringTokenizer(path, "/", false);
+        while(token.hasMoreTokens()){
+            mDatabase= mDatabase.child(token.nextToken());
+        }
+
+        // Read from the database
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                callback.success(dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                callback.fail(error.getMessage());
+            }
+        });
+    }
+    public void saveExamInfoList(String path, HashMap<String ,ExamInfo> list){
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        StringTokenizer token= new StringTokenizer(path, "/", false);
+        while(token.hasMoreTokens()){
+            mDatabase= mDatabase.child(token.nextToken());
+        }
+
+        mDatabase.setValue(list);
     }
 
 }

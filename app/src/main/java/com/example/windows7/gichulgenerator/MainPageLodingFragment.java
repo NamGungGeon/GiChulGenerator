@@ -112,7 +112,17 @@ public class MainPageLodingFragment extends Fragment {
                 if(firebaseAuth.getCurrentUser()!=null){
                     //User is login
                     Toast.makeText(getContext(), "로그인되었습니다.", Toast.LENGTH_SHORT).show();
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                    CheckList.Callback checkList_callback= new CheckList.Callback() {
+                        @Override
+                        public void success() {
+                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                        }
+                        @Override
+                        public void fail() {
+                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                        }
+                    };
+                    CheckList.getInstance().loadCheckListFromServer(checkList_callback);
                 }else{
                     //User is logout
                 }
