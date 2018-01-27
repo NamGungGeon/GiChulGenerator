@@ -1,5 +1,6 @@
 package com.example.windows7.gichulgenerator;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,15 +58,22 @@ public class CheckList {
         final FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
             public void success(Object data) {
-                checkList= (HashMap<String, ExamInfo>)data;
+                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
 
                 //Case: There is no data in database
-                if(checkList== null || checkList.size()==0){
+                if(checkList== null){
                     checkList= new HashMap<>();
                 }else{
                     //Case: Success to read
+                    for(String key: temp.keySet()){
+                        HashMap<String, String> value= temp.get(key);
+                        ExamInfo info= new ExamInfo(value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
+                                value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
+                        checkList.put(key, info);
+                    }
                 }
 
+                Log.i("Firebase  Check", String.valueOf(checkList.size()));
                 _callback.success();
             }
 

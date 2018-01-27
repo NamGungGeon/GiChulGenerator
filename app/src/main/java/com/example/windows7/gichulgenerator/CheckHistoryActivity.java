@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -60,6 +62,8 @@ public class CheckHistoryActivity extends AppCompatActivity {
             }
         });
 
+        checkList= findViewById(R.id.checkList);
+
         final ArrayList<ListViewItem_CheckList> checkListData= new ArrayList<>();
         final ArrayList<ListViewItem_HistoryList> historyListData= new ArrayList<>();
 
@@ -90,6 +94,7 @@ public class CheckHistoryActivity extends AppCompatActivity {
                 }
                 ListViewAdapter_CheckList adapter=new ListViewAdapter_CheckList(getApplicationContext(), R.layout.item_checklist, checkListData);
                 checkList.setAdapter(adapter);
+                setListViewHeightBasedOnChildren(checkList);
 
             }
 
@@ -104,4 +109,28 @@ public class CheckHistoryActivity extends AppCompatActivity {
 
 
     }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
+
 }
