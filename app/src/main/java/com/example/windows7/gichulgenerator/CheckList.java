@@ -1,15 +1,10 @@
 package com.example.windows7.gichulgenerator;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by WINDOWS7 on 2018-01-25.
@@ -17,10 +12,6 @@ import java.util.Set;
 
 public class CheckList {
     private HashMap<String, ExamInfo> checkList= new HashMap<>();
-
-    // true= conection success
-    // false= connection fail
-    private boolean connectionStatus;
 
     private static CheckList inst= null;
     private CheckList() {
@@ -61,13 +52,13 @@ public class CheckList {
                 HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
 
                 //Case: There is no data in database
-                if(checkList== null){
+                if(checkList== null || data== null){
                     checkList= new HashMap<>();
                 }else{
                     //Case: Success to read
                     for(String key: temp.keySet()){
                         HashMap<String, String> value= temp.get(key);
-                        ExamInfo info= new ExamInfo(value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
+                        ExamInfo info= new ExamInfo(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
                                 value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
                         checkList.put(key, info);
                     }

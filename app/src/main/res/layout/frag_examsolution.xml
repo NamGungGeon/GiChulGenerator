@@ -6,7 +6,6 @@
     <RelativeLayout
         android:id="@+id/solutionLoadingContainer"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="match_parent">
 
         <ProgressBar
@@ -26,6 +25,7 @@
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/solutionContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

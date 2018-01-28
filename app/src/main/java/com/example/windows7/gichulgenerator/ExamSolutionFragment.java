@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,7 +110,7 @@ public class ExamSolutionFragment extends Fragment {
                     public void callbackMethod() {
                         EditText memoBox= childView.findViewById(R.id.memoBox);
                         int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-                        CheckList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examFileName"),
+                        CheckList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName"),
                                 inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                         dialog.dismiss();
                     }
@@ -150,6 +149,8 @@ public class ExamSolutionFragment extends Fragment {
 
                 loadingContainer.setVisibility(View.INVISIBLE);
                 solutionContainer.setVisibility(View.VISIBLE);
+
+                saveHistory();
             }
 
             @Override
@@ -159,5 +160,12 @@ public class ExamSolutionFragment extends Fragment {
             }
         };
         FirebaseConnection.getInstance().loadData("answer/2018/sunung/11/imath/7", callback);
+
+    }
+
+    private void saveHistory(){
+        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
+        HistoryList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName"),
+                inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
     }
 }

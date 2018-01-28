@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
  */
 
 public class ExamInfo {
+
+    private String title= "";
     private String period_y= "";
     private String period_m= "";
     private String institute= "";
@@ -18,7 +20,8 @@ public class ExamInfo {
     private String time= "";
     private String memo= "";
 
-    public ExamInfo(String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
+    public ExamInfo(String title, String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
+        this.title= title;
         this.period_y = period_y;
         this.period_m = period_m;
         this.institute = institute;
@@ -30,9 +33,10 @@ public class ExamInfo {
         this.time = time;
         this.memo = memo;
     }
-    public ExamInfo(String examFileName, String inputAnswer, String rightAnswer, String time, String memo ){
-        StringTokenizer token= new StringTokenizer(examFileName, "_", false);
+    public ExamInfo(String title, String examFileName, String inputAnswer, String rightAnswer, String time, String memo ){
+        this.title= title;
 
+        StringTokenizer token= new StringTokenizer(examFileName, "_", false);
         String type= token.nextToken();
         period_y= token.nextToken();
         period_m= token.nextToken();
@@ -48,6 +52,14 @@ public class ExamInfo {
     }
 
     public ExamInfo(){}
+
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title){
+        this.title= title;
+    }
+
 
     public String getInstitute() {
         return institute;

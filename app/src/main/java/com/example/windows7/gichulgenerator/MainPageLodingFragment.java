@@ -1,7 +1,6 @@
 package com.example.windows7.gichulgenerator;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,9 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -28,9 +24,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
@@ -111,15 +104,27 @@ public class MainPageLodingFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser()!=null){
                     //User is login
-                    Toast.makeText(getContext(), "로그인되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), firebaseAuth.getCurrentUser().getDisplayName()+ "님 로그인되었습니다.", Toast.LENGTH_SHORT).show();
                     CheckList.Callback checkList_callback= new CheckList.Callback() {
                         @Override
                         public void success() {
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                            HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
+                                @Override
+                                public void success() {
+                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                                }
+
+                                @Override
+                                public void fail() {
+                                    Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                                    getActivity().finish();
+                                }
+                            });
                         }
                         @Override
                         public void fail() {
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                            Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
                         }
                     };
                     CheckList.getInstance().loadCheckListFromServer(checkList_callback);
