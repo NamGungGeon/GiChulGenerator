@@ -93,6 +93,42 @@ public class MainPageLodingFragment extends Fragment {
         }
     }
 
+    private void loadDataFromServer(){
+        Toast.makeText(getContext(), firebaseAuth.getCurrentUser().getDisplayName()+ "님 로그인되었습니다.", Toast.LENGTH_SHORT).show();
+
+        //Open Loading dialog
+        final DialogMaker dialog= new DialogMaker();
+        View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_loding, null);
+        dialog.setValue(null, "", "", null, null, childView);
+        dialog.setCancelable(false);
+        dialog.show(getActivity().getSupportFragmentManager(), "Open Loading Dialog");
+
+        //Start to connection firebase and Load data
+        CheckList.Callback checkList_callback= new CheckList.Callback() {
+            @Override
+            public void success() {
+                HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
+                    @Override
+                    public void success() {
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void fail() {
+                        Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                });
+            }
+            @Override
+            public void fail() {
+                Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        };
+        CheckList.getInstance().loadCheckListFromServer(checkList_callback);
+    }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Firebase Auth", "firebaseAuthWithGoogle:" + acct.getId());
@@ -104,30 +140,7 @@ public class MainPageLodingFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser()!=null){
                     //User is login
-                    Toast.makeText(getContext(), firebaseAuth.getCurrentUser().getDisplayName()+ "님 로그인되었습니다.", Toast.LENGTH_SHORT).show();
-                    CheckList.Callback checkList_callback= new CheckList.Callback() {
-                        @Override
-                        public void success() {
-                            HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
-                                @Override
-                                public void success() {
-                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
-                                }
-
-                                @Override
-                                public void fail() {
-                                    Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                                    getActivity().finish();
-                                }
-                            });
-                        }
-                        @Override
-                        public void fail() {
-                            Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                            getActivity().finish();
-                        }
-                    };
-                    CheckList.getInstance().loadCheckListFromServer(checkList_callback);
+                    loadDataFromServer();
                 }else{
                     //User is logout
                 }

@@ -20,6 +20,10 @@ public class ExamInfo {
     private String time= "";
     private String memo= "";
 
+    //fileName is period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number
+    //not include potential and type( ex- a_ or q_)
+    private String fileName= "";
+
     public ExamInfo(String title, String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
         this.title= title;
         this.period_y = period_y;
@@ -32,6 +36,8 @@ public class ExamInfo {
         this.rightAnswer = rightAnswer;
         this.time = time;
         this.memo = memo;
+
+        fileName= period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number;
     }
     public ExamInfo(String title, String examFileName, String inputAnswer, String rightAnswer, String time, String memo ){
         this.title= title;
@@ -49,9 +55,19 @@ public class ExamInfo {
         this.rightAnswer = rightAnswer;
         this.time = time;
         this.memo = memo;
+
+        this.fileName= examFileName;
     }
 
-    public ExamInfo(){}
+    //fileName is period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number
+    //not include potential and type( ex- a_ or q_)
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public String getTitle() {
         return title;

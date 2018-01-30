@@ -18,5 +18,6 @@
         <activity android:name=".ExamActivity"></activity>
         <activity android:name=".CalendarActivity"></activity>
         <activity android:name=".CheckHistoryActivity"></activity>
+        <activity android:name=".RecheckActivity"></activity>
     </application>
 </manifest>

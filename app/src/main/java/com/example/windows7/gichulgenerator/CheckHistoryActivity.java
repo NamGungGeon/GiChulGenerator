@@ -1,10 +1,14 @@
 package com.example.windows7.gichulgenerator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -18,6 +22,7 @@ import java.util.HashMap;
  */
 
 public class CheckHistoryActivity extends AppCompatActivity {
+
     private ViewFlipper flipper;
     private Button checkListBtn;
     private Button historyListBtn;
@@ -27,6 +32,9 @@ public class CheckHistoryActivity extends AppCompatActivity {
 
     private ListView checkList;
     private ListView historyList;
+
+    private ImageView status_historyListBtn;
+    private ImageView status_checkListBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +50,31 @@ public class CheckHistoryActivity extends AppCompatActivity {
 
     private void init(){
         flipper= findViewById(R.id.checkHistory_flipper);
+        flipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move_right_appear));
+        flipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move_right_disappear));
+
+
+        status_checkListBtn= findViewById(R.id.selectedCheckBtn);
+        status_historyListBtn= findViewById(R.id.selectedHistoryBtn);
+
         checkListBtn= findViewById(R.id.checkHistory_checkListBtn);
         checkListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                flipper.setDisplayedChild(VIEW_CHECKLIST);
+                if(flipper.getDisplayedChild()== 0){
+                    flipper.setDisplayedChild(VIEW_CHECKLIST);
+                    updateButtonStatus();
+                }
             }
         });
         historyListBtn= findViewById(R.id.checkHistory_historyListBtn);
         historyListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                flipper.setDisplayedChild(VIEW_HISTORYLIST);
+                if(flipper.getDisplayedChild()== 1){
+                    flipper.setDisplayedChild(VIEW_HISTORYLIST);
+                    updateButtonStatus();
+                }
             }
         });
 
@@ -69,15 +90,15 @@ public class CheckHistoryActivity extends AppCompatActivity {
 
                 int index=0;
                 for(String key: loadedData.keySet()){
-                    String rightAnswer= ((ExamInfo)(loadedData.get(key))).getRightAnswer();
-                    String inputAnswer= ((ExamInfo)(loadedData.get(key))).getInputAnswer();
+                    String rightAnswer= loadedData.get(key).getRightAnswer();
+                    String inputAnswer= loadedData.get(key).getInputAnswer();
                     String info;
                     if(rightAnswer.equals(inputAnswer)){
                         info= "정답";
                     }else{
                         info= "오답";
                     }
-                    checkListData.add(index, new ListViewItem_CheckList(loadedData.get(key).getTitle(), info, loadedData.get(key).getMemo()));
+                    checkListData.add(index, new ListViewItem_CheckList(loadedData.get(key).getTitle(), info, loadedData.get(key).getMemo(), loadedData.get(key).getFileName(), loadedData.get(key).getPotential()));
                     index++;
                 }
                 ListViewAdapter_CheckList CheckListAdapter=new ListViewAdapter_CheckList(getApplicationContext(), R.layout.item_checklist, checkListData);
@@ -92,6 +113,17 @@ public class CheckHistoryActivity extends AppCompatActivity {
             }
         };
         CheckList.getInstance().loadCheckListFromServer(callback_checkList);
+        checkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent= new Intent(getApplicationContext(), RecheckActivity.class);
+                intent.putExtra("fileName", checkListData.get(i).getExamFileName());
+                intent.putExtra("title", checkListData.get(i).getExamTitle());
+                intent.putExtra("potential", checkListData.get(i).getExamPotential());
+
+                startActivity(intent);
+            }
+        });
 
         // historyList - ListView setting
         final ArrayList<ListViewItem_HistoryList> historyListData= new ArrayList<>();
@@ -110,15 +142,15 @@ public class CheckHistoryActivity extends AppCompatActivity {
 
                 int index=0;
                 for(String key: loadedData.keySet()){
-                    String rightAnswer= ((ExamInfo)(loadedData.get(key))).getRightAnswer();
-                    String inputAnswer= ((ExamInfo)(loadedData.get(key))).getInputAnswer();
+                    String rightAnswer= loadedData.get(key).getRightAnswer();
+                    String inputAnswer= loadedData.get(key).getInputAnswer();
                     String info;
                     if(rightAnswer.equals(inputAnswer)){
                         info= "정답";
                     }else{
                         info= "오답";
                     }
-                    historyListData.add(index, new ListViewItem_HistoryList(loadedData.get(key).getTitle(), info));
+                    historyListData.add(index, new ListViewItem_HistoryList(loadedData.get(key).getTitle(), info, loadedData.get(key).getFileName(), loadedData.get(key).getPotential()));
                     index++;
                 }
                 ListViewAdapter_HistoryList historyListAdapter=new ListViewAdapter_HistoryList(getApplicationContext(), R.layout.item_historylist, historyListData);
@@ -133,6 +165,34 @@ public class CheckHistoryActivity extends AppCompatActivity {
             }
         };
         HistoryList.getInstance().loadHistoryListFromServer(callback_historyList);
+        historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Intent intent= new Intent(getApplicationContext(), RecheckActivity.class);
+                intent.putExtra("fileName", historyListData.get(i).getExamFileName());
+                intent.putExtra("title", historyListData.get(i).getExamTitle());
+                intent.putExtra("potential", historyListData.get(i).getExamPotential());
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void updateButtonStatus(){
+        int currentChild= flipper.getDisplayedChild();
+        switch (currentChild){
+            case 0:
+                //HistoryList
+                status_historyListBtn.setVisibility(View.VISIBLE);
+                status_checkListBtn.setVisibility(View.INVISIBLE);
+                break;
+            case 1:
+                //CheckList
+                status_historyListBtn.setVisibility(View.INVISIBLE);
+                status_checkListBtn.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
 }

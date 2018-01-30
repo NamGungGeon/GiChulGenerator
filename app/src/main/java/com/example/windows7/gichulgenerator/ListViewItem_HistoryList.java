@@ -7,10 +7,14 @@ package com.example.windows7.gichulgenerator;
 public class ListViewItem_HistoryList {
     private String examTitle;
     private String examInfo;
+    private String examFileName;
+    private String examPotential;
 
-    public ListViewItem_HistoryList(String examTitle, String examInfo) {
+    public ListViewItem_HistoryList(String examTitle, String examInfo, String examFileName, String examPotential) {
         this.examTitle = examTitle;
         this.examInfo = examInfo;
+        this.examFileName= examFileName;
+        this.examPotential= examPotential;
     }
 
     public String getExamTitle() {
@@ -21,4 +25,11 @@ public class ListViewItem_HistoryList {
         return examInfo;
     }
 
+    public String getExamFileName() {
+        return examFileName;
+    }
+
+    public String getExamPotential() {
+        return examPotential;
+    }
 }

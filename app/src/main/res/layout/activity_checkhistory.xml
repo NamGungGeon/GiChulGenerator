@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:id="@+id/checkHistory_loadingContainer"
         android:layout_height="match_parent">
@@ -26,7 +27,6 @@
             />
     </RelativeLayout>
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/checkHistory_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -46,28 +46,49 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
+            <RelativeLayout
                 android:layout_weight="1"
-                android:textColor="#000000"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:id="@+id/checkHistory_historyListBtn"
-                android:textSize="18dp"
-                android:text="문제 기록"
-                android:background="@drawable/button_border"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp" />
-            <Button
+                android:layout_width="1dp"
+                android:layout_height="40dp">
+                <Button
+                    android:textColor="#000000"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:id="@+id/checkHistory_historyListBtn"
+                    android:textSize="18dp"
+                    android:text="문제 기록"
+                    android:background="#FFFFFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp" />
+                <ImageView
+                    android:layout_below="@+id/checkHistory_historyListBtn"
+                    android:layout_width="match_parent"
+                    android:id="@+id/selectedHistoryBtn"
+                    android:layout_height="2dp"
+                    android:background="#000000"/>
+            </RelativeLayout>
+            <RelativeLayout
                 android:layout_weight="1"
-                android:textColor="#000000"
-                android:id="@+id/checkHistory_checkListBtn"
-                android:background="@drawable/button_border"
-                android:gravity="center"
-                android:text="오답노트"
-                android:textAlignment="center"
-                android:textSize="18dp"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp" />
+                android:layout_width="1dp"
+                android:layout_height="40dp">
+                <Button
+                    android:textColor="#000000"
+                    android:id="@+id/checkHistory_checkListBtn"
+                    android:gravity="center"
+                    android:text="오답노트"
+                    android:background="#FFFFFF"
+                    android:textAlignment="center"
+                    android:textSize="18dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp" />
+                <ImageView
+                    android:visibility="invisible"
+                    android:layout_below="@+id/checkHistory_checkListBtn"
+                    android:layout_width="match_parent"
+                    android:id="@+id/selectedCheckBtn"
+                    android:layout_height="2dp"
+                    android:background="#000000"/>
+            </RelativeLayout>
         </LinearLayout>
 
         <FrameLayout
@@ -75,7 +96,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ViewFlipper
-                android:background="@drawable/button_border"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/checkHistory_flipper">

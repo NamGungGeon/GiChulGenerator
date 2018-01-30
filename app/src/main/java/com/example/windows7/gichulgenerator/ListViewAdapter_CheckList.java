@@ -28,7 +28,7 @@ public class ListViewAdapter_CheckList extends BaseAdapter {
     @Override
     public int getCount(){return data.size();}
     @Override
-    public String getItem(int position){return data.get(position).getExamTitle();}
+    public String getItem(int position){return data.get(position).getExamFileName();}
     @Override
     public long getItemId(int position){return position;}
 
