@@ -2,6 +2,9 @@
 <resources>
     <string-array name="instituteArray">
         <item>
+            수능
+        </item>
+        <item>
             상관없음
         </item>
         <item>
@@ -10,11 +13,11 @@
         <item>
             평가원
         </item>
-        <item>
-            수능
-        </item>
     </string-array>
     <string-array name="subjectArray">
+        <item>
+            수학(이과)
+        </item>
         <item>
             상관없음
         </item>
@@ -23,9 +26,6 @@
         </item>
         <item>
             수학(문과)
-        </item>
-        <item>
-            수학(이과)
         </item>
             영어
         <item>
@@ -57,6 +57,9 @@
     </string-array>
     <string-array name="periodArray">
         <item>
+            2017
+        </item>
+        <item>
             상관없음
         </item>
         <item>
@@ -64,9 +67,6 @@
         </item>
         <item>
             최근 3년 내
-        </item>
-        <item>
-            2017
         </item>
         <item>
             2016

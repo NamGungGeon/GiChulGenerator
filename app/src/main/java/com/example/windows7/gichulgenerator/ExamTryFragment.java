@@ -1,11 +1,11 @@
 package com.example.windows7.gichulgenerator;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
@@ -38,10 +42,13 @@ public class ExamTryFragment extends Fragment{
     private String examInstitute;
     private String examSubject;
     private String examNumber;
-    private String examProb;
+    private String examPotential;
+
+    private RelativeLayout loadingContainer;
+    private RelativeLayout examTryContainer;
 
     private TextView title;
-    private TextView probability;
+    private TextView potential;
     private ImageView questionImage;
     private EditText answer_text;
     private RadioGroup answer_radio;
@@ -56,11 +63,104 @@ public class ExamTryFragment extends Fragment{
     private Button regenerateExamBtn;
     private Button submitButton;
 
+    private HashMap<String, String> potentialList= new HashMap<>();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_examtry, container, false);
-        init(rootView);
+        final ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_examtry, container, false);
+
+        String filter_subj= getActivity().getIntent().getStringExtra("subj");
+        String filter_inst= getActivity().getIntent().getStringExtra("inst");
+        String filter_peri= getActivity().getIntent().getStringExtra("peri");
+
+        // Decide Subject
+        if(filter_subj.equals("상관없음")){
+            String[] subjectList= getResources().getStringArray(R.array.subjectArray);
+            examSubject= subjectList[new Random().nextInt(subjectList.length)];
+        } else if (filter_subj.equals("수학(이과)")) {
+            examSubject= "imath";
+        }else if (filter_subj.equals("수학(문과)")) {
+            examSubject= "mmath";
+        }else if (filter_subj.equals("국어")) {
+            examSubject= "korean";
+        }else if (filter_subj.equals("영어")) {
+            examSubject= "english";
+        }else if (filter_subj.equals("사회탐구")) {
+            examSubject= "social";
+        }else if (filter_subj.equals("과학탐구")) {
+            examSubject= "science";
+        }
+
+        //Decide period_y
+        if(filter_peri.equals("상관없음")){
+            String[] yList= {"2017", "2016", "2015", "2014", "2013", "2012"};
+            examPeriod_y= yList[new Random().nextInt(yList.length)];
+        }else if(filter_peri.equals("최근 6년 내")){
+            String[] yList= {"2017", "2016", "2015", "2014", "2013", "2012"};
+            examPeriod_y= yList[new Random().nextInt(yList.length)];
+        }else if(filter_peri.equals("최근 3년 내")){
+            String[] yList= {"2017", "2016", "2015"};
+            examPeriod_y= yList[new Random().nextInt(yList.length)];
+        }else if(filter_peri.equals("2017")){
+            examPeriod_y= "2017";
+        }else if(filter_peri.equals("2016")){
+            examPeriod_y= "2016";
+        }else if(filter_peri.equals("2015")){
+            examPeriod_y= "2015";
+        }else if(filter_peri.equals("2014")){
+            examPeriod_y= "2014";
+        }else if(filter_peri.equals("2013")){
+            examPeriod_y= "2013";
+        }else if(filter_peri.equals("2012")){
+            examPeriod_y= "2012";
+        }
+
+        //Decide institute
+        if(filter_inst.equals("상관없음")){
+            String instList[]= {"sunung", "pyeong", "gyoyuk"};
+            examInstitute= instList[new Random().nextInt(instList.length)];
+        }else if(filter_inst.equals("교육청")){
+            examInstitute= "gyoyuk";
+        }else if(filter_inst.equals("평가원")){
+            examInstitute= "pyeong";
+        }else if(filter_inst.equals("수능")){
+            examInstitute= "sunung";
+        }
+
+        //Decide period_m
+        if(examInstitute.equals("sunung")){
+            examPeriod_m= "11";
+        }else if(examInstitute.equals("gyoyuk")){
+            String mList[]= {"3", "4", "7", "10"};
+            examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }else if(examInstitute.equals("pyeong")){
+            String mList[]= {"6", "9"};
+            examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }
+        loadingContainer= rootView.findViewById(R.id.examtry_loadingContainer);
+        examTryContainer= rootView.findViewById(R.id.examtry_container);
+
+        FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
+            @Override
+            public void success(Object data) {
+                ArrayList<Long> temp= (ArrayList<Long>)data;
+                for(int i=1; i<temp.size(); i++){
+                    potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
+                    Log.i("ValueCheck", String.valueOf(temp.get(i)));
+                }
+                init(rootView);
+
+                loadingContainer.setVisibility(View.GONE);
+                examTryContainer.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void fail(String errorMessage) {
+                Toast.makeText(getActivity().getApplicationContext(), "데이터베이스 통신 실패: "+ errorMessage, Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
         return rootView;
     }
 
@@ -77,8 +177,8 @@ public class ExamTryFragment extends Fragment{
 
         title= rootView.findViewById(R.id.examTitle);
         title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
-        probability= rootView.findViewById(R.id.examProbability);
-        probability.setText("정답률 "+ examProb+ "%");
+        potential = rootView.findViewById(R.id.examProbability);
+        potential.setText("정답률 "+ examPotential + "%");
 
         answer_radio= rootView.findViewById(R.id.answer_radio);
         answer_radio.setVisibility(View.VISIBLE);
@@ -145,25 +245,15 @@ public class ExamTryFragment extends Fragment{
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recheckAnswer(getAnswer());
+                recheckAnswer(getUserAnswer());
             }
         });
     }
 
     private void setQuestion(){
         //일단은 임시적으로 설정값은 고려하지 않고 한 이미지로 대체
-        examFileName= "q_2017_11_sunung_imath_7_100";
-        FirebaseConnection connection= FirebaseConnection.getInstance();
-        connection.loadImage(examFileName, questionImage, getContext());
-
-        StringTokenizer tokenizer= new StringTokenizer(examFileName, "_", false);
-        examType= tokenizer.nextToken();
-        examPeriod_y= tokenizer.nextToken();
-        examPeriod_m= tokenizer.nextToken();
-        examInstitute= tokenizer.nextToken();
-        examSubject= tokenizer.nextToken();
-        examNumber= tokenizer.nextToken();
-        examProb= tokenizer.nextToken();
+        examFileName= generateExamFileName();
+        FirebaseConnection.getInstance().loadImage(examFileName, questionImage, getContext());
 
         if(examSubject.equals("imath")){
             examSubject= "수학(이과)";
@@ -188,7 +278,58 @@ public class ExamTryFragment extends Fragment{
         }
     }
 
-    private String getAnswer(){
+    // Return value of this method is examFileName that used to load from firebase
+    // Return value is only using for first parameter of FirebaseConnection.getInstance().loadImage()
+    private String generateExamFileName(){
+
+        String fileName= "q_";
+
+        String filter_prob= getActivity().getIntent().getStringExtra("prob");
+        ArrayList<String> numberList= new ArrayList<>();
+        //Decide potential
+        if(filter_prob.equals("상관없음")){
+            numberList.addAll(potentialList.keySet());
+        }else if(filter_prob.equals("80%~ 100%")){
+            for(String number: potentialList.keySet()){
+                if(Integer.valueOf(potentialList.get(number))>=80){
+                    numberList.add(number);
+                }
+            }
+        }else if(filter_prob.equals("60%~ 80%")){
+            for(String number: potentialList.keySet()){
+                if(Integer.valueOf(potentialList.get(number))>=60 || Integer.valueOf(potentialList.get(number))<=80){
+                    numberList.add(number);
+                }
+            }
+        }else if(filter_prob.equals("40%~ 60%")){
+            for(String number: potentialList.keySet()){
+                if(Integer.valueOf(potentialList.get(number))>=40 || Integer.valueOf(potentialList.get(number))<=60){
+                    numberList.add(number);
+                }
+            }
+        }else if(filter_prob.equals("20%~ 40%")){
+            for(String number: potentialList.keySet()){
+                if(Integer.valueOf(potentialList.get(number))>=20 || Integer.valueOf(potentialList.get(number))<=40){
+                    numberList.add(number);
+                }
+            }
+        }else if(filter_prob.equals("20% 이하")){
+            for(String number: potentialList.keySet()){
+                if(Integer.valueOf(potentialList.get(number))<=20){
+                    numberList.add(number);
+                }
+            }
+        }
+
+        //Decide number
+        examNumber= numberList.get(new Random().nextInt(numberList.size()));
+        examPotential= potentialList.get(examNumber);
+
+        fileName+= examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"_"+examNumber;
+        return fileName;
+    }
+
+    private String getUserAnswer(){
         String result;
         if(answer_radio.getVisibility()== View.VISIBLE){
             //객관식
@@ -251,6 +392,7 @@ public class ExamTryFragment extends Fragment{
         getActivity().getIntent().putExtra("examFileName", examFileName);
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
         getActivity().getIntent().putExtra("min", timeSaver[1]);
+        getActivity().getIntent().putExtra("potential", examPotential);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamSolutionFragment()).commit();
     }
 }

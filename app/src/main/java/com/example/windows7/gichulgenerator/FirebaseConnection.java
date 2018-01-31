@@ -58,7 +58,7 @@ public class FirebaseConnection {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                callback.success(dataSnapshot.getValue().toString());
+                callback.success(dataSnapshot.getValue());
             }
 
             @Override
@@ -68,6 +68,7 @@ public class FirebaseConnection {
             }
         });
     }
+
 
     public void loadImage(String fileName, ImageView imageView, Context context){
         // Create a reference to a file from a Google Cloud Storage URI

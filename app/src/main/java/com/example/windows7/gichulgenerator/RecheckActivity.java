@@ -34,12 +34,12 @@ public class RecheckActivity extends AppCompatActivity {
         title.setText(getIntent().getStringExtra("title"));
 
         potential= findViewById(R.id.recheck_potential);
-        potential.setText("정답률 "+ getIntent().getStringExtra("potential"));
+        potential.setText("정답률 "+ getIntent().getStringExtra("potential")+"%");
 
         examImage= findViewById(R.id.recheck_exam);
         solutionImage= findViewById(R.id.recheck_solution);
 
-        FirebaseConnection.getInstance().loadImage("q_"+ getIntent().getStringExtra("fileName")+ "_"+getIntent().getStringExtra("potential"), examImage, getApplicationContext());
+        FirebaseConnection.getInstance().loadImage("q_"+ getIntent().getStringExtra("fileName"), examImage, getApplicationContext());
         FirebaseConnection.getInstance().loadImage("a_"+ getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext());
     }
 }

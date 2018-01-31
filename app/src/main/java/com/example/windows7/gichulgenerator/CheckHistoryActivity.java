@@ -3,7 +3,6 @@ package com.example.windows7.gichulgenerator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -53,7 +52,6 @@ public class CheckHistoryActivity extends AppCompatActivity {
         flipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move_right_appear));
         flipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move_right_disappear));
 
-
         status_checkListBtn= findViewById(R.id.selectedCheckBtn);
         status_historyListBtn= findViewById(R.id.selectedHistoryBtn);
 
@@ -78,27 +76,23 @@ public class CheckHistoryActivity extends AppCompatActivity {
             }
         });
 
+        loadCheckListFromFirebase();
+        loadHistoryListFromFirebase();
+    }
+
+    private void loadCheckListFromFirebase(){
         // checkList - ListView setting
         checkList= findViewById(R.id.checkList);
-        final ArrayList<ListViewItem_CheckList> checkListData= new ArrayList<>();
+        final ArrayList<ExamInfo> checkListData= new ArrayList<>();
         CheckList.Callback callback_checkList= new CheckList.Callback() {
             @Override
             public void success() {
                 //Load data...
                 HashMap<String, ExamInfo> loadedData= CheckList.getInstance().getCheckList();
-                Log.d("Firebase Check", String.valueOf(loadedData.size()));
 
                 int index=0;
                 for(String key: loadedData.keySet()){
-                    String rightAnswer= loadedData.get(key).getRightAnswer();
-                    String inputAnswer= loadedData.get(key).getInputAnswer();
-                    String info;
-                    if(rightAnswer.equals(inputAnswer)){
-                        info= "정답";
-                    }else{
-                        info= "오답";
-                    }
-                    checkListData.add(index, new ListViewItem_CheckList(loadedData.get(key).getTitle(), info, loadedData.get(key).getMemo(), loadedData.get(key).getFileName(), loadedData.get(key).getPotential()));
+                    checkListData.add(index, loadedData.get(key));
                     index++;
                 }
                 ListViewAdapter_CheckList CheckListAdapter=new ListViewAdapter_CheckList(getApplicationContext(), R.layout.item_checklist, checkListData);
@@ -117,16 +111,46 @@ public class CheckHistoryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent= new Intent(getApplicationContext(), RecheckActivity.class);
-                intent.putExtra("fileName", checkListData.get(i).getExamFileName());
-                intent.putExtra("title", checkListData.get(i).getExamTitle());
-                intent.putExtra("potential", checkListData.get(i).getExamPotential());
+                intent.putExtra("fileName", checkListData.get(i).getFileName());
+                intent.putExtra("title", checkListData.get(i).getTitle());
+                intent.putExtra("potential", checkListData.get(i).getPotential());
 
                 startActivity(intent);
             }
         });
+        checkList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final AdapterView<?> adapterView, final View view, final int i, long l) {
+                final DialogMaker dialog= new DialogMaker();
+                dialog.setValue("오답노트에서 삭제하시겠습니까?", "예", "아니오",
+                        new DialogMaker.Callback() {
+                            @Override
+                            public void callbackMethod() {
+                                CheckList.getInstance().deleteFromList(checkListData.get(i));
 
+                                RelativeLayout loadingContainer= findViewById(R.id.checkHistory_loadingContainer);
+                                loadingContainer.setVisibility(View.VISIBLE);
+                                RelativeLayout container= findViewById(R.id.checkHistory_container);
+                                container.setVisibility(View.GONE);
+
+                                init();
+
+                                dialog.dismiss();
+                            }
+                        }, new DialogMaker.Callback() {
+                            @Override
+                            public void callbackMethod() {
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show(getSupportFragmentManager(), "Ask to user: Delete this exam?");
+                return true;
+            }
+        });
+    }
+    private void loadHistoryListFromFirebase(){
         // historyList - ListView setting
-        final ArrayList<ListViewItem_HistoryList> historyListData= new ArrayList<>();
+        final ArrayList<ExamInfo> historyListData= new ArrayList<>();
         historyList= findViewById(R.id.historyList);
         HistoryList.Callback callback_historyList= new HistoryList.Callback() {
             @Override
@@ -138,19 +162,10 @@ public class CheckHistoryActivity extends AppCompatActivity {
 
                 //Load data...
                 HashMap<String, ExamInfo> loadedData= HistoryList.getInstance().getHistoryList();
-                Log.d("Firebase Check", String.valueOf(loadedData.size()));
 
                 int index=0;
                 for(String key: loadedData.keySet()){
-                    String rightAnswer= loadedData.get(key).getRightAnswer();
-                    String inputAnswer= loadedData.get(key).getInputAnswer();
-                    String info;
-                    if(rightAnswer.equals(inputAnswer)){
-                        info= "정답";
-                    }else{
-                        info= "오답";
-                    }
-                    historyListData.add(index, new ListViewItem_HistoryList(loadedData.get(key).getTitle(), info, loadedData.get(key).getFileName(), loadedData.get(key).getPotential()));
+                    historyListData.add(index, loadedData.get(key));
                     index++;
                 }
                 ListViewAdapter_HistoryList historyListAdapter=new ListViewAdapter_HistoryList(getApplicationContext(), R.layout.item_historylist, historyListData);
@@ -168,13 +183,41 @@ public class CheckHistoryActivity extends AppCompatActivity {
         historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 Intent intent= new Intent(getApplicationContext(), RecheckActivity.class);
-                intent.putExtra("fileName", historyListData.get(i).getExamFileName());
-                intent.putExtra("title", historyListData.get(i).getExamTitle());
-                intent.putExtra("potential", historyListData.get(i).getExamPotential());
+                intent.putExtra("fileName", historyListData.get(i).getFileName());
+                intent.putExtra("title", historyListData.get(i).getTitle());
+                intent.putExtra("potential", historyListData.get(i).getPotential());
 
                 startActivity(intent);
+            }
+        });
+        historyList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, final View view, final int i, long l) {
+                final DialogMaker dialog= new DialogMaker();
+                dialog.setValue("기록에서 삭제하시겠습니까?", "예", "아니오",
+                        new DialogMaker.Callback() {
+                            @Override
+                            public void callbackMethod() {
+                                HistoryList.getInstance().deleteFromList(historyListData.get(i));
+
+                                RelativeLayout loadingContainer= findViewById(R.id.checkHistory_loadingContainer);
+                                loadingContainer.setVisibility(View.VISIBLE);
+                                RelativeLayout container= findViewById(R.id.checkHistory_container);
+                                container.setVisibility(View.GONE);
+
+                                init();
+
+                                dialog.dismiss();
+                            }
+                        }, new DialogMaker.Callback() {
+                            @Override
+                            public void callbackMethod() {
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show(getSupportFragmentManager(), "Ask to user: Delete this exam?");
+                return true;
             }
         });
     }
