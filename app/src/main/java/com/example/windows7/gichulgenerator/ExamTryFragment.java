@@ -255,6 +255,14 @@ public class ExamTryFragment extends Fragment{
         examFileName= generateExamFileName();
         FirebaseConnection.getInstance().loadImage(examFileName, questionImage, getContext());
 
+        // below value must be saved before converting.
+        getActivity().getIntent().putExtra("potential", examPotential);
+        getActivity().getIntent().putExtra("period_y", examPeriod_y);
+        getActivity().getIntent().putExtra("period_m", examPeriod_m);
+        getActivity().getIntent().putExtra("institute", examInstitute);
+        getActivity().getIntent().putExtra("subject", examSubject);
+        getActivity().getIntent().putExtra("number", examNumber);
+
         if(examSubject.equals("imath")){
             examSubject= "수학(이과)";
         }else if(examSubject.equals("mmath")){
@@ -387,12 +395,14 @@ public class ExamTryFragment extends Fragment{
         if(answer.charAt(answer.length()-1)== '번'){
             answer= String.valueOf(answer.charAt(0));
         }
-        getActivity().getIntent().putExtra("answer", answer);
-        getActivity().getIntent().putExtra("examInfo", title.getText());
+
         getActivity().getIntent().putExtra("examFileName", examFileName);
+        getActivity().getIntent().putExtra("examInfo", title.getText());
+        getActivity().getIntent().putExtra("answer", answer);
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
         getActivity().getIntent().putExtra("min", timeSaver[1]);
-        getActivity().getIntent().putExtra("potential", examPotential);
+
+
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamSolutionFragment()).commit();
     }
 }

@@ -3,6 +3,7 @@ package com.example.windows7.gichulgenerator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 /**
@@ -72,6 +74,7 @@ public class ExamSolutionFragment extends Fragment {
         examInfo.setText(getActivity().getIntent().getStringExtra("examInfo"));
 
         solutionImage= rootView.findViewById(R.id.solutionImage);
+        Log.i("Solution File Name", solutionFileName);
         FirebaseConnection.getInstance().loadImage(solutionFileName, solutionImage, getContext());
 
         solutionTitle= rootView.findViewById(R.id.solutionTitle);
@@ -111,7 +114,7 @@ public class ExamSolutionFragment extends Fragment {
                         EditText memoBox= childView.findViewById(R.id.memoBox);
                         int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
                         CheckList.getInstance()
-                                .addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName"),
+                                .addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
                                 getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                         dialog.dismiss();
                     }
@@ -139,13 +142,13 @@ public class ExamSolutionFragment extends Fragment {
             @Override
             public void success(Object data) {
                 inputAnswer= getActivity().getIntent().getStringExtra("answer");
-                rightAnswer= String.valueOf(data);
+                rightAnswer= String.valueOf(((ArrayList<Long>)data).get(Integer.valueOf(getActivity().getIntent().getStringExtra("number"))));
                 if(inputAnswer.equals(rightAnswer)){
                     //정답
-                    solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ data+" 입니다.");
+                    solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ inputAnswer+" 입니다.");
                 }else{
                     //오답
-                    solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ data+" 이지만, 정답은 "+ inputAnswer+ " 입니다.");
+                    solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ inputAnswer+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
                 }
 
                 loadingContainer.setVisibility(View.INVISIBLE);
@@ -160,13 +163,20 @@ public class ExamSolutionFragment extends Fragment {
                 getActivity().finish();
             }
         };
-        FirebaseConnection.getInstance().loadData("answer/2017/sunung/11/imath/7", callback);
+        FirebaseConnection.getInstance().loadData(
+                "answer/"+getActivity().getIntent().getStringExtra("period_y")+"/"+getActivity().getIntent().getStringExtra("institute")
+                + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject"), callback);
+
+        Log.i("Path: ", "answer/"+getActivity().getIntent().getStringExtra("period_y")+"/"+getActivity().getIntent().getStringExtra("institute")
+                + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject"));
 
     }
 
     private void saveHistory(){
         int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-        HistoryList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName"),
+        String basicFileName= getActivity().getIntent().getStringExtra("examFileName");
+        basicFileName= basicFileName.substring(2);
+        HistoryList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), basicFileName,
                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
     }
 }

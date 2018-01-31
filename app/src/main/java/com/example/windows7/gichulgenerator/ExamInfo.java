@@ -41,14 +41,11 @@ public class ExamInfo {
 
         fileName= period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number;
     }
-    public ExamInfo(String title, String examFileName, String potential, String inputAnswer, String rightAnswer, String time, String memo){
+    public ExamInfo(String title, String basicFileName, String potential, String inputAnswer, String rightAnswer, String time, String memo){
         this.title= title;
 
-        StringTokenizer token= new StringTokenizer(examFileName, "_", false);
+        StringTokenizer token= new StringTokenizer(basicFileName, "_", false);
 
-        //type is never used in this class
-        //just truncate type to input fileName
-        String type= token.nextToken();
         period_y= token.nextToken();
         period_m= token.nextToken();
         institute= token.nextToken();
@@ -61,7 +58,7 @@ public class ExamInfo {
         this.time = time;
         this.memo = memo;
 
-        this.fileName= examFileName;
+        this.fileName= basicFileName;
     }
 
     //fileName is period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number
