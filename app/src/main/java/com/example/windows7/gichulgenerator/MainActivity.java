@@ -1,6 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -22,11 +23,25 @@ public class MainActivity extends AppCompatActivity {
     private long time= 0;
     @Override
     public void onBackPressed(){
-        if(System.currentTimeMillis()-time>=1500){
-            time=System.currentTimeMillis();
-            Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 종료합니다.",Toast.LENGTH_SHORT).show();
-        }else if(System.currentTimeMillis()-time<1500){
-            finish();
+        Fragment currentFragment= getSupportFragmentManager().findFragmentByTag("mainPage");
+        if(currentFragment instanceof OnBackPressedListener){
+            OnBackPressedListener backPressedListener= (OnBackPressedListener)currentFragment;
+            boolean isContinueExecute= backPressedListener.onBackPressed();
+            if(isContinueExecute== true){
+                if(System.currentTimeMillis()-time>=1500){
+                    time=System.currentTimeMillis();
+                    Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 종료합니다.",Toast.LENGTH_SHORT).show();
+                }else if(System.currentTimeMillis()-time<1500){
+                    finish();
+                }
+            }
+        }else{
+            if(System.currentTimeMillis()-time>=1500){
+                time=System.currentTimeMillis();
+                Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 종료합니다.",Toast.LENGTH_SHORT).show();
+            }else if(System.currentTimeMillis()-time<1500){
+                finish();
+            }
         }
     }
 }

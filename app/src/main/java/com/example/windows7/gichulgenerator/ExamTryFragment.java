@@ -35,8 +35,6 @@ public class ExamTryFragment extends Fragment{
     //문제 파일 이름 규칙
     //타입_기간(년)_기간(월)_주최기관_과목_문제번호_정답률
     private String examFileName;
-
-    private String examType;
     private String examPeriod_y;
     private String examPeriod_m;
     private String examInstitute;
@@ -62,6 +60,11 @@ public class ExamTryFragment extends Fragment{
 
     private Button regenerateExamBtn;
     private Button submitButton;
+
+    private int examType;
+    private final int choiceType= 1511;
+    private final int inputType= 1512;
+
 
     private HashMap<String, String> potentialList= new HashMap<>();
 
@@ -180,13 +183,46 @@ public class ExamTryFragment extends Fragment{
         potential = rootView.findViewById(R.id.examProbability);
         potential.setText("정답률 "+ examPotential + "%");
 
-        answer_radio= rootView.findViewById(R.id.answer_radio);
-        answer_radio.setVisibility(View.VISIBLE);
-
-        answer_text= rootView.findViewById(R.id.answer_text);
-        answer_text.setVisibility(View.INVISIBLE);
+        if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
+            if(Integer.valueOf(examNumber)>=22){
+                //주관식
+                answer_text= rootView.findViewById(R.id.answer_text);
+                answer_text.setVisibility(View.VISIBLE);
+                examType= inputType;
+            }else{
+                //객관식
+                answer_radio= rootView.findViewById(R.id.answer_radio);
+                answer_radio.setVisibility(View.VISIBLE);
+                examType= choiceType;
+            }
+        }else{
+            //객관식
+            answer_radio= rootView.findViewById(R.id.answer_radio);
+            answer_radio.setVisibility(View.VISIBLE);
+            examType= choiceType;
+        }
 
         timer= rootView.findViewById(R.id.timer);
+        startTimer();
+
+        regenerateExamBtn= rootView.findViewById(R.id.regenerateBtn);
+        regenerateExamBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
+            }
+        });
+
+        submitButton= rootView.findViewById(R.id.submit);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recheckAnswer(getUserAnswer());
+            }
+        });
+    }
+
+    private void startTimer(){
 
         final Handler handler= new Handler(){
             @Override
@@ -232,28 +268,12 @@ public class ExamTryFragment extends Fragment{
             }
         };
         timerThread.start();
-
-        regenerateExamBtn= rootView.findViewById(R.id.regenerateBtn);
-        regenerateExamBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
-            }
-        });
-
-        submitButton= rootView.findViewById(R.id.submit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recheckAnswer(getUserAnswer());
-            }
-        });
     }
 
     private void setQuestion(){
         //일단은 임시적으로 설정값은 고려하지 않고 한 이미지로 대체
         examFileName= generateExamFileName();
-        FirebaseConnection.getInstance().loadImage(examFileName, questionImage, getContext());
+        FirebaseConnection.getInstance().loadImage(examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"/"+examFileName, questionImage, getContext());
 
         // below value must be saved before converting.
         getActivity().getIntent().putExtra("potential", examPotential);
@@ -290,7 +310,7 @@ public class ExamTryFragment extends Fragment{
     // Return value is only using for first parameter of FirebaseConnection.getInstance().loadImage()
     private String generateExamFileName(){
 
-        String fileName= "q_";
+        String fileName= "";
 
         String filter_prob= getActivity().getIntent().getStringExtra("prob");
         ArrayList<String> numberList= new ArrayList<>();
@@ -333,14 +353,15 @@ public class ExamTryFragment extends Fragment{
         examNumber= numberList.get(new Random().nextInt(numberList.size()));
         examPotential= potentialList.get(examNumber);
 
-        fileName+= examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"_"+examNumber;
+        fileName+= "q_" +examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"_"+examNumber;
         return fileName;
     }
 
     private String getUserAnswer(){
-        String result;
-        if(answer_radio.getVisibility()== View.VISIBLE){
-            //객관식
+        String result= "";
+
+        //객관식
+        if(examType== choiceType){
             int answer=0;
             int checkedAnswer= answer_radio.getCheckedRadioButtonId();
             switch(checkedAnswer){
@@ -362,7 +383,7 @@ public class ExamTryFragment extends Fragment{
             }
             result= String.valueOf(answer);
             result= result+ "번";
-        }else{
+        }else if(examType== inputType){
             //주관식
             result= answer_text.getText().toString();
         }
@@ -398,7 +419,7 @@ public class ExamTryFragment extends Fragment{
 
         getActivity().getIntent().putExtra("examFileName", examFileName);
         getActivity().getIntent().putExtra("examInfo", title.getText());
-        getActivity().getIntent().putExtra("answer", answer);
+        getActivity().getIntent().putExtra("inputAnswer", answer);
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
         getActivity().getIntent().putExtra("min", timeSaver[1]);
 

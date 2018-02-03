@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "460654701170-ebhmg6jnmefiom7f76omr09q2hi96r4n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.windows7.gichulgenerator",
+            "certificate_hash": "9b6d1932801182dab1a9e63d32c558f50af7a51e"
+          }
+        },
+        {
           "client_id": "460654701170-st0tff9tdrqegk59o2n59emn1u4io8ml.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

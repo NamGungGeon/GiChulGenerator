@@ -3,94 +3,231 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/mainMenuContainer">
+    android:background="#FFFFFF"
+    android:id="@+id/frag_mainmenu"
+    >
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/mainPageAd"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+    </com.google.android.gms.ads.AdView>
     <RelativeLayout
+        android:layout_below="@+id/mainPageAd"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainMenuMenuContainer"
-        android:layout_margin="15dp">
+        android:layout_height="match_parent"
+        android:id="@+id/mainMenuContainer">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:id="@+id/mainmenu_info"
+            android:paddingBottom="40dp">
+
+            <TextView
+                android:id="@+id/specialMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="성실함과 노력만이 합격으로 가는 지름길입니다!"
+                android:textColor="#000000"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/scheduler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/specialMessage"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="주요 일정 표시"
+                android:textColor="#000000"
+                android:textSize="35dp" />
+
+        </RelativeLayout>
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/list_icon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/konkuk"
+            android:layout_below="@+id/mainmenu_info"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/mainmenu_univImage"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            android:text="나의 목표 대학"
+            android:layout_below="@id/mainmenu_univImage"/>
+        <LinearLayout
+            android:layout_above="@+id/mainmenu_actionList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/yesterdayInfo"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="#AAAAAA"
+                android:text="어제 푼 문제 갯수 표시" />
+            <TextView
+                android:id="@+id/todayInfo"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30dp"
+                android:textColor="#000000"
+                android:text="오늘 푼 문제 갯수 표시" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/mainmenu_actionList"
+            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="60dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="1dp"
+                android:layout_weight="1"
+                android:layout_height="120dp"
+                android:id="@+id/goToStudy"
+                android:text="문제 풀러 가기"
+                android:textColor="#000000"
+                android:textSize="18dp"
+                android:layout_margin= "15dp"
+                android:background="@drawable/button_border"/>
+            <Button
+                android:layout_width="1dp"
+                android:layout_weight="1"
+                android:layout_height="120dp"
+                android:layout_margin= "15dp"
+                android:id="@+id/searchExam"
+                android:text="문제 검색"
+                android:textColor="#000000"
+                android:textSize="18dp"
+                android:background="@drawable/button_border"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:background="@drawable/menulist_top_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/mainMenuListContainer">
+            <ImageView
+                android:padding="10dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/list_icon"
+                android:id="@+id/menuListBtn"
+                android:background="@drawable/menulist_right_divider"
+                android:layout_alignParentLeft="true"/>
+            <ImageView
+                android:padding="10dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/help"
+                android:src="@drawable/help_icon"
+                android:background="@drawable/menulist_left_divider"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/checkHistory"/>
+            <ImageView
+                android:padding="10dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/checkHistory"
+                android:background="@drawable/menulist_left_divider"
+                android:src="@drawable/checkhistory_icon"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/calender"/>
+            <ImageView
+                android:padding="10dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/calender"
+                android:background="@drawable/menulist_left_divider"
+                android:src="@drawable/calendar_icon"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+        <!-- MenuList -->
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/mainMenuListContainer"
+            android:background="#313131"
             android:id="@+id/menuList"
-            android:layout_alignParentLeft="true"/>
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/help"
-            android:layout_marginRight="15dp"
-            android:src="@drawable/help_icon"
-            android:layout_toLeftOf="@+id/checkHistory"/>
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/checkHistory"
-            android:layout_marginRight="15dp"
-            android:src="@drawable/checkhistory_icon"
-            android:layout_toLeftOf="@+id/calender"/>
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/calender"
-            android:src="@drawable/calendar_icon"
-            android:layout_alignParentRight="true"/>
+            android:orientation="vertical">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+                        <ImageView
+                            android:layout_centerInParent="true"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/settingIcon"
+                            android:background="@drawable/setting_icon"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@+id/settingIcon"
+                            android:text="설정"
+                            android:layout_marginTop="25dp"
+                            android:textColor="#FFFFFF"
+                            android:textSize="20dp"/>
+                    </RelativeLayout>
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="*">
+                        <TableRow>
+                            <Button
+                                android:layout_margin="20dp"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/setting_icon"/>
+                            <Button
+                                android:layout_margin="20dp"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/setting_icon"/>
+                        </TableRow>
+                        <TableRow>
+                            <Button
+                                android:layout_margin="20dp"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/setting_icon"/>
+                            <Button
+                                android:layout_margin="20dp"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/setting_icon"/>
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/mainMenuMenuContainer"
-        android:layout_marginTop="10dp"
-        android:paddingBottom="40dp">
-
-        <TextView
-            android:id="@+id/specialMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="성실함과 노력만이 합격으로 가는 지름길입니다!"
-            android:textColor="#000000"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/scheduler"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/specialMessage"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="주요 일정 표시"
-            android:textColor="#000000"
-            android:textSize="35dp" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/yesterdayInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="20dp"
-        android:textColor="#AAAAAA"
-        android:layout_above="@+id/todayInfo"
-        android:text="어제 푼 문제 갯수 표시" />
-    <TextView
-        android:id="@+id/todayInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="30dp"
-        android:textColor="#000000"
-        android:layout_centerInParent="true"
-        android:text="오늘 푼 문제 갯수 표시" />
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
-        android:id="@+id/goToStudy"
-        android:background="@drawable/gotostudy_icon"
-        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

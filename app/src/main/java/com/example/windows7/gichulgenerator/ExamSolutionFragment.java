@@ -74,8 +74,10 @@ public class ExamSolutionFragment extends Fragment {
         examInfo.setText(getActivity().getIntent().getStringExtra("examInfo"));
 
         solutionImage= rootView.findViewById(R.id.solutionImage);
-        Log.i("Solution File Name", solutionFileName);
-        FirebaseConnection.getInstance().loadImage(solutionFileName, solutionImage, getContext());
+        String solutionPath= getActivity().getIntent().getStringExtra("period_y")+ "_"+ getActivity().getIntent().getStringExtra("period_m")+ "_"+
+                getActivity().getIntent().getStringExtra("institute")+ "_"+ getActivity().getIntent().getStringExtra("subject");
+        FirebaseConnection.getInstance().loadImage(solutionPath+"/"+solutionFileName, solutionImage, getContext());
+        Log.i("Path: ", solutionPath+"/"+solutionFileName);
 
         solutionTitle= rootView.findViewById(R.id.solutionTitle);
 
@@ -106,27 +108,7 @@ public class ExamSolutionFragment extends Fragment {
         addToCheckListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final DialogMaker dialog= new DialogMaker();
-                final View childView= getLayoutInflater().inflate(R.layout.dialog_addtochecklist, null);
-                DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
-                    @Override
-                    public void callbackMethod() {
-                        EditText memoBox= childView.findViewById(R.id.memoBox);
-                        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-                        CheckList.getInstance()
-                                .addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
-                                getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
-                        dialog.dismiss();
-                    }
-                };
-                DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
-                    @Override
-                    public void callbackMethod() {
-                        dialog.dismiss();
-                    }
-                };
-                dialog.setValue("문제를 오답노트에 추가합니다.", "저장", "취소", pos_callback, nag_callback, childView);
-                dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
+                saveCheckList();
             }
         });
         continueTryBtn= rootView.findViewById(R.id.continueTryBtn);
@@ -137,11 +119,15 @@ public class ExamSolutionFragment extends Fragment {
             }
         });
 
+        checkAnswer();
+    }
+
+    private void checkAnswer(){
         // descript action after loading data
         FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
             public void success(Object data) {
-                inputAnswer= getActivity().getIntent().getStringExtra("answer");
+                inputAnswer= getActivity().getIntent().getStringExtra("inputAnswer");
                 rightAnswer= String.valueOf(((ArrayList<Long>)data).get(Integer.valueOf(getActivity().getIntent().getStringExtra("number"))));
                 if(inputAnswer.equals(rightAnswer)){
                     //정답
@@ -165,10 +151,7 @@ public class ExamSolutionFragment extends Fragment {
         };
         FirebaseConnection.getInstance().loadData(
                 "answer/"+getActivity().getIntent().getStringExtra("period_y")+"/"+getActivity().getIntent().getStringExtra("institute")
-                + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject"), callback);
-
-        Log.i("Path: ", "answer/"+getActivity().getIntent().getStringExtra("period_y")+"/"+getActivity().getIntent().getStringExtra("institute")
-                + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject"));
+                        + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject"), callback);
 
     }
 
@@ -178,5 +161,29 @@ public class ExamSolutionFragment extends Fragment {
         basicFileName= basicFileName.substring(2);
         HistoryList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), basicFileName,
                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
+    }
+
+    private void saveCheckList(){
+        final DialogMaker dialog= new DialogMaker();
+        final View childView= getLayoutInflater().inflate(R.layout.dialog_addtochecklist, null);
+        DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
+            @Override
+            public void callbackMethod() {
+                EditText memoBox= childView.findViewById(R.id.memoBox);
+                int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
+                CheckList.getInstance()
+                        .addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
+                                getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
+                dialog.dismiss();
+            }
+        };
+        DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
+            @Override
+            public void callbackMethod() {
+                dialog.dismiss();
+            }
+        };
+        dialog.setValue("문제를 오답노트에 추가합니다.", "저장", "취소", pos_callback, nag_callback, childView);
+        dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
     }
 }

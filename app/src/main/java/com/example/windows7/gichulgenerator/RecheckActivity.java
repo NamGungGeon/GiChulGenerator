@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.StringTokenizer;
+
 /**
  * Created by WINDOWS7 on 2018-01-31.
  */
@@ -39,7 +41,15 @@ public class RecheckActivity extends AppCompatActivity {
         examImage= findViewById(R.id.recheck_exam);
         solutionImage= findViewById(R.id.recheck_solution);
 
-        FirebaseConnection.getInstance().loadImage("q_"+ getIntent().getStringExtra("fileName"), examImage, getApplicationContext());
-        FirebaseConnection.getInstance().loadImage("a_"+ getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext());
+        String temp= getIntent().getStringExtra("fileName");
+        String basicPath= "";
+        StringTokenizer token= new StringTokenizer(temp);
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken();
+
+        FirebaseConnection.getInstance().loadImage(basicPath+"/"+ "q_"+ getIntent().getStringExtra("fileName"), examImage, getApplicationContext());
+        FirebaseConnection.getInstance().loadImage(basicPath+"/"+ "a_"+ getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext());
     }
 }

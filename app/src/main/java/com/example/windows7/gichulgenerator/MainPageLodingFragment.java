@@ -110,7 +110,7 @@ public class MainPageLodingFragment extends Fragment {
                 HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
                     @Override
                     public void success() {
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment()).commit();
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                         dialog.dismiss();
                     }
 
