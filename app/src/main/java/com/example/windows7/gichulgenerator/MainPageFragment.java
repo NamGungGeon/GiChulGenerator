@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -47,6 +46,13 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     private LinearLayout menuList;
     private boolean isOpenedMenuList= false;
+    private Button menu_notification;
+    private Button menu_allDeleteHistory;
+    private Button menu_qna;
+    private Button menu_freeBoard;
+    private Button menu_donation;
+    private Button menu_devInfo;
+
 
     private RelativeLayout mainContainer;
 
@@ -68,7 +74,20 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 return true;
             }
         });
-        resizeSettingListElement();
+
+        menu_notification= rootView.findViewById(R.id.menuList_notification);
+        resizeMenuListElement(menu_notification);
+        menu_allDeleteHistory= rootView.findViewById(R.id.menuList_allHistoryDelete);
+        resizeMenuListElement(menu_allDeleteHistory);
+        menu_qna= rootView.findViewById(R.id.menuList_qna);
+        resizeMenuListElement(menu_qna);
+        menu_freeBoard= rootView.findViewById(R.id.menuList_freeBoard);
+        resizeMenuListElement(menu_freeBoard);
+        menu_donation= rootView.findViewById(R.id.menuList_donation);
+        resizeMenuListElement(menu_donation);
+        menu_devInfo= rootView.findViewById(R.id.menuList_devInfo);
+        resizeMenuListElement(menu_devInfo);
+
 
         mainContainer= rootView.findViewById(R.id.mainMenuContainer);
         mainContainer.setOnClickListener(new View.OnClickListener() {
@@ -156,29 +175,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         adView.loadAd(adRequest);
     }
 
-    private void resizeSettingListElement(){
-
-        /*
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
-        }
-
-        int totalHeight = 0;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
-
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-        */
+    private void resizeMenuListElement(View view){
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = getActivity().getWindowManager().getDefaultDisplay().getWidth()/3;
+        params.width= params.height;
+        view.setLayoutParams(params);
+        view.requestLayout();
     }
 
     private void openMenuList(){
