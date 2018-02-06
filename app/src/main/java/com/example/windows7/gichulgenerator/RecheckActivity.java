@@ -43,7 +43,7 @@ public class RecheckActivity extends AppCompatActivity {
 
         String temp= getIntent().getStringExtra("fileName");
         String basicPath= "";
-        StringTokenizer token= new StringTokenizer(temp);
+        StringTokenizer token= new StringTokenizer(temp, "_", false);
         basicPath+= token.nextToken()+"_";
         basicPath+= token.nextToken()+"_";
         basicPath+= token.nextToken()+"_";

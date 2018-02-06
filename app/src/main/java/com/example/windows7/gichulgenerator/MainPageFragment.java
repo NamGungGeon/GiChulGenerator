@@ -38,11 +38,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private Spinner instituteSpinner;
     private Spinner periodSpinner;
 
-    private TextView yesterdayInfo;
     private TextView todayInfo;
     private TextView schedular;
 
-    private AdView adView;
+    //private AdView adView;
 
     private LinearLayout menuList;
     private boolean isOpenedMenuList= false;
@@ -102,9 +101,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
         todayInfo= rootView.findViewById(R.id.todayInfo);
         todayInfo.setText("오늘 0문제를 푸셨습니다");
-
-        yesterdayInfo= rootView.findViewById(R.id.yesterdayInfo);
-        yesterdayInfo.setText("어제 0문제를 푸셨습니다");
 
         schedular= rootView.findViewById(R.id.scheduler);
         schedular.setText("수능 D-300");
@@ -169,10 +165,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 dialog.show(getActivity().getSupportFragmentManager(), "Open Help Dialog");
             }
         });
-
+        /*
         adView= rootView.findViewById(R.id.mainPageAd);
         AdRequest adRequest= new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+        */
     }
 
     private void resizeMenuListElement(View view){
@@ -184,12 +181,14 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void openMenuList(){
+        mainContainer.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.move_right_disappear));
         menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.appear_menulist));
         menuList.setVisibility(View.VISIBLE);
         isOpenedMenuList= true;
     }
 
     private void closeMenuList(){
+        mainContainer.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.move_left_appear));
         menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.disappear_menulist));
         menuList.setVisibility(View.GONE);
         isOpenedMenuList= false;

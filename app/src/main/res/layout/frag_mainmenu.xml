@@ -3,9 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     android:id="@+id/frag_mainmenu"
     >
+    <!-- Ad is not using now -->
+    <!--
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/mainPageAd"
@@ -16,241 +17,268 @@
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
     </com.google.android.gms.ads.AdView>
+    -->
     <RelativeLayout
-        android:layout_below="@+id/mainPageAd"
+        android:layout_above="@+id/bottomQuickMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#C8E6F2"
         android:id="@+id/mainMenuContainer">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:id="@+id/mainmenu_info"
-            android:paddingBottom="40dp">
+        <!-- Left Basic Menu List-->
+        <FrameLayout
+            android:id="@+id/basicMenuList"
+            android:background="#77FFFFFF"
+            android:layout_width="120dp"
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/specialMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:text="성실함과 노력만이 합격으로 가는 지름길입니다!"
-                android:textColor="#000000"
-                android:textSize="15dp" />
-
-            <TextView
-                android:id="@+id/scheduler"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/specialMessage"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:text="주요 일정 표시"
-                android:textColor="#000000"
-                android:textSize="35dp" />
-
-        </RelativeLayout>
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/konkuk"
-            android:layout_below="@+id/mainmenu_info"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/mainmenu_univImage"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:textColor="#000000"
-            android:textSize="15dp"
-            android:text="나의 목표 대학"
-            android:layout_below="@id/mainmenu_univImage"/>
-        <LinearLayout
-            android:layout_above="@+id/mainmenu_actionList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/yesterdayInfo"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:textColor="#AAAAAA"
-                android:text="어제 푼 문제 갯수 표시" />
-            <TextView
-                android:id="@+id/todayInfo"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:textColor="#000000"
-                android:text="오늘 푼 문제 갯수 표시" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/mainmenu_actionList"
-            android:layout_width="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="60dp"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="1dp"
-                android:layout_weight="1"
-                android:layout_height="120dp"
-                android:id="@+id/goToStudy"
-                android:text="문제 풀러 가기"
-                android:textColor="#000000"
-                android:textSize="18dp"
-                android:layout_margin= "15dp"
-                android:background="@drawable/button_border"/>
-            <Button
-                android:layout_width="1dp"
-                android:layout_weight="1"
-                android:layout_height="120dp"
-                android:layout_margin= "15dp"
-                android:id="@+id/searchExam"
-                android:text="문제 검색"
-                android:textColor="#000000"
-                android:textSize="18dp"
-                android:background="@drawable/button_border"/>
-        </LinearLayout>
-        <RelativeLayout
-            android:background="@drawable/menulist_top_divider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/mainMenuListContainer">
-            <ImageView
-                android:padding="10dp"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/list_icon"
-                android:id="@+id/menuListBtn"
-                android:background="@drawable/menulist_right_divider"
-                android:layout_alignParentLeft="true"/>
-            <ImageView
-                android:padding="10dp"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/help"
-                android:src="@drawable/help_icon"
-                android:background="@drawable/menulist_left_divider"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/checkHistory"/>
-            <ImageView
-                android:padding="10dp"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/checkHistory"
-                android:background="@drawable/menulist_left_divider"
-                android:src="@drawable/checkhistory_icon"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/calender"/>
-            <ImageView
-                android:padding="10dp"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/calender"
-                android:background="@drawable/menulist_left_divider"
-                android:src="@drawable/calendar_icon"
-                android:layout_alignParentRight="true"/>
-        </RelativeLayout>
-
-        <!-- MenuList -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/mainMenuListContainer"
-            android:background="#313131"
-            android:id="@+id/menuList"
-            android:visibility="gone"
-            android:orientation="vertical">
             <ScrollView
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- Image Icon -->
+                    <Button
+                        android:id="@+id/goToStudy"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/gotostudy_icon"/>
+
+                    <Button
+                        android:id="@+id/searchExam"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/search_icon"/>
+                </LinearLayout>
+            </ScrollView>
+        </FrameLayout>
+        <!-- Right Status Checker -->
+        <RelativeLayout
+            android:layout_toRightOf="@id/basicMenuList"
+            android:id="@+id/statusCheckList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ScrollView
+                android:scrollbars="none"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:orientation="vertical">
+                    <!-- Status Description -->
+                    <TextView
+                        android:layout_marginTop="25dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingLeft="15dp"
+                        android:text="열심히 하고 있나요?"
+                        android:gravity="center"
+                        android:textColor="#000000"
+                        android:background="#66FFFFFF"
+                        android:textSize="25dp" />
+                    <TextView
+                        android:id="@+id/specialMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:gravity="center"
+                        android:background="#66FFFFFF"
+                        android:layout_margin="20dp"
+                        android:text="Special Message"
+                        android:textColor="#000000"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/scheduler"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:gravity="center"
+                        android:background="#66FFFFFF"
+                        android:layout_margin="20dp"
+                        android:text="Scheduler"
+                        android:textColor="#000000"
+                        android:textSize="25dp" />
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginTop="10dp">
-                        <ImageView
-                            android:layout_centerInParent="true"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:id="@+id/settingIcon"
-                            android:background="@drawable/setting_icon"/>
+                        android:layout_height="150dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:background="#66FFFFFF"
+                        android:layout_margin="20dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_below="@+id/settingIcon"
-                            android:text="메뉴"
-                            android:layout_marginTop="25dp"
-                            android:textColor="#FFFFFF"
-                            android:textSize="20dp"/>
+                            android:layout_centerVertical="true"
+                            android:id="@+id/myWish"
+                            android:textSize="23dp"
+                            android:layout_marginRight="20dp"
+                            android:textColor="#000000"
+                            android:text="나의 목표는"/>
+                        <ImageView
+                            android:id="@+id/mainmenu_univImage"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_toRightOf="@id/myWish"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/konkuk" />
                     </RelativeLayout>
+                    <TextView
+                        android:id="@+id/todayInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:gravity="center"
+                        android:layout_centerHorizontal="true"
+                        android:background="#66FFFFFF"
+                        android:layout_margin="20dp"
+                        android:text="오늘 푼 문제 갯수 표시"
+                        android:textColor="#000000"
+                        android:textSize="20dp" />
+                </LinearLayout>
+            </ScrollView>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- Bottom Quick Menu -->
+    <RelativeLayout
+        android:background="@drawable/menulist_top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/bottomQuickMenu">
+        <ImageView
+            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/list_icon"
+            android:id="@+id/menuListBtn"
+            android:background="@drawable/menulist_right_divider"
+            android:layout_alignParentLeft="true"/>
+        <ImageView
+            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/help"
+            android:src="@drawable/help_icon"
+            android:background="@drawable/menulist_left_divider"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/checkHistory"/>
+        <ImageView
+            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/checkHistory"
+            android:background="@drawable/menulist_left_divider"
+            android:src="@drawable/checkhistory_icon"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/calender"/>
+        <ImageView
+            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/calender"
+            android:background="@drawable/menulist_left_divider"
+            android:src="@drawable/calendar_icon"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <!-- MenuList -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomQuickMenu"
+        android:background="#9BD5E0"
+        android:id="@+id/menuList"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="10dp">
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/settingIcon"
+                        android:background="@drawable/setting_icon"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/settingIcon"
+                        android:text="메뉴"
+                        android:layout_marginTop="25dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20dp"/>
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <Button
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:id="@+id/menuList_notification"
-                                android:background="@drawable/notification_icon"/>
-                            <Button
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:id="@+id/menuList_devInfo"
-                                android:background="@drawable/devinfo_icon"/>
-                            <Button
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:background="@drawable/delete_icon"
-                                android:id="@+id/menuList_allHistoryDelete"/>
-                        </LinearLayout>
+                        android:orientation="horizontal">
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/menuList_notification"
+                            android:background="@drawable/notification_icon"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/menuList_devInfo"
+                            android:background="@drawable/devinfo_icon"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/delete_icon"
+                            android:id="@+id/menuList_allHistoryDelete"/>
+                    </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <Button
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:id="@+id/menuList_qna"
-                                android:background="@drawable/qna_icon"/>
-                            <Button
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:background="@drawable/freeboard_icon"
-                                android:id="@+id/menuList_freeBoard"/>
-                            <Button
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:background="@drawable/donation_icon"
-                                android:id="@+id/menuList_donation"/>
-                        </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/menuList_qna"
+                            android:background="@drawable/qna_icon"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/freeboard_icon"
+                            android:id="@+id/menuList_freeBoard"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/donation_icon"
+                            android:id="@+id/menuList_donation"/>
+                    </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                        </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
                     </LinearLayout>
                 </LinearLayout>
-            </ScrollView>
-        </LinearLayout>
-    </RelativeLayout>
-
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </RelativeLayout>
