@@ -1,9 +1,15 @@
 package com.example.windows7.gichulgenerator;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 
 /**
@@ -51,9 +57,10 @@ public class HistoryList {
             @Override
             public void success(Object data) {
                 HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
+                historyList= new HashMap<>();
 
                 //Case: There is no data in database
-                if(historyList== null || data== null){
+                if(temp== null || temp.size()==0){
                     historyList= new HashMap<>();
                 }else{
                     //Case: Success to read
@@ -83,5 +90,24 @@ public class HistoryList {
     // Save CheckList to firebase
     private void saveHistoryListToServer(){
         FirebaseConnection.getInstance().saveExamInfoList("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList", historyList);
+    }
+
+    public int getTodayHistoryNumber(){
+        int todayNumber= 0;
+
+        Calendar today= Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
+
+        Calendar todayChecker;
+        for(String key: historyList.keySet()){
+            todayChecker= Calendar.getInstance();
+            todayChecker.setTimeInMillis(Long.valueOf(key));
+            if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
+                    && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
+                    && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
+                todayNumber++;
+            }
+        }
+        return todayNumber;
     }
 }

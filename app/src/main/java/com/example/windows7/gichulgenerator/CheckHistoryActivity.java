@@ -16,6 +16,8 @@ import android.widget.ViewFlipper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import butterknife.OnClick;
+
 /**
  * Created by WINDOWS7 on 2018-01-20.
  */
@@ -45,7 +47,6 @@ public class CheckHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_checkhistory);
         init();
     }
-
 
     private void init(){
         flipper= findViewById(R.id.checkHistory_flipper);
@@ -237,5 +238,4 @@ public class CheckHistoryActivity extends AppCompatActivity {
                 break;
         }
     }
-
 }

@@ -38,6 +38,7 @@ public class MainPageLodingFragment extends Fragment {
     private GoogleApiClient mGoogleApiClient=null;
     private FirebaseAuth firebaseAuth=null;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -104,14 +105,30 @@ public class MainPageLodingFragment extends Fragment {
         dialog.show(getActivity().getSupportFragmentManager(), "Open Loading Dialog");
 
         //Start to connection firebase and Load data
-        CheckList.Callback checkList_callback= new CheckList.Callback() {
+        //Load CheckList
+        CheckList.getInstance().loadCheckListFromServer(new CheckList.Callback() {
             @Override
             public void success() {
+                //Load HistoryList
                 HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
                     @Override
                     public void success() {
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
-                        dialog.dismiss();
+                        getActivity().getIntent().putExtra("todayExamNumber", HistoryList.getInstance().getTodayHistoryNumber());
+                        //Load Schedule
+                        FirebaseConnection.getInstance().loadData("appdata/schedule/sunung", new FirebaseConnection.Callback() {
+                            @Override
+                            public void success(Object data) {
+                                getActivity().getIntent().putExtra("schedule", (String)data);
+                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void fail(String errorMessage) {
+                                Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                                getActivity().finish();
+                            }
+                        });
                     }
 
                     @Override
@@ -126,9 +143,10 @@ public class MainPageLodingFragment extends Fragment {
                 Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
-        };
-        CheckList.getInstance().loadCheckListFromServer(checkList_callback);
+        });
     }
+
+
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Firebase Auth", "firebaseAuthWithGoogle:" + acct.getId());

@@ -57,7 +57,6 @@ public class ExamInfo {
         this.rightAnswer = rightAnswer;
         this.time = time;
         this.memo = memo;
-
         this.fileName= basicFileName;
     }
 

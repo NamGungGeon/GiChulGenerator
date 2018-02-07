@@ -19,76 +19,94 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import butterknife.BindDimen;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
  */
 
 public class MainPageFragment extends Fragment implements OnBackPressedListener{
-    private Button goToStudyBtn;
-    private Button searchExamBtn;
-
-    private ImageView menuListBtn;
-    private ImageView calendarBtn;
-    private ImageView checkHistoryBtn;
-    private ImageView helpBtn;
-
-    private Spinner subjectSpinner;
-    private Spinner probabilitySpinner;
-    private Spinner instituteSpinner;
-    private Spinner periodSpinner;
-
-    private TextView todayInfo;
-    private TextView schedular;
-
     //private AdView adView;
 
-    private LinearLayout menuList;
+    @BindView(R.id.mainMenuContainer) RelativeLayout mainContainer;
+    //Left Quick Menu
+    @BindView(R.id.goToStudy) Button goToStudyBtn;
+    @BindView(R.id.searchExam) Button searchExamBtn;
+    @BindView(R.id.calender) Button calendarBtn;
+    @BindView(R.id.checkHistory) Button checkHistoryBtn;
+
+    // Right Status window
+    @BindView(R.id.todayInfo) TextView todayInfo;
+    @BindView(R.id.scheduler) TextView schedular;
+
+    // Menu List
     private boolean isOpenedMenuList= false;
-    private Button menu_notification;
-    private Button menu_allDeleteHistory;
-    private Button menu_qna;
-    private Button menu_freeBoard;
-    private Button menu_donation;
-    private Button menu_devInfo;
+    @BindView(R.id.menuList) LinearLayout menuList;
+    @BindView(R.id.menuList_notification) Button menu_notification;
+    @BindView(R.id.menuList_allHistoryDelete) Button menu_allDeleteHistory;
+    @BindView(R.id.menuList_qna) Button menu_qna;
+    @BindView(R.id.menuList_freeBoard) Button menu_freeBoard;
+    @BindView(R.id.menuList_donation) Button menu_donation;
+    @BindView(R.id.menuList_devInfo) Button menu_devInfo;
+    @BindView(R.id.menuList_goToStudy) Button menu_goToStudy;
+    @BindView(R.id.menuList_searchExam) Button menu_searchExam;
+    @BindView(R.id.menuList_changeBackground) Button menu_changeBackground;
+    @BindView(R.id.menuList_checkList) Button menu_checkHistory;
+    @BindView(R.id.menuList_calendar) Button menu_calendar;
 
+    // Bottom Menu
+    @BindView(R.id.menuListBtn) ImageView menuListBtn;
+    @BindView(R.id.help) ImageView helpBtn;
 
-    private RelativeLayout mainContainer;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
-        init(rootView);
+        unbinder= ButterKnife.bind(this, rootView);
+        init();
 
         return rootView;
     }
 
-    private void init(ViewGroup rootView){
-        menuList= rootView.findViewById(R.id.menuList);
+    private void init(){
+        /*
+        adView= rootView.findViewById(R.id.mainPageAd);
+        AdRequest adRequest= new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+        */
+        resizeMenuListElements();
+
+        int todayNumber= getActivity().getIntent().getIntExtra("todayExamNumber", 0);
+        todayInfo.setText("오늘 "+ todayNumber+ "문제를 풀었습니다");
+
+        String between= "";
+        SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            String sunung= getActivity().getIntent().getStringExtra("schedule");
+            Date sunungDate= format.parse(sunung);
+            long currentDate= Calendar.getInstance().getTime().getTime();
+            long differentMills= sunungDate.getTime()- currentDate;
+            long differentDays= differentMills/(1000*60*60*24);
+
+            between= String.valueOf(differentDays);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        schedular.setText("2018학년도 수능까지 \n\n"+ between+"일 남았습니다");
+
         // Prevent to call closeMenuList() from listener of mainContainer
-        menuList.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
-
-        menu_notification= rootView.findViewById(R.id.menuList_notification);
-        resizeMenuListElement(menu_notification);
-        menu_allDeleteHistory= rootView.findViewById(R.id.menuList_allHistoryDelete);
-        resizeMenuListElement(menu_allDeleteHistory);
-        menu_qna= rootView.findViewById(R.id.menuList_qna);
-        resizeMenuListElement(menu_qna);
-        menu_freeBoard= rootView.findViewById(R.id.menuList_freeBoard);
-        resizeMenuListElement(menu_freeBoard);
-        menu_donation= rootView.findViewById(R.id.menuList_donation);
-        resizeMenuListElement(menu_donation);
-        menu_devInfo= rootView.findViewById(R.id.menuList_devInfo);
-        resizeMenuListElement(menu_devInfo);
-
-
-        mainContainer= rootView.findViewById(R.id.mainMenuContainer);
         mainContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,31 +115,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 }
             }
         });
-
-
-        todayInfo= rootView.findViewById(R.id.todayInfo);
-        todayInfo.setText("오늘 0문제를 푸셨습니다");
-
-        schedular= rootView.findViewById(R.id.scheduler);
-        schedular.setText("수능 D-300");
-
-        goToStudyBtn= rootView.findViewById(R.id.goToStudy);
-        goToStudyBtn.setOnClickListener(new View.OnClickListener() {
+        menuList.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                goToStudy();
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
             }
         });
-
-        searchExamBtn= rootView.findViewById(R.id.searchExam);
-        searchExamBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchExam();
-            }
-        });
-
-        menuListBtn= rootView.findViewById(R.id.menuListBtn);
         menuListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,8 +131,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 }
             }
         });
-
-        calendarBtn= rootView.findViewById(R.id.calender);
         calendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,7 +138,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             }
         });
 
-        checkHistoryBtn= rootView.findViewById(R.id.checkHistory);
         checkHistoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,7 +145,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             }
         });
 
-        helpBtn= rootView.findViewById(R.id.help);
         helpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,11 +160,20 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 dialog.show(getActivity().getSupportFragmentManager(), "Open Help Dialog");
             }
         });
-        /*
-        adView= rootView.findViewById(R.id.mainPageAd);
-        AdRequest adRequest= new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-        */
+    }
+
+    private void resizeMenuListElements(){
+        resizeMenuListElement(menu_notification);
+        resizeMenuListElement(menu_allDeleteHistory);
+        resizeMenuListElement(menu_qna);
+        resizeMenuListElement(menu_freeBoard);
+        resizeMenuListElement(menu_donation);
+        resizeMenuListElement(menu_devInfo);
+        resizeMenuListElement(menu_goToStudy);
+        resizeMenuListElement(menu_searchExam);
+        resizeMenuListElement(menu_changeBackground);
+        resizeMenuListElement(menu_checkHistory);
+        resizeMenuListElement(menu_calendar);
     }
 
     private void resizeMenuListElement(View view){
@@ -181,21 +185,20 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void openMenuList(){
-        mainContainer.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.move_right_disappear));
         menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.appear_menulist));
         menuList.setVisibility(View.VISIBLE);
         isOpenedMenuList= true;
     }
 
     private void closeMenuList(){
-        mainContainer.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.move_left_appear));
         menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.disappear_menulist));
         menuList.setVisibility(View.GONE);
         isOpenedMenuList= false;
 
     }
 
-    private void searchExam(){
+    @OnClick({R.id.searchExam, R.id.menuList_searchExam})
+    void searchExam(){
         final DialogMaker dialog= new DialogMaker();
         dialog.setValue("문제 검색", "검색", "취소",
                 new DialogMaker.Callback() {
@@ -214,8 +217,16 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 });
     }
 
-    private void goToStudy(){
+    @OnClick({R.id.goToStudy, R.id.menuList_goToStudy})
+    void goToStudy(){
         final DialogMaker dialog= new DialogMaker();
+        View childView= getLayoutInflater().inflate(R.layout.dialog_setfilter, null);
+
+        final Spinner subjectSpinner= childView.findViewById(R.id.selectSubject);
+        final Spinner probabilitySpinner= childView.findViewById(R.id.selectProbability);
+        final Spinner instituteSpinner= childView.findViewById(R.id.selectInstitute);
+        final Spinner periodSpinner= childView.findViewById(R.id.selectPeriod);
+
         DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
@@ -241,14 +252,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 dialog.dismiss();
             }
         };
-        View childView= getLayoutInflater().inflate(R.layout.dialog_setfilter, null);
-        subjectSpinner= childView.findViewById(R.id.selectSubject);
         subjectSpinner.setSelection(0);
-        probabilitySpinner= childView.findViewById(R.id.selectProbability);
         probabilitySpinner.setSelection(0);
-        instituteSpinner= childView.findViewById(R.id.selectInstitute);
         instituteSpinner.setSelection(0);
-        periodSpinner= childView.findViewById(R.id.selectPeriod);
         periodSpinner.setSelection(0);
 
         dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, nag_callback, childView);
@@ -264,5 +270,18 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         }else{
             return true;
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int todayNumber= HistoryList.getInstance().getTodayHistoryNumber();
+        todayInfo.setText("오늘 "+ todayNumber+ "문제를 풀었습니다");
+
     }
 }
