@@ -84,4 +84,59 @@
             2012
         </item>
     </string-array>
+
+    <string-array name="periodArray_y">
+        <item>
+            2017
+        </item>
+        <item>
+            2016
+        </item>
+        <item>
+            2015
+        </item>
+        <item>
+            2014
+        </item>
+        <item>
+            2013
+        </item>
+        <item>
+            2012
+        </item>
+    </string-array>
+    <string-array name="search_institute">
+        <item>
+            대학수학능력평가시험
+        </item>
+        <item>
+            교육청
+        </item>
+        <item>
+            교육과정평가원
+        </item>
+    </string-array>
+    <string-array name="search_subject">
+        <item>
+            국어
+        </item>
+        <item>
+            수학(이과)
+        </item>
+        <item>
+            수학(문과)
+        </item>
+            영어
+        <item>
+            사회탐구
+        </item>
+        <item>
+            과학탐구
+        </item>
+    </string-array>
+    <string-array name="emptyArray">
+        <item>
+            -
+        </item>
+    </string-array>
 </resources>

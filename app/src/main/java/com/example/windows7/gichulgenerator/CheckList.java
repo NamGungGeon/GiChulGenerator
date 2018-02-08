@@ -34,9 +34,20 @@ public class CheckList {
     }
 
     public void deleteFromList(ExamInfo exam){
-        checkList.remove(exam);
+        for(String key: checkList.keySet()){
+            if(checkList.get(key).getTimeStamp()== exam.getTimeStamp()){
+                checkList.remove(key);
+                return;
+            }
+        }
         saveCheckListToServer();
     }
+
+    public void deleteAllData(){
+        checkList= new HashMap<>();
+        saveCheckListToServer();
+    }
+
 
     public interface Callback{
         void success();

@@ -39,8 +39,8 @@ public class HistoryList {
         saveHistoryListToServer();
     }
 
-    public void deleteFromList(ExamInfo exam){
-        historyList.remove(exam);
+    public void deleteAllData(){
+        historyList= new HashMap<>();
         saveHistoryListToServer();
     }
 
@@ -110,4 +110,71 @@ public class HistoryList {
         }
         return todayNumber;
     }
+
+    public int getTodayPotential(){
+        int todayNumber= getTodayHistoryNumber();
+        if(todayNumber== 0){
+            return 0;
+        }else{
+            int right= 0;
+            for(String key: historyList.keySet()){
+                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                    right++;
+                }
+            }
+            return (int)(((float)right/(float)todayNumber)*100);
+        }
+    }
+
+    public int getMonthHistoryNumber(){
+        int monthNumber= 0;
+
+        Calendar today= Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
+
+        Calendar todayChecker;
+        for(String key: historyList.keySet()){
+            todayChecker= Calendar.getInstance();
+            todayChecker.setTimeInMillis(Long.valueOf(key));
+            if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
+                    && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)){
+                monthNumber++;
+            }
+        }
+        return monthNumber;
+    }
+
+    public int getMonthPotential(){
+        int monthNumber= getMonthHistoryNumber();
+        if(monthNumber== 0){
+            return 0;
+        }else{
+            int right= 0;
+            for(String key: historyList.keySet()){
+                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                    right++;
+                }
+            }
+            return (int)(((float)right/(float)monthNumber)*100);
+        }
+    }
+
+    public int getSubjectPotential(String subject){
+        int totalNumber= 0;
+        int right= 0;
+        for(String key: historyList.keySet()){
+            if(historyList.get(key).getSubject().equals(subject)){
+                totalNumber++;
+                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                    right++;
+                }
+            }
+        }
+        if(totalNumber== 0){
+            return 0;
+        }else{
+            return (int)(((float)right/(float)totalNumber)*100);
+        }
+    }
+
 }

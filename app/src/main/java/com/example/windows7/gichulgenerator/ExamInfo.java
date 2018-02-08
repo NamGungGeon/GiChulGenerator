@@ -1,5 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
+import android.support.annotation.NonNull;
+
 import java.util.StringTokenizer;
 
 /**
@@ -8,7 +10,7 @@ import java.util.StringTokenizer;
 
 // No exist setter
 // Setter is never used, and also must not used.
-public class ExamInfo {
+public class ExamInfo{
 
     private String title= "";
     private String period_y= "";
@@ -26,6 +28,8 @@ public class ExamInfo {
     //not include potential and type( ex- a_ or q_)
     private String fileName= "";
 
+    private long timeStamp;
+
     public ExamInfo(String title, String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
         this.title= title;
         this.period_y = period_y;
@@ -40,6 +44,8 @@ public class ExamInfo {
         this.memo = memo;
 
         fileName= period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number;
+
+        timeStamp= System.currentTimeMillis();
     }
     public ExamInfo(String title, String basicFileName, String potential, String inputAnswer, String rightAnswer, String time, String memo){
         this.title= title;
@@ -58,12 +64,18 @@ public class ExamInfo {
         this.time = time;
         this.memo = memo;
         this.fileName= basicFileName;
+
+        timeStamp= System.currentTimeMillis();
     }
 
     //fileName is period_y+ "_"+ period_m+ "_"+ institute+ "_"+ subject+ "_"+ number
     //not include potential and type( ex- a_ or q_)
     public String getFileName() {
         return fileName;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
     public String getTitle() {
@@ -109,7 +121,5 @@ public class ExamInfo {
     public String getMemo() {
         return memo;
     }
-
-
 
 }

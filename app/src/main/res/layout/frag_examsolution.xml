@@ -6,6 +6,7 @@
     <RelativeLayout
         android:id="@+id/solutionLoadingContainer"
         android:layout_width="match_parent"
+        android:background="#313131"
         android:layout_height="match_parent">
 
         <ProgressBar
@@ -18,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text= "서버에서 문제의 답을 가져오는 중입니다..."
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:layout_marginTop="20dp"
             android:textSize="15dp"
             android:layout_below="@+id/solutionLoadingBar"
@@ -37,16 +38,16 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="25dp">
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Title"
-                    android:textAlignment="center"
                     android:layout_marginBottom="15dp"
-                    android:textColor="#000000"
-                    android:textSize="25dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20dp"
+                    android:background="#313131"
+                    android:padding="15dp"
                     android:id="@+id/solution_examInfo"/>
                 <TextView
                     android:layout_width="wrap_content"

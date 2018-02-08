@@ -113,7 +113,6 @@ public class MainPageLodingFragment extends Fragment {
                 HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
                     @Override
                     public void success() {
-                        getActivity().getIntent().putExtra("todayExamNumber", HistoryList.getInstance().getTodayHistoryNumber());
                         //Load Schedule
                         FirebaseConnection.getInstance().loadData("appdata/schedule/sunung", new FirebaseConnection.Callback() {
                             @Override

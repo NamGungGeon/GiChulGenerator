@@ -45,17 +45,6 @@ public class DialogMaker extends DialogFragment{
         this.childView=childView;
     }
 
-    public void setValue(String message, String positiveMsg, String negativeMsg, Callback callback_positive, Callback callback_negative, String list[], DialogInterface.OnClickListener adapterListener){
-        this.message=message;
-        this.positiveMsg=positiveMsg;
-        this.negativeMsg=negativeMsg;
-        this.callback_positive=callback_positive;
-        this.callback_negative=callback_negative;
-        this.list=list;
-        this.adapterListener=adapterListener;
-    }
-
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -86,6 +75,8 @@ public class DialogMaker extends DialogFragment{
                         //Prevent to close dialog when positive button is clicked.
                         if(callback_positive!=null){
                             callback_positive.callbackMethod();
+                        }else{
+                            dialog.dismiss();
                         }
                     }
                 });
@@ -95,6 +86,8 @@ public class DialogMaker extends DialogFragment{
                         //Prevent to close dialog when negative button is clicked.
                         if(callback_negative!=null){
                             callback_negative.callbackMethod();
+                        }else{
+                            dialog.dismiss();
                         }
                     }
                 });

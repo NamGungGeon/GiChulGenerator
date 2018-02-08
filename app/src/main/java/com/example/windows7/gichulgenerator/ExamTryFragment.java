@@ -33,7 +33,7 @@ public class ExamTryFragment extends Fragment{
     private String selectedPeriod;
 
     //문제 파일 이름 규칙
-    //타입_기간(년)_기간(월)_주최기관_과목_문제번호_정답률
+    //타입_기간(년)_기간(월)_주최기관_과목_문제번호
     private String examFileName;
     private String examPeriod_y;
     private String examPeriod_m;
@@ -150,7 +150,6 @@ public class ExamTryFragment extends Fragment{
                 ArrayList<Long> temp= (ArrayList<Long>)data;
                 for(int i=1; i<temp.size(); i++){
                     potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
-                    Log.i("ValueCheck", String.valueOf(temp.get(i)));
                 }
                 init(rootView);
 
@@ -217,7 +216,7 @@ public class ExamTryFragment extends Fragment{
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recheckAnswer(getUserAnswer());
+                recheckAnswer();
             }
         });
     }
@@ -391,14 +390,14 @@ public class ExamTryFragment extends Fragment{
         return result;
     }
 
-    private void recheckAnswer(final String answer){
+    private void recheckAnswer(){
         final DialogMaker dialog= new DialogMaker();
         DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
                 //submit user's answer. move solution page
                 isRunningTimer= false;
-                submitSolution(answer);
+                submitSolution();
                 dialog.dismiss();
             }
         };
@@ -408,11 +407,12 @@ public class ExamTryFragment extends Fragment{
                 dialog.dismiss();
             }
         };
-        dialog.setValue("선택하신 답안은 "+ answer+ "입니다.\n제출하시겠습니까?", "제출", "취소", pos_callback, nag_callback);
+        dialog.setValue("선택하신 답안은 "+ getUserAnswer()+ "입니다.\n제출하시겠습니까?", "제출", "취소", pos_callback, nag_callback);
         dialog.show(getActivity().getSupportFragmentManager(), "AnswerSubmit");
     }
 
-    private void submitSolution(String answer){
+    private void submitSolution(){
+        String answer= getUserAnswer();
         if(answer.charAt(answer.length()-1)== '번'){
             answer= String.valueOf(answer.charAt(0));
         }

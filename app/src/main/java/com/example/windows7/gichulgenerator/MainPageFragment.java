@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,15 +18,12 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -43,11 +42,14 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.goToStudy) Button goToStudyBtn;
     @BindView(R.id.searchExam) Button searchExamBtn;
     @BindView(R.id.calender) Button calendarBtn;
-    @BindView(R.id.checkHistory) Button checkHistoryBtn;
+    @BindView(R.id.checkListBtn) Button checkListBtn;
+    @BindView(R.id.historyListBtn) Button historyListBtn;
 
     // Right Status window
     @BindView(R.id.todayInfo) TextView todayInfo;
     @BindView(R.id.scheduler) TextView schedular;
+    @BindView(R.id.monthInfo) TextView monthInfo;
+    @BindView(R.id.subjectInfo) TextView subjectInfo;
 
     // Menu List
     private boolean isOpenedMenuList= false;
@@ -61,8 +63,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.menuList_goToStudy) Button menu_goToStudy;
     @BindView(R.id.menuList_searchExam) Button menu_searchExam;
     @BindView(R.id.menuList_changeBackground) Button menu_changeBackground;
-    @BindView(R.id.menuList_checkList) Button menu_checkHistory;
+    @BindView(R.id.menuList_checkList) Button menu_checkListBtn;
     @BindView(R.id.menuList_calendar) Button menu_calendar;
+    @BindView(R.id.menuList_historyList) Button menu_historyList;
 
     // Bottom Menu
     @BindView(R.id.menuListBtn) ImageView menuListBtn;
@@ -88,9 +91,35 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         */
         resizeMenuListElements();
 
-        int todayNumber= getActivity().getIntent().getIntExtra("todayExamNumber", 0);
-        todayInfo.setText("오늘 "+ todayNumber+ "문제를 풀었습니다");
+        //Set TodayInfo
+        String todayMessage= "";
+        int todayNumber= HistoryList.getInstance().getTodayHistoryNumber();
+        todayMessage+= "오늘 "+ todayNumber+ "문제를 풀었습니다";
+        todayMessage+= "\n\n오늘 나의 정답률은 "+HistoryList.getInstance().getTodayPotential()+ "% 입니다";
+        todayInfo.setText(todayMessage);
 
+        //Set MonthInfo
+        String monthMessage= "";
+        int monthNumber= HistoryList.getInstance().getMonthHistoryNumber();
+        monthMessage+= "이번 달에 "+ monthNumber+ "문제를 풀었습니다";
+        monthMessage+= "\n\n이번 달 나의 정답률은 "+ HistoryList.getInstance().getMonthPotential()+ "% 입니다";
+        monthInfo.setText(monthMessage);
+
+        //Set SubjectInfo
+        String subjectMessage= "과목별 전체 정답률\n\n";
+        int koreanNumber= HistoryList.getInstance().getSubjectPotential("korean");
+        subjectMessage+= "국어 정답률 "+ koreanNumber+ "%\n";
+        int mathNumber= HistoryList.getInstance().getSubjectPotential("imath")+ HistoryList.getInstance().getSubjectPotential("mmath");
+        subjectMessage+= "수학 정답률 "+ mathNumber+ "%\n";
+        int englishNumber= HistoryList.getInstance().getSubjectPotential("english");
+        subjectMessage+= "영어 정답률 "+ englishNumber+ "%\n";
+        int socialNumber= HistoryList.getInstance().getSubjectPotential("social");
+        subjectMessage+= "사회탐구 정답률 "+ socialNumber+ "%\n";
+        int scienceNumber= HistoryList.getInstance().getSubjectPotential("science");
+        subjectMessage+= "과학탐구 정답률 "+ scienceNumber+ "%";
+        subjectInfo.setText(subjectMessage);
+
+        //Set Schedule
         String between= "";
         SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -104,7 +133,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        schedular.setText("2018학년도 수능까지 \n\n"+ between+"일 남았습니다");
+        schedular.setText("2019학년도 수능까지 \n\n"+ between+"일 남았습니다");
 
         // Prevent to call closeMenuList() from listener of mainContainer
         mainContainer.setOnClickListener(new View.OnClickListener() {
@@ -138,13 +167,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             }
         });
 
-        checkHistoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), CheckHistoryActivity.class));
-            }
-        });
-
         helpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,8 +194,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         resizeMenuListElement(menu_goToStudy);
         resizeMenuListElement(menu_searchExam);
         resizeMenuListElement(menu_changeBackground);
-        resizeMenuListElement(menu_checkHistory);
+        resizeMenuListElement(menu_checkListBtn);
         resizeMenuListElement(menu_calendar);
+        resizeMenuListElement(menu_historyList);
     }
 
     private void resizeMenuListElement(View view){
@@ -197,24 +220,188 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     }
 
+    @OnClick({R.id.historyListBtn, R.id.menuList_historyList})
+    void openHistoryList(){
+        startActivity(new Intent(getActivity(), HistoryListActivity.class));
+    }
+
+    @OnClick({R.id.checkListBtn, R.id.menuList_checkList})
+    void openCheckList(){
+        startActivity(new Intent(getActivity(), CheckListActivity.class));
+    }
+
+    @OnClick(R.id.menuList_allHistoryDelete)
+    void deleteAllData(){
+        final DialogMaker dialog= new DialogMaker();
+        dialog.setValue("오답노트와 문제 기록을 전부 삭제하시겠습니까?", "예", "아니오", new DialogMaker.Callback() {
+            @Override
+            public void callbackMethod() {
+                CheckList.getInstance().deleteAllData();
+                HistoryList.getInstance().deleteAllData();
+                dialog.dismiss();
+            }
+        }, null);
+        dialog.show(getActivity().getSupportFragmentManager(), "");
+    }
+
     @OnClick({R.id.searchExam, R.id.menuList_searchExam})
     void searchExam(){
         final DialogMaker dialog= new DialogMaker();
+        View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
+
+        final Spinner subject= childView.findViewById(R.id.searchSubject);
+        final Spinner institute= childView.findViewById(R.id.searchInstitute);
+        final Spinner period_y= childView.findViewById(R.id.searchPeriod_y);
+        final Spinner period_m= childView.findViewById(R.id.searchPeriod_m);
+        final Spinner number= childView.findViewById(R.id.searchNumber);
+        subject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ArrayAdapter<String> adapter;
+
+                if(subject.getSelectedItem().equals("수학(이과)") || institute.getSelectedItem().equals("수학(문과)")){
+                    ArrayList<String> numbers= new ArrayList<>();
+                    for(int k=0; k<30; k++){
+                        numbers.add(String.valueOf(k+1));
+                    }
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+                    number.setAdapter(adapter);
+                }else if(subject.getSelectedItem().equals("국어")){
+                    ArrayList<String> numbers= new ArrayList<>();
+                    for(int k=0; k<45; k++){
+                        numbers.add(String.valueOf(k+1));
+                    }
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+                    number.setAdapter(adapter);
+                }else if(subject.getSelectedItem().equals("영어")){
+                    ArrayList<String> numbers= new ArrayList<>();
+                    for(int k=0; k<45; k++){
+                        numbers.add(String.valueOf(k+1));
+                    }
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+                    number.setAdapter(adapter);
+                }else if(subject.getSelectedItem().equals("과학탐구")){
+                    ArrayList<String> numbers= new ArrayList<>();
+                    for(int k=0; k<20; k++){
+                        numbers.add(String.valueOf(k+1));
+                    }
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+                    number.setAdapter(adapter);
+                }else if(subject.getSelectedItem().equals("사회탐구")){
+                    ArrayList<String> numbers= new ArrayList<>();
+                    for(int k=0; k<20; k++){
+                        numbers.add(String.valueOf(k+1));
+                    }
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+                    number.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        institute.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ArrayAdapter<String> adapter;
+
+                if(institute.getSelectedItem().equals("대학수학능력평가시험")){
+                    String list[]= {"11"};
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                    period_m.setAdapter(adapter);
+                }else if(institute.getSelectedItem().equals("교육청")){
+                    String list[]= {"3", "4", "7", "10"};
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                    period_m.setAdapter(adapter);
+                }else if(institute.getSelectedItem().equals("교육과정평가원")){
+                    String list[]= {"6", "9"};
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                    period_m.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         dialog.setValue("문제 검색", "검색", "취소",
                 new DialogMaker.Callback() {
                     @Override
                     public void callbackMethod() {
                         //start search
+                        String basicFileName= "";
 
-                    }
-                },
-                new DialogMaker.Callback() {
-                    @Override
-                    public void callbackMethod() {
-                        //cancel
+                        //Decide period_y
+                        String filter_period_y= period_y.getSelectedItem().toString();
+                        if(filter_period_y.equals("2017")){
+                            basicFileName+= "2017";
+                        }else if(filter_period_y.equals("2016")){
+                            basicFileName+= "2016";
+                        }else if(filter_period_y.equals("2015")){
+                            basicFileName+= "2015";
+                        }else if(filter_period_y.equals("2014")){
+                            basicFileName+= "2014";
+                        }else if(filter_period_y.equals("2013")){
+                            basicFileName+= "2013";
+                        }else if(filter_period_y.equals("2012")){
+                            basicFileName+= "2012";
+                        }
+                        basicFileName+= "_";
 
+                        //Decide period_m
+                        String filter_period_m= period_m.getSelectedItem().toString();
+                        basicFileName+= filter_period_m;
+                        basicFileName+= "_";
+
+                        //Decide institute
+                        String filter_institute= institute.getSelectedItem().toString();
+                        if(filter_institute.equals("대학수학능력평가시험")){
+                            basicFileName+= "sunung";
+                        }else if(filter_institute.equals("교육청")){
+                            basicFileName+= "gyoyuk";
+                        }else if(filter_institute.equals("교육과정평가원")){
+                            basicFileName+= "pyeong";
+                        }
+                        basicFileName+="_";
+
+                        // Decide Subject
+                        String filter_subj= subject.getSelectedItem().toString();
+                        if (filter_subj.equals("수학(이과)")) {
+                            basicFileName+= "imath";
+                        }else if (filter_subj.equals("수학(문과)")) {
+                            basicFileName+= "mmath";
+                        }else if (filter_subj.equals("국어")) {
+                            basicFileName+= "korean";
+                        }else if (filter_subj.equals("영어")) {
+                            basicFileName+= "english";
+                        }else if (filter_subj.equals("사회탐구")) {
+                            basicFileName+= "social";
+                        }else if (filter_subj.equals("과학탐구")) {
+                            basicFileName+= "science";
+                        }
+
+                        //Decide Number
+                        String filter_number= number.getSelectedItem().toString();
+
+                        //Go to result page
+                        Intent intent= new Intent(getActivity().getApplicationContext(), SearchResultActivity.class);
+                        intent.putExtra("period_y", filter_period_y);
+                        intent.putExtra("period_m", filter_period_m);
+                        intent.putExtra("institute", filter_institute);
+                        intent.putExtra("subject", filter_subj);
+                        intent.putExtra("number", filter_number);
+                        // basicFileName is not include "Number"
+                        intent.putExtra("basicFileName", basicFileName);
+
+                        startActivity(intent);
+                        dialog.dismiss();
                     }
-                });
+                }, null, childView);
+        dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
     @OnClick({R.id.goToStudy, R.id.menuList_goToStudy})
