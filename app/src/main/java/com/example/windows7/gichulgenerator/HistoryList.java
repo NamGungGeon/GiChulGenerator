@@ -56,12 +56,12 @@ public class HistoryList {
         final FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
             public void success(Object data) {
-                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
                 historyList= new HashMap<>();
+                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
 
                 //Case: There is no data in database
                 if(temp== null || temp.size()==0){
-                    historyList= new HashMap<>();
+
                 }else{
                     //Case: Success to read
                     for(String key: temp.keySet()){

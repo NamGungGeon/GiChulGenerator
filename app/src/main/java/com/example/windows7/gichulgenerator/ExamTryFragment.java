@@ -22,16 +22,16 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 /**
  * Created by WINDOWS7 on 2018-01-20.
  */
 
-public class ExamTryFragment extends Fragment{
-    private String selectedSubject;
-    private String selectedProb;
-    private String selectedInst;
-    private String selectedPeriod;
-
+public class ExamTryFragment extends Fragment implements OnBackPressedListener{
     //문제 파일 이름 규칙
     //타입_기간(년)_기간(월)_주최기관_과목_문제번호
     private String examFileName;
@@ -42,41 +42,67 @@ public class ExamTryFragment extends Fragment{
     private String examNumber;
     private String examPotential;
 
-    private RelativeLayout loadingContainer;
-    private RelativeLayout examTryContainer;
+    @BindView(R.id.examtry_loadingContainer) RelativeLayout loadingContainer;
+    @BindView(R.id.examtry_container) RelativeLayout examTryContainer;
 
-    private TextView title;
-    private TextView potential;
-    private ImageView questionImage;
-    private EditText answer_text;
-    private RadioGroup answer_radio;
-    private TextView timer;
+    @BindView(R.id.examTitle) TextView title;
+    @BindView(R.id.examProbability) TextView potential;
+    @BindView(R.id.question) ImageView questionImage;
+    @BindView(R.id.answer_text) EditText answer_text;
+    @BindView(R.id.answer_radio) RadioGroup answer_radio;
+    @BindView(R.id.timer) TextView timer;
+    @BindView(R.id.regenerateBtn) Button regenerateExamBtn;
+    @BindView(R.id.submit) Button submitButton;
 
-    private Thread timerThread;
-    private boolean isRunningTimer= true;
     //0 is sec
     //1 is min
     final int timeSaver[]= new int[2];
-
-    private Button regenerateExamBtn;
-    private Button submitButton;
+    private Thread timerThread;
+    private boolean isRunningTimer= true;
 
     private int examType;
     private final int choiceType= 1511;
     private final int inputType= 1512;
 
-
     private HashMap<String, String> potentialList= new HashMap<>();
+
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_examtry, container, false);
 
-        String filter_subj= getActivity().getIntent().getStringExtra("subj");
-        String filter_inst= getActivity().getIntent().getStringExtra("inst");
-        String filter_peri= getActivity().getIntent().getStringExtra("peri");
+        setSubjectIdentifier();
+        setInstituteIdentifier();
+        setPeriodIdentifier();
 
+        unbinder= ButterKnife.bind(this, rootView);
+
+        FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
+            @Override
+            public void success(Object data) {
+                ArrayList<Long> temp= (ArrayList<Long>)data;
+                for(int i=1; i<temp.size(); i++){
+                    potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
+                }
+                init(rootView);
+
+                loadingContainer.setVisibility(View.GONE);
+                examTryContainer.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void fail(String errorMessage) {
+                Toast.makeText(getActivity().getApplicationContext(), "데이터베이스 통신 실패: "+ errorMessage, Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
+        return rootView;
+    }
+
+    private void setSubjectIdentifier(){
+        String filter_subj= getActivity().getIntent().getStringExtra("subj");
         // Decide Subject
         if(filter_subj.equals("상관없음")){
             String[] subjectList= getResources().getStringArray(R.array.subjectArray);
@@ -94,6 +120,10 @@ public class ExamTryFragment extends Fragment{
         }else if (filter_subj.equals("과학탐구")) {
             examSubject= "science";
         }
+    }
+
+    private void setPeriodIdentifier(){
+        String filter_peri= getActivity().getIntent().getStringExtra("peri");
 
         //Decide period_y
         if(filter_peri.equals("상관없음")){
@@ -119,6 +149,20 @@ public class ExamTryFragment extends Fragment{
             examPeriod_y= "2012";
         }
 
+        //Decide period_m
+        if(examInstitute.equals("sunung")){
+            examPeriod_m= "11";
+        }else if(examInstitute.equals("gyoyuk")){
+            String mList[]= {"3", "4", "7", "10"};
+            examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }else if(examInstitute.equals("pyeong")){
+            String mList[]= {"6", "9"};
+            examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }
+    }
+
+    private void setInstituteIdentifier(){
+        String filter_inst= getActivity().getIntent().getStringExtra("inst");
         //Decide institute
         if(filter_inst.equals("상관없음")){
             String instList[]= {"sunung", "pyeong", "gyoyuk"};
@@ -131,98 +175,34 @@ public class ExamTryFragment extends Fragment{
             examInstitute= "sunung";
         }
 
-        //Decide period_m
-        if(examInstitute.equals("sunung")){
-            examPeriod_m= "11";
-        }else if(examInstitute.equals("gyoyuk")){
-            String mList[]= {"3", "4", "7", "10"};
-            examPeriod_m= mList[new Random().nextInt(mList.length)];
-        }else if(examInstitute.equals("pyeong")){
-            String mList[]= {"6", "9"};
-            examPeriod_m= mList[new Random().nextInt(mList.length)];
-        }
-        loadingContainer= rootView.findViewById(R.id.examtry_loadingContainer);
-        examTryContainer= rootView.findViewById(R.id.examtry_container);
-
-        FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
-            @Override
-            public void success(Object data) {
-                ArrayList<Long> temp= (ArrayList<Long>)data;
-                for(int i=1; i<temp.size(); i++){
-                    potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
-                }
-                init(rootView);
-
-                loadingContainer.setVisibility(View.GONE);
-                examTryContainer.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void fail(String errorMessage) {
-                Toast.makeText(getActivity().getApplicationContext(), "데이터베이스 통신 실패: "+ errorMessage, Toast.LENGTH_SHORT).show();
-                getActivity().finish();
-            }
-        });
-        return rootView;
     }
 
     private void init(final ViewGroup rootView){
-        isRunningTimer= true;
-
-        questionImage= rootView.findViewById(R.id.question);
-        selectedSubject= getActivity().getIntent().getStringExtra("subj");
-        selectedProb= getActivity().getIntent().getStringExtra("prob");
-        selectedInst= getActivity().getIntent().getStringExtra("inst");
-        selectedPeriod= getActivity().getIntent().getStringExtra("Period");
-
         setQuestion();
 
-        title= rootView.findViewById(R.id.examTitle);
         title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
-        potential = rootView.findViewById(R.id.examProbability);
         potential.setText("정답률 "+ examPotential + "%");
 
         if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
             if(Integer.valueOf(examNumber)>=22){
                 //주관식
-                answer_text= rootView.findViewById(R.id.answer_text);
                 answer_text.setVisibility(View.VISIBLE);
                 examType= inputType;
             }else{
                 //객관식
-                answer_radio= rootView.findViewById(R.id.answer_radio);
                 answer_radio.setVisibility(View.VISIBLE);
                 examType= choiceType;
             }
         }else{
             //객관식
-            answer_radio= rootView.findViewById(R.id.answer_radio);
             answer_radio.setVisibility(View.VISIBLE);
             examType= choiceType;
         }
 
-        timer= rootView.findViewById(R.id.timer);
         startTimer();
-
-        regenerateExamBtn= rootView.findViewById(R.id.regenerateBtn);
-        regenerateExamBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
-            }
-        });
-
-        submitButton= rootView.findViewById(R.id.submit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recheckAnswer();
-            }
-        });
     }
 
     private void startTimer(){
-
         final Handler handler= new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -234,7 +214,6 @@ public class ExamTryFragment extends Fragment{
                 timer.setText(min + "분 " + sec + "초");
             }
         };
-
         timerThread= new Thread(){
             @Override
             public void run() {
@@ -266,11 +245,11 @@ public class ExamTryFragment extends Fragment{
                 }
             }
         };
+        isRunningTimer= true;
         timerThread.start();
     }
 
     private void setQuestion(){
-        //일단은 임시적으로 설정값은 고려하지 않고 한 이미지로 대체
         examFileName= generateExamFileName();
         FirebaseConnection.getInstance().loadImage(examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"/"+examFileName, questionImage, getContext());
 
@@ -308,7 +287,6 @@ public class ExamTryFragment extends Fragment{
     // Return value of this method is examFileName that used to load from firebase
     // Return value is only using for first parameter of FirebaseConnection.getInstance().loadImage()
     private String generateExamFileName(){
-
         String fileName= "";
 
         String filter_prob= getActivity().getIntent().getStringExtra("prob");
@@ -357,7 +335,7 @@ public class ExamTryFragment extends Fragment{
     }
 
     private String getUserAnswer(){
-        String result= "";
+        String result= null;
 
         //객관식
         if(examType== choiceType){
@@ -381,43 +359,47 @@ public class ExamTryFragment extends Fragment{
                     break;
             }
             result= String.valueOf(answer);
-            result= result+ "번";
         }else if(examType== inputType){
             //주관식
-            result= answer_text.getText().toString();
+            if(answer_text.getText()!= null){
+                result= answer_text.getText().toString();
+            }
         }
-
         return result;
     }
 
-    private void recheckAnswer(){
+    @OnClick(R.id.regenerateBtn)
+    void regenerateExam(){
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
+    }
+
+    @OnClick(R.id.submit)
+    void recheckAnswer(){
         final DialogMaker dialog= new DialogMaker();
         DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
-                //submit user's answer. move solution page
-                isRunningTimer= false;
-                submitSolution();
+                if(getUserAnswer()== null || getUserAnswer().equals("")){
+                    //No exist inputAnswer
+                    Toast.makeText(getContext(), "아직 정답을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
+                }else{
+                    //submit user's answer. move solution page
+                    isRunningTimer= false;
+                    submitSolution();
+                }
                 dialog.dismiss();
             }
         };
-        DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
-            @Override
-            public void callbackMethod() {
-                dialog.dismiss();
-            }
-        };
-        dialog.setValue("선택하신 답안은 "+ getUserAnswer()+ "입니다.\n제출하시겠습니까?", "제출", "취소", pos_callback, nag_callback);
+        dialog.setValue("선택하신 답안은 "+ getUserAnswer()+ "입니다.\n제출하시겠습니까?", "제출", "취소", pos_callback, null);
         dialog.show(getActivity().getSupportFragmentManager(), "AnswerSubmit");
     }
 
     private void submitSolution(){
         String answer= getUserAnswer();
-        if(answer.charAt(answer.length()-1)== '번'){
-            answer= String.valueOf(answer.charAt(0));
-        }
+        answer= String.valueOf(answer.charAt(0));
 
         getActivity().getIntent().putExtra("examFileName", examFileName);
+        getActivity().getIntent().putExtra("examNumber", examNumber);
         getActivity().getIntent().putExtra("examInfo", title.getText());
         getActivity().getIntent().putExtra("inputAnswer", answer);
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
@@ -425,5 +407,18 @@ public class ExamTryFragment extends Fragment{
 
 
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamSolutionFragment()).commit();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        isRunningTimer= false;
+        try {
+            timerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        unbinder.unbind();
+        return true;
     }
 }

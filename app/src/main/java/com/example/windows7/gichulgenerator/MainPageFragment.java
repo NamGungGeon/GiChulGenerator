@@ -1,6 +1,9 @@
 package com.example.windows7.gichulgenerator;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -71,6 +74,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.menuListBtn) ImageView menuListBtn;
     @BindView(R.id.help) ImageView helpBtn;
 
+    private final int EXAM_ACTIVITY= 1335;
+    private final int SEARCH_ACTIVITY= 1336;
+
     private Unbinder unbinder;
 
     @Nullable
@@ -84,11 +90,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void init(){
-        /*
-        adView= rootView.findViewById(R.id.mainPageAd);
-        AdRequest adRequest= new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-        */
+        setBackground();
         resizeMenuListElements();
 
         //Set TodayInfo
@@ -184,6 +186,18 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         });
     }
 
+    private void setBackground(){
+        int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
+
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
+
+        BitmapDrawable background= new BitmapDrawable(bitmap);
+
+        mainContainer.setBackgroundDrawable(background);
+    }
+
     private void resizeMenuListElements(){
         resizeMenuListElement(menu_notification);
         resizeMenuListElement(menu_allDeleteHistory);
@@ -233,11 +247,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @OnClick(R.id.menuList_allHistoryDelete)
     void deleteAllData(){
         final DialogMaker dialog= new DialogMaker();
-        dialog.setValue("오답노트와 문제 기록을 전부 삭제하시겠습니까?", "예", "아니오", new DialogMaker.Callback() {
+        dialog.setValue("오답노트와 문제 기록을 전부 삭제하시겠습니까?\n(복구 불가능)", "예", "아니오", new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
                 CheckList.getInstance().deleteAllData();
                 HistoryList.getInstance().deleteAllData();
+                init();
                 dialog.dismiss();
             }
         }, null);
@@ -397,7 +412,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         // basicFileName is not include "Number"
                         intent.putExtra("basicFileName", basicFileName);
 
-                        startActivity(intent);
+                        startActivityForResult(intent, SEARCH_ACTIVITY);
                         dialog.dismiss();
                     }
                 }, null, childView);
@@ -430,21 +445,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 intent.putExtra("peri", periodOption);
 
                 dialog.dismiss();
-                startActivity(intent);
+                startActivityForResult(intent, EXAM_ACTIVITY);
             }
         };
-        DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
-            @Override
-            public void callbackMethod() {
-                dialog.dismiss();
-            }
-        };
-        subjectSpinner.setSelection(0);
-        probabilitySpinner.setSelection(0);
-        instituteSpinner.setSelection(0);
-        periodSpinner.setSelection(0);
 
-        dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, nag_callback, childView);
+        dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
     }
 
@@ -467,8 +472,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        int todayNumber= HistoryList.getInstance().getTodayHistoryNumber();
-        todayInfo.setText("오늘 "+ todayNumber+ "문제를 풀었습니다");
-
+        init();
     }
 }

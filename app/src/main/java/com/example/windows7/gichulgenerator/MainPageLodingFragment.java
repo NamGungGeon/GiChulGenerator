@@ -119,6 +119,7 @@ public class MainPageLodingFragment extends Fragment {
                             public void success(Object data) {
                                 getActivity().getIntent().putExtra("schedule", (String)data);
                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+
                                 dialog.dismiss();
                             }
 

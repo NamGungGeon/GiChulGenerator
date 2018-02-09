@@ -1,6 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -16,7 +17,17 @@ public class ExamActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().hide();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment(), "examTry").commit();
         setContentView(R.layout.activity_exam);
+    }
+
+    @Override
+    public void onBackPressed() {
+        for(Fragment fragment: getSupportFragmentManager ().getFragments()){
+            if(fragment instanceof OnBackPressedListener){
+                ((OnBackPressedListener) fragment).onBackPressed();
+            }
+        }
+        super.onBackPressed();
     }
 }
