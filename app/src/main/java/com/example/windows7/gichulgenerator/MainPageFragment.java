@@ -86,6 +86,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         unbinder= ButterKnife.bind(this, rootView);
         init();
 
+
         return rootView;
     }
 
@@ -453,6 +454,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
     }
 
+    @OnClick(R.id.menuList_freeBoard)
+    void openFreeboard(){
+        startActivity(new Intent(getContext(), FreeboardActivity.class));
+
+    }
 
     @Override
     public boolean onBackPressed() {

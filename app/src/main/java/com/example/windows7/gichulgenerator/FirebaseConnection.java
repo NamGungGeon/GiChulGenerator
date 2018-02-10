@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -69,6 +70,35 @@ public class FirebaseConnection {
         });
     }
 
+    public DatabaseReference getReference(String path){
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        StringTokenizer token= new StringTokenizer(path, "/", false);
+        while(token.hasMoreTokens()){
+            mDatabase= mDatabase.child(token.nextToken());
+        }
+
+        return mDatabase;
+    }
+
+    // Must use this form in callback
+    /*
+    for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+        // Action...
+    }
+    */
+    public void loadDataWithQuery(Query query, final Callback callback){
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                callback.success(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.fail(databaseError.getMessage());
+            }
+        });
+    }
 
     public void loadImage(String fileName, ImageView imageView, Context context){
         // Create a reference to a file from a Google Cloud Storage URI
@@ -76,28 +106,6 @@ public class FirebaseConnection {
         Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).into(imageView);
     }
 
-    public void loadExamInfoList(String path, final Callback callback){
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        StringTokenizer token= new StringTokenizer(path, "/", false);
-        while(token.hasMoreTokens()){
-            mDatabase= mDatabase.child(token.nextToken());
-        }
-
-        // Read from the database
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                callback.success(dataSnapshot.getValue());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                callback.fail(error.getMessage());
-            }
-        });
-    }
 
     public void saveExamInfoList(String path, HashMap<String ,ExamInfo> list){
 

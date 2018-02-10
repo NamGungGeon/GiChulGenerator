@@ -87,7 +87,7 @@ public class CheckList {
             }
         };
 
-        FirebaseConnection.getInstance().loadExamInfoList("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", callback);
+        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", callback);
     }
 
     // Save CheckList to firebase

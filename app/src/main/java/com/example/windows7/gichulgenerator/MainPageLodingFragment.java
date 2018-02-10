@@ -2,6 +2,9 @@ package com.example.windows7.gichulgenerator;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -43,6 +47,16 @@ public class MainPageLodingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_loading, container, false);
+
+
+        int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
+        BitmapDrawable background= new BitmapDrawable(bitmap);
+        RelativeLayout loadingContainer= rootView.findViewById(R.id.loadingContainer);
+        loadingContainer.setBackgroundDrawable(background);
+
         login_google();
 
         return rootView;

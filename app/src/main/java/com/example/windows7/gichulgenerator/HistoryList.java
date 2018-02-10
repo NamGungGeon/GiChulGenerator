@@ -1,14 +1,9 @@
 package com.example.windows7.gichulgenerator;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -84,7 +79,7 @@ public class HistoryList {
             }
         };
 
-        FirebaseConnection.getInstance().loadExamInfoList("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList", callback);
+        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList", callback);
     }
 
     // Save CheckList to firebase

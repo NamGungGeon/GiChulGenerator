@@ -21,6 +21,7 @@
         <activity android:name=".CheckListActivity"></activity>
         <activity android:name=".RecheckActivity"></activity>
         <activity android:name=".SearchResultActivity"></activity>
+        <activity android:name=".FreeboardActivity"></activity>
         <service
             android:name=".FirebaseMessageService" android:enabled="true">
             <intent-filter>
