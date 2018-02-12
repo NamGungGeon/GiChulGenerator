@@ -22,6 +22,9 @@
         <activity android:name=".RecheckActivity"></activity>
         <activity android:name=".SearchResultActivity"></activity>
         <activity android:name=".FreeboardActivity"></activity>
+        <activity android:name=".ArticleActivity"></activity>
+        <activity android:name=".ArticlePublishActivity"></activity>
+        <activity android:name=".CommentActivity"></activity>
         <service
             android:name=".FirebaseMessageService" android:enabled="true">
             <intent-filter>

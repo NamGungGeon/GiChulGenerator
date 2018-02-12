@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -396,7 +394,6 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
     private void submitSolution(){
         String answer= getUserAnswer();
-        answer= String.valueOf(answer.charAt(0));
 
         getActivity().getIntent().putExtra("examFileName", examFileName);
         getActivity().getIntent().putExtra("examNumber", examNumber);

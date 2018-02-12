@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="60dp">
+    <TextView
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="historyTitle"
+        android:textSize="15dp"
+        android:textColor="#000000"
+        android:id="@+id/commentListItem_text"/>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/commentListItem_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentListItem_userName"
+        android:text="historyInfo"
+        android:textSize="10dp"
+        android:textColor="#A0A0A0"/>
+</RelativeLayout>

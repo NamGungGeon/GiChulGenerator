@@ -47,10 +47,19 @@ public class ListViewAdapter_Freeboard extends BaseAdapter {
             convertView = inflater.inflate(layout, parent, false);
         }
 
+        int commentNumber= 0;
+        if(data.get(position).getComments()== null || data.get(position).getComments().size()== 0){
+            commentNumber= 0;
+        }else{
+            commentNumber= data.get(position).getComments().size();
+        }
+
         TextView title= convertView.findViewById(R.id.freeboardListItem_title);
-        title.setText(data.get(position).getTitle());
+        title.setText(data.get(position).getTitle()+ " ["+ commentNumber+ "]");
         TextView userName= convertView.findViewById(R.id.freeboardListItem_userName);
         userName.setText(data.get(position).getUserName());
+
+
 
         return convertView;
     }

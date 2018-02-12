@@ -14,8 +14,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 /**
  * Created by WINDOWS7 on 2018-01-21.
@@ -92,7 +90,6 @@ public class FirebaseConnection {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 callback.success(dataSnapshot);
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 callback.fail(databaseError.getMessage());
@@ -107,15 +104,14 @@ public class FirebaseConnection {
     }
 
 
-    public void saveExamInfoList(String path, HashMap<String ,ExamInfo> list){
-
+    public void saveData(String path, Object o){
         mDatabase = FirebaseDatabase.getInstance().getReference();
         StringTokenizer token= new StringTokenizer(path, "/", false);
         while(token.hasMoreTokens()){
             mDatabase= mDatabase.child(token.nextToken());
         }
 
-        mDatabase.setValue(list);
+        mDatabase.setValue(o);
     }
 
 }

@@ -40,18 +40,18 @@ public class CheckListActivity extends AppCompatActivity {
     private void setListView_checkList(){
         // checkList - ListView setting
         checkList= findViewById(R.id.checkList);
-        final ArrayList<ExamInfo> checkListData= new ArrayList<>();
+        final ArrayList<Exam> checkListData= new ArrayList<>();
 
         //Load data...
-        HashMap<String, ExamInfo> loadedData= CheckList.getInstance().getCheckList();
+        HashMap<String, Exam> loadedData= CheckList.getInstance().getCheckList();
         int index=0;
         for(String key: loadedData.keySet()){
             checkListData.add(index, loadedData.get(key));
             index++;
         }
-        Collections.sort(checkListData, new Comparator<ExamInfo>() {
+        Collections.sort(checkListData, new Comparator<Exam>() {
             @Override
-            public int compare(ExamInfo e1, ExamInfo e2) {
+            public int compare(Exam e1, Exam e2) {
                 return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
             }
         });

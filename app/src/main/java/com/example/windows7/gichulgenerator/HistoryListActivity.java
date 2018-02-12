@@ -4,12 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,17 +41,17 @@ public class HistoryListActivity extends AppCompatActivity {
         historyList= findViewById(R.id.historyList);
 
         //Load data...
-        final ArrayList<ExamInfo> historyListData= new ArrayList<>();
-        HashMap<String, ExamInfo> loadedData= HistoryList.getInstance().getHistoryList();
+        final ArrayList<Exam> historyListData= new ArrayList<>();
+        HashMap<String, Exam> loadedData= HistoryList.getInstance().getHistoryList();
 
         int index=0;
         for(String key: loadedData.keySet()){
             historyListData.add(index, loadedData.get(key));
             index++;
         }
-        Collections.sort(historyListData, new Comparator<ExamInfo>() {
+        Collections.sort(historyListData, new Comparator<Exam>() {
             @Override
-            public int compare(ExamInfo e1, ExamInfo e2) {
+            public int compare(Exam e1, Exam e2) {
                 return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
             }
         });

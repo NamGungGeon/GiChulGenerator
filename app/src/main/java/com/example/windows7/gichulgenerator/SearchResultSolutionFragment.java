@@ -98,7 +98,7 @@ public class SearchResultSolutionFragment extends Fragment {
         String basicFileName= getActivity().getIntent().getStringExtra("basicFileName");
 
         HistoryList.getInstance().addToList(
-                new ExamInfo(getActivity().getIntent().getStringExtra("title"), basicFileName+ "_"+ getActivity().getIntent().getStringExtra("number"),
+                new Exam(getActivity().getIntent().getStringExtra("title"), basicFileName+ "_"+ getActivity().getIntent().getStringExtra("number"),
                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
     }
 
@@ -128,7 +128,7 @@ public class SearchResultSolutionFragment extends Fragment {
                 EditText memoBox= childView.findViewById(R.id.memoBox);
                 int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
                 CheckList.getInstance()
-                        .addToList(new ExamInfo(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ getActivity().getIntent().getStringExtra("number"),
+                        .addToList(new Exam(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ getActivity().getIntent().getStringExtra("number"),
                                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                 dialog.dismiss();
             }

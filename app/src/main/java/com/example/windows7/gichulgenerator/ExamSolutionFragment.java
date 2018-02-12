@@ -3,7 +3,6 @@ package com.example.windows7.gichulgenerator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
@@ -128,7 +126,7 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
         int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
         String basicFileName= getActivity().getIntent().getStringExtra("examFileName");
         basicFileName= basicFileName.substring(2);
-        HistoryList.getInstance().addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), basicFileName,
+        HistoryList.getInstance().addToList(new Exam(getActivity().getIntent().getStringExtra("examInfo"), basicFileName,
                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
     }
 
@@ -148,7 +146,7 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
                 EditText memoBox= childView.findViewById(R.id.memoBox);
                 int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
                 CheckList.getInstance()
-                        .addToList(new ExamInfo(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
+                        .addToList(new Exam(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
                                 getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                 dialog.dismiss();
             }

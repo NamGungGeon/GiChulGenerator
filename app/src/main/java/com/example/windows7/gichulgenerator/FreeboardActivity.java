@@ -1,8 +1,8 @@
 package com.example.windows7.gichulgenerator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -13,10 +13,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
@@ -27,6 +27,9 @@ public class FreeboardActivity extends AppCompatActivity {
     @BindView(R.id.freeboard_loadingContainer) RelativeLayout loadingContainer;
     @BindView(R.id.freeboard_container) RelativeLayout container;
     @BindView(R.id.freeboard_list) ListView list;
+
+    private final int PUBLISH_ACTIVITY= 1524;
+    private final int ARTICLE_ACTIVITY= 1552;
 
     private Unbinder unbinder;
     @Override
@@ -46,7 +49,7 @@ public class FreeboardActivity extends AppCompatActivity {
         final ArrayList<Article> articles= new ArrayList<>();
 
         DatabaseReference reference= FirebaseConnection.getInstance().getReference("freeboard/");
-        FirebaseConnection.getInstance().loadDataWithQuery(reference.limitToFirst(10), new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadDataWithQuery(reference.orderByKey().limitToFirst(10), new FirebaseConnection.Callback() {
                     @Override
                     public void success(Object data) {
                         DataSnapshot dataSnapshot= (DataSnapshot)data;
@@ -70,8 +73,28 @@ public class FreeboardActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(FreeboardActivity.this, "CLICK", Toast.LENGTH_SHORT).show();
+                Intent intent= new Intent(getApplicationContext(), ArticleActivity.class);
+                intent.putExtra("Article", articles.get(i));
+                startActivityForResult(intent, ARTICLE_ACTIVITY);
             }
         });
+    }
+
+
+    @OnClick(R.id.freeboard_refresh)
+    void refresh(){
+        loadingContainer.setVisibility(View.VISIBLE);
+        container.setVisibility(View.GONE);
+        setArticleList();
+    }
+
+    @OnClick(R.id.freeboard_publishArticle)
+    void publishArticle(){
+        startActivityForResult(new Intent(getApplicationContext(), ArticlePublishActivity.class), PUBLISH_ACTIVITY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        refresh();
     }
 }

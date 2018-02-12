@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 // No exist setter
 // Setter is never used, and also must not used.
-public class ExamInfo{
+public class Exam {
 
     private String title= "";
     private String period_y= "";
@@ -30,7 +30,7 @@ public class ExamInfo{
 
     private long timeStamp;
 
-    public ExamInfo(String title, String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
+    public Exam(String title, String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
         this.title= title;
         this.period_y = period_y;
         this.period_m = period_m;
@@ -47,7 +47,7 @@ public class ExamInfo{
 
         timeStamp= System.currentTimeMillis();
     }
-    public ExamInfo(String title, String basicFileName, String potential, String inputAnswer, String rightAnswer, String time, String memo){
+    public Exam(String title, String basicFileName, String potential, String inputAnswer, String rightAnswer, String time, String memo){
         this.title= title;
 
         StringTokenizer token= new StringTokenizer(basicFileName, "_", false);

@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 
 public class CheckList {
-    private HashMap<String, ExamInfo> checkList= new HashMap<>();
+    private HashMap<String, Exam> checkList= new HashMap<>();
 
     private static CheckList inst= null;
     private CheckList() {
@@ -24,16 +24,16 @@ public class CheckList {
         return inst;
     }
 
-    public HashMap<String, ExamInfo> getCheckList(){
+    public HashMap<String, Exam> getCheckList(){
         return checkList;
     }
 
-    public void addToList(ExamInfo exam){
+    public void addToList(Exam exam){
         checkList.put(String.valueOf(System.currentTimeMillis()), exam);
         saveCheckListToServer();
     }
 
-    public void deleteFromList(ExamInfo exam){
+    public void deleteFromList(Exam exam){
         for(String key: checkList.keySet()){
             if(checkList.get(key).getTimeStamp()== exam.getTimeStamp()){
                 checkList.remove(key);
@@ -55,9 +55,8 @@ public class CheckList {
     }
 
     // Load CheckList from firebase
-    public void loadCheckListFromServer(final Callback _callback){
-
-        final FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
+    public void loadCheckListFromServer(final Callback callback){
+        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", new FirebaseConnection.Callback() {
             @Override
             public void success(Object data) {
                 HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
@@ -69,29 +68,27 @@ public class CheckList {
                     //Case: Success to read
                     for(String key: temp.keySet()){
                         HashMap<String, String> value= temp.get(key);
-                        ExamInfo info= new ExamInfo(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
+                        Exam info= new Exam(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
                                 value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
                         checkList.put(key, info);
                     }
                 }
 
                 Log.i("Firebase  Check", String.valueOf(checkList.size()));
-                _callback.success();
+                callback.success();
             }
 
             @Override
             public void fail(String errorMessage) {
                 //Case: Connection Fail
                 checkList= new HashMap<>();
-                _callback.fail();
+                callback.fail();
             }
-        };
-
-        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", callback);
+        });
     }
 
     // Save CheckList to firebase
     private void saveCheckListToServer(){
-        FirebaseConnection.getInstance().saveExamInfoList("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", checkList);
+        FirebaseConnection.getInstance().saveData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", checkList);
     }
 }

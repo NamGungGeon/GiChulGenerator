@@ -94,33 +94,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         setBackground();
         resizeMenuListElements();
 
-        //Set TodayInfo
-        String todayMessage= "";
-        int todayNumber= HistoryList.getInstance().getTodayHistoryNumber();
-        todayMessage+= "오늘 "+ todayNumber+ "문제를 풀었습니다";
-        todayMessage+= "\n\n오늘 나의 정답률은 "+HistoryList.getInstance().getTodayPotential()+ "% 입니다";
-        todayInfo.setText(todayMessage);
-
-        //Set MonthInfo
-        String monthMessage= "";
-        int monthNumber= HistoryList.getInstance().getMonthHistoryNumber();
-        monthMessage+= "이번 달에 "+ monthNumber+ "문제를 풀었습니다";
-        monthMessage+= "\n\n이번 달 나의 정답률은 "+ HistoryList.getInstance().getMonthPotential()+ "% 입니다";
-        monthInfo.setText(monthMessage);
-
-        //Set SubjectInfo
-        String subjectMessage= "과목별 전체 정답률\n\n";
-        int koreanNumber= HistoryList.getInstance().getSubjectPotential("korean");
-        subjectMessage+= "국어 정답률 "+ koreanNumber+ "%\n";
-        int mathNumber= HistoryList.getInstance().getSubjectPotential("imath")+ HistoryList.getInstance().getSubjectPotential("mmath");
-        subjectMessage+= "수학 정답률 "+ mathNumber+ "%\n";
-        int englishNumber= HistoryList.getInstance().getSubjectPotential("english");
-        subjectMessage+= "영어 정답률 "+ englishNumber+ "%\n";
-        int socialNumber= HistoryList.getInstance().getSubjectPotential("social");
-        subjectMessage+= "사회탐구 정답률 "+ socialNumber+ "%\n";
-        int scienceNumber= HistoryList.getInstance().getSubjectPotential("science");
-        subjectMessage+= "과학탐구 정답률 "+ scienceNumber+ "%";
-        subjectInfo.setText(subjectMessage);
+        setTodayReport();
+        setMonthReport();
+        setTotalReport();
 
         //Set Schedule
         String between= "";
@@ -187,6 +163,63 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         });
     }
 
+
+    private void setTodayReport(){
+        HistoryList historyList= HistoryList.getInstance();
+
+        String todayMessage= "오늘 요약\n\n";
+        int todayNumber= HistoryList.getInstance().getTodayHistoryNumber();
+        todayMessage+= "오늘 "+ todayNumber+ "문제를 풀었습니다\n";
+        todayMessage+= "오늘 나의 정답률은 "+HistoryList.getInstance().getTodayPotential()+ "% 입니다\n\n";
+
+        todayMessage+= "국어 "+ historyList.getTodaySubjectNumber("korean")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("korean")+ "%\n";
+        int todayMathPotential= historyList.getTodaySubjectPotential("imath")+ historyList.getTodaySubjectPotential("mmath");
+        int todayMathNumber= historyList.getTodaySubjectNumber("imath")+ historyList.getTodaySubjectNumber("mmath");
+        todayMessage+= "수학 "+ todayMathNumber+"문제 중 정답률 "+ todayMathPotential+ "%\n";
+        todayMessage+= "영어 "+ historyList.getTodaySubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("english")+ "%\n";
+        todayMessage+= "사회탐구 "+ historyList.getTodaySubjectNumber("social")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("social")+ "%\n";
+        todayMessage+= "과학탐구 "+ historyList.getTodaySubjectNumber("science")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("science")+ "%";
+
+        todayInfo.setText(todayMessage);
+    }
+
+    private void setMonthReport(){
+        HistoryList historyList= HistoryList.getInstance();
+
+        String monthMessage= "이번 달 요약\n\n";
+        int monthNumber= HistoryList.getInstance().getMonthHistoryNumber();
+        monthMessage+= "이번 달에 "+ monthNumber+ "문제를 풀었습니다\n";
+        monthMessage+= "이번 달 나의 정답률은 "+ HistoryList.getInstance().getMonthPotential()+ "% 입니다\n\n";
+
+        monthMessage+= "국어 "+ historyList.getMonthSubjectNumber("korean")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("korean")+ "%\n";
+        int todayMathPotential= historyList.getMonthSubjectPotential("imath")+ historyList.getMonthSubjectPotential("mmath");
+        int todayMathNumber= historyList.getMonthSubjectNumber("imath")+ historyList.getMonthSubjectNumber("mmath");
+        monthMessage+= "수학 "+ todayMathNumber+"문제 중 정답률 "+ todayMathPotential+ "%\n";
+        monthMessage+= "영어 "+ historyList.getMonthSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("english")+ "%\n";
+        monthMessage+= "사회탐구 "+ historyList.getMonthSubjectNumber("social")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("social")+ "%\n";
+        monthMessage+= "과학탐구 "+ historyList.getMonthSubjectNumber("science")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("science")+ "%";
+
+        monthInfo.setText(monthMessage);
+    }
+
+    private void setTotalReport(){
+        HistoryList historyList= HistoryList.getInstance();
+
+        String totalMessage= "전체 요약\n\n";
+        int totalNumber= HistoryList.getInstance().getTotalNumber();
+        totalMessage+= "전체 "+ totalNumber+ "문제를 풀었습니다\n";
+        totalMessage+= "전체 나의 정답률은 "+ HistoryList.getInstance().getTotalPotential()+ "% 입니다\n\n";
+
+        totalMessage+= "국어 "+ historyList.getTotalSubjectNumber("korean")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("korean")+ "%\n";
+        int totalMathPotential= historyList.getTotalSubjectPotential("imath")+ historyList.getTotalSubjectPotential("mmath");
+        int totalMathNumber= historyList.getTotalSubjectNumber("imath")+ historyList.getTotalSubjectNumber("mmath");
+        totalMessage+= "수학 "+ totalMathNumber+"문제 중 정답률 "+ totalMathPotential+ "%\n";
+        totalMessage+= "영어 "+ historyList.getTotalSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("english")+ "%\n";
+        totalMessage+= "사회탐구 "+ historyList.getTotalSubjectNumber("social")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("social")+ "%\n";
+        totalMessage+= "과학탐구 "+ historyList.getTotalSubjectNumber("science")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("science")+ "%";
+
+        subjectInfo.setText(totalMessage);
+    }
     private void setBackground(){
         int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
@@ -454,10 +487,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
     }
 
-    @OnClick(R.id.menuList_freeBoard)
+    @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
     void openFreeboard(){
         startActivity(new Intent(getContext(), FreeboardActivity.class));
-
     }
 
     @Override

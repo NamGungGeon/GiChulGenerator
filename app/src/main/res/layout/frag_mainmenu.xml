@@ -95,6 +95,17 @@
                             android:id="@+id/calender"
                             android:background="@drawable/calendar_icon"/>
                     </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#99000000"
+                        android:layout_margin="10dp">
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/freeboard"
+                            android:background="@drawable/freeboard_icon"/>
+                    </FrameLayout>
                 </LinearLayout>
             </ScrollView>
         </FrameLayout>
@@ -178,7 +189,7 @@
                     <TextView
                         android:id="@+id/todayInfo"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="230dp"
                         android:paddingLeft="20dp"
                         android:gravity="left|center"
                         android:layout_centerHorizontal="true"
@@ -190,7 +201,7 @@
                     <TextView
                         android:id="@+id/monthInfo"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="230dp"
                         android:paddingLeft="20dp"
                         android:gravity="left|center"
                         android:layout_centerHorizontal="true"
@@ -203,7 +214,7 @@
                     <TextView
                         android:id="@+id/subjectInfo"
                         android:layout_width="match_parent"
-                        android:layout_height="160dp"
+                        android:layout_height="230dp"
                         android:paddingLeft="20dp"
                         android:gravity="left|center"
                         android:layout_centerHorizontal="true"
