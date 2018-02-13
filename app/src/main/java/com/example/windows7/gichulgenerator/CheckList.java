@@ -3,6 +3,7 @@ package com.example.windows7.gichulgenerator;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 
@@ -37,10 +38,10 @@ public class CheckList {
         for(String key: checkList.keySet()){
             if(checkList.get(key).getTimeStamp()== exam.getTimeStamp()){
                 checkList.remove(key);
+                saveCheckListToServer();
                 return;
             }
         }
-        saveCheckListToServer();
     }
 
     public void deleteAllData(){
@@ -58,11 +59,11 @@ public class CheckList {
     public void loadCheckListFromServer(final Callback callback){
         FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", new FirebaseConnection.Callback() {
             @Override
-            public void success(Object data) {
-                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
+            public void success(DataSnapshot snapshot) {
+                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)snapshot.getValue();
 
                 //Case: There is no data in database
-                if(checkList== null || data== null){
+                if(checkList== null || temp== null){
                     checkList= new HashMap<>();
                 }else{
                     //Case: Success to read

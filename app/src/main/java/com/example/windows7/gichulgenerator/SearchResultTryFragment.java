@@ -18,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -80,8 +82,8 @@ public class SearchResultTryFragment extends Fragment {
         //Load Potential
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute+ "/"+ examPeriod_m + "/" + examSubject + "/" + examNumber, new FirebaseConnection.Callback() {
             @Override
-            public void success(Object data) {
-                examPotential= data.toString();
+            public void success(DataSnapshot snapshot) {
+                examPotential= snapshot.getValue().toString();
 
                 loadingContainer.setVisibility(View.GONE);
                 mainContainer.setVisibility(View.VISIBLE);

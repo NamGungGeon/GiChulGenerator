@@ -92,8 +92,8 @@
                         <Button
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/calender"
-                            android:background="@drawable/calendar_icon"/>
+                            android:id="@+id/freeboard"
+                            android:background="@drawable/freeboard_icon"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="100dp"
@@ -103,8 +103,8 @@
                         <Button
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/freeboard"
-                            android:background="@drawable/freeboard_icon"/>
+                            android:id="@+id/calender"
+                            android:background="@drawable/calendar_icon"/>
                     </FrameLayout>
                 </LinearLayout>
             </ScrollView>
@@ -148,7 +148,7 @@
                         android:gravity="left|center"
                         android:text="Special Message"
                         android:textColor="#FFFFFF"
-                        android:textSize="15dp" />
+                        android:textSize="13dp" />
 
                     <TextView
                         android:id="@+id/scheduler"

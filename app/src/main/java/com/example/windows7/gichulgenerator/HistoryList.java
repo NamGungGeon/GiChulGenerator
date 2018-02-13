@@ -1,6 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -45,13 +46,11 @@ public class HistoryList {
 
     // Load CheckList from firebase
     public void loadHistoryListFromServer(final Callback callback){
-
-
         FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList", new FirebaseConnection.Callback() {
             @Override
-            public void success(Object data) {
+            public void success(DataSnapshot snapshot) {
                 historyList= new HashMap<>();
-                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)data;
+                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)snapshot.getValue();
 
                 //Case: There is no data in database
                 if(temp== null || temp.size()==0){

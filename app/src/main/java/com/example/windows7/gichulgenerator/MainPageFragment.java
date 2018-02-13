@@ -49,6 +49,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.historyListBtn) Button historyListBtn;
 
     // Right Status window
+    @BindView(R.id.specialMessage) TextView specialMessage;
     @BindView(R.id.todayInfo) TextView todayInfo;
     @BindView(R.id.scheduler) TextView schedular;
     @BindView(R.id.monthInfo) TextView monthInfo;
@@ -97,6 +98,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         setTodayReport();
         setMonthReport();
         setTotalReport();
+
+        specialMessage.setText("성공은 매일 반복한 작은 노력들의 합이다");
 
         //Set Schedule
         String between= "";

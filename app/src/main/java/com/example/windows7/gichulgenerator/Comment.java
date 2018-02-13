@@ -11,15 +11,22 @@ public class Comment implements Serializable{
     private String text;
     private long timeStamp;
     private String uid;
-    private String key;
 
     public Comment(){}
-    public Comment(String userName, String text, String uid, String key) {
+    public Comment(String userName, String text, String uid) {
         this.userName = userName;
         this.text = text;
         timeStamp= System.currentTimeMillis();
         this.uid= uid;
-        this.key= key;
+    }
+
+    //This Constructor is only using to load Comment Object from Firebase
+    public Comment(String userName, String text, String uid, long timeStamp) {
+        this.userName = userName;
+        this.text = text;
+        timeStamp= System.currentTimeMillis();
+        this.uid= uid;
+        this.timeStamp= timeStamp;
     }
     public String getUid() {
         return uid;
@@ -32,9 +39,6 @@ public class Comment implements Serializable{
     }
     public long getTimeStamp() {
         return timeStamp;
-    }
-    public String getKey() {
-        return key;
     }
 
 }

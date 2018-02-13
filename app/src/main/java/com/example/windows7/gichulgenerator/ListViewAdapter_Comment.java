@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 /**
@@ -46,6 +48,11 @@ public class ListViewAdapter_Comment extends BaseAdapter {
         TextView userName= convertView.findViewById(R.id.commentListItem_userName);
         context.setText(data.get(position).getText());
         userName.setText(data.get(position).getUserName());
+
+        if(FirebaseAuth.getInstance().getUid().equals("k8JUjAI0RvQ0BDY6FUbDtgP55542")){
+            userName.setText("관리자");
+            userName.setTextColor(context.getResources().getColor(R.color.red));
+        }
         return convertView;
     }
 }

@@ -28,6 +28,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
@@ -130,8 +131,8 @@ public class MainPageLodingFragment extends Fragment {
                         //Load Schedule
                         FirebaseConnection.getInstance().loadData("appdata/schedule/sunung", new FirebaseConnection.Callback() {
                             @Override
-                            public void success(Object data) {
-                                getActivity().getIntent().putExtra("schedule", (String)data);
+                            public void success(DataSnapshot snapshot) {
+                                getActivity().getIntent().putExtra("schedule", (String)snapshot.getValue());
                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
 
                                 dialog.dismiss();

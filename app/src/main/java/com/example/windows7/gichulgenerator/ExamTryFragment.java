@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -79,8 +81,8 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
             @Override
-            public void success(Object data) {
-                ArrayList<Long> temp= (ArrayList<Long>)data;
+            public void success(DataSnapshot snapshot) {
+                ArrayList<Long> temp= (ArrayList<Long>)snapshot.getValue();
                 for(int i=1; i<temp.size(); i++){
                     potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
                 }

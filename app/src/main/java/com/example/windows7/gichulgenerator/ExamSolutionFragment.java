@@ -13,6 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
@@ -59,9 +61,9 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
         // descript action after loading data
         FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
-            public void success(Object data) {
+            public void success(DataSnapshot snapshot) {
                 inputAnswer= getActivity().getIntent().getStringExtra("inputAnswer");
-                rightAnswer= String.valueOf(data);
+                rightAnswer= String.valueOf(snapshot.getValue());
                 if(inputAnswer.equals(rightAnswer)){
                     //정답
                     solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ inputAnswer+" 입니다.");

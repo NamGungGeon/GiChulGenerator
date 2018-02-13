@@ -41,7 +41,7 @@ public class FirebaseConnection {
     }
 
     public interface Callback{
-        void success(Object data);
+        void success(DataSnapshot snapshot);
         void fail(String errorMessage);
     }
 
@@ -57,7 +57,7 @@ public class FirebaseConnection {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                callback.success(dataSnapshot.getValue());
+                callback.success(dataSnapshot);
             }
 
             @Override

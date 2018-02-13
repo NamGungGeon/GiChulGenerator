@@ -81,7 +81,6 @@ public class CheckListActivity extends AppCompatActivity {
                             public void callbackMethod() {
                                 CheckList.getInstance().deleteFromList(checkListData.get(i));
                                 init();
-
                                 dialog.dismiss();
                             }
                         }, null);

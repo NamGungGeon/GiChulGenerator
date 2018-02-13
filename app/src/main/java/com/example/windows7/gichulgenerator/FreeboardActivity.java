@@ -13,6 +13,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,14 +51,21 @@ public class FreeboardActivity extends AppCompatActivity {
         final ArrayList<Article> articles= new ArrayList<>();
 
         DatabaseReference reference= FirebaseConnection.getInstance().getReference("freeboard/");
-        FirebaseConnection.getInstance().loadDataWithQuery(reference.orderByKey().limitToFirst(10), new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadDataWithQuery(reference.orderByKey().limitToLast(10), new FirebaseConnection.Callback() {
                     @Override
-                    public void success(Object data) {
-                        DataSnapshot dataSnapshot= (DataSnapshot)data;
+                    public void success(DataSnapshot snapshot) {
+                        DataSnapshot dataSnapshot= snapshot;
                         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                             Article article= postSnapshot.getValue(Article.class);
                             articles.add(article);
                         }
+                        //sorting
+                        Collections.sort(articles, new Comparator<Article>() {
+                            @Override
+                            public int compare(Article article, Article t1) {
+                                return Long.valueOf(t1.getTimeStamp()).compareTo(Long.valueOf(article.getTimeStamp()));
+                            }
+                        });
 
                         ListViewAdapter_Freeboard adapter= new ListViewAdapter_Freeboard(getApplicationContext(), R.layout.item_freeboard, articles);
                         list.setAdapter(adapter);
@@ -74,7 +83,7 @@ public class FreeboardActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent= new Intent(getApplicationContext(), ArticleActivity.class);
-                intent.putExtra("Article", articles.get(i));
+                intent.putExtra("articleKey", articles.get(i).getKey());
                 startActivityForResult(intent, ARTICLE_ACTIVITY);
             }
         });

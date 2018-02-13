@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,8 +52,8 @@ public class SearchResultSolutionFragment extends Fragment {
         String answerPath= "answer/" + intent.getStringExtra("period_y") + "/" +intent.getStringExtra("institute")+ "/"+ intent.getStringExtra("period_m") + "/" +intent.getStringExtra("subject") + "/" + intent.getStringExtra("number");
         FirebaseConnection.getInstance().loadData(answerPath, new FirebaseConnection.Callback() {
             @Override
-            public void success(Object data) {
-                rightAnswer= data.toString();
+            public void success(DataSnapshot snapshot) {
+                rightAnswer= snapshot.getValue().toString();
                 inputAnswer= intent.getStringExtra("inputAnswer");
 
                 loadingContainer.setVisibility(View.GONE);
