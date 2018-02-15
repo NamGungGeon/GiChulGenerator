@@ -59,9 +59,10 @@ public class ArticleActivity extends AppCompatActivity {
 
                 article= snapshot.getValue(Article.class);
                 if(article== null){
+                    // If Article is deleted...
                     title.setText("삭제된 게시물입니다.");
                     userName.setText("???");
-                    context.setText("관리자에 의해 삭제된 게시글입니다.");
+                    context.setText("삭제된 게시글입니다.");
                     commentBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -70,7 +71,7 @@ public class ArticleActivity extends AppCompatActivity {
                     });
                 }else{
                     title.setText(article.getTitle());
-                    if(article.getUid().equals("k8JUjAI0RvQ0BDY6FUbDtgP55542")){
+                    if(article.getUserName().equals("관리자")){
                         userName.setText("관리자");
                         userName.setTextColor(getResources().getColor(R.color.red));
                     }else{

@@ -62,12 +62,14 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_border"
+                android:id="@+id/freeboard_search"
                 android:text="검색"/>
             <Button
                 android:layout_weight="1"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_border"
+                android:id="@+id/freeboard_prev"
                 android:text="이전"/>
             <Button
                 android:layout_weight="1"
@@ -81,6 +83,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_border"
+                android:id="@+id/freeboard_next"
                 android:text="다음"/>
             <Button
                 android:layout_weight="1"

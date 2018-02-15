@@ -62,7 +62,7 @@ public class ListViewAdapter_Freeboard extends BaseAdapter {
         userName.setText(data.get(position).getUserName());
 
 
-        if(FirebaseAuth.getInstance().getUid().equals("k8JUjAI0RvQ0BDY6FUbDtgP55542")){
+        if(data.get(position).getUserName().equals("관리자")){
             userName.setText("관리자");
             userName.setTextColor(context.getResources().getColor(R.color.red));
         }

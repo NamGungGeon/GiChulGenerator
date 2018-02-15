@@ -1,13 +1,23 @@
 package com.example.windows7.gichulgenerator;
 
+import android.*;
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,6 +38,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
     EditText context;
 
     private Unbinder unbinder;
+    private String imagePath= null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +54,6 @@ public class ArticlePublishActivity extends AppCompatActivity{
     }
 
     private void init(){
-
     }
 
     private void openWarningMessage(){
@@ -60,13 +70,35 @@ public class ArticlePublishActivity extends AppCompatActivity{
         if(title.getText().equals("") || context.getText().toString().equals("")){
             Toast.makeText(this, "제목과 본문을 입력하세요.", Toast.LENGTH_SHORT).show();
         }else{
-            DatabaseReference ref= FirebaseConnection.getInstance().getReference("freeboard").push();
-            Article article= new Article(title.getText().toString(), context.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()
-                    , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>());
-            ref.setValue(article);
-            finish();
-        }
+            final ProgressDialog dialog = ProgressDialog.show(this, "","글을 업로드하는 중입니다...", true);
+            dialog.show();
 
+            final DatabaseReference ref= FirebaseConnection.getInstance().getReference("freeboard").push();
+            if(imagePath!= null){
+                Toast.makeText(this, imagePath, Toast.LENGTH_SHORT).show();
+                FirebaseConnection.getInstance().uploadImage(ref.getKey(), new File(imagePath), new FirebaseConnection.Callback() {
+                    @Override
+                    public void success(DataSnapshot snapshot) {
+                        Article article= new Article(title.getText().toString(), context.getText().toString(), Status.nickName
+                                , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>());
+                        ref.setValue(article);
+                        dialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void fail(String errorMessage) {
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else{
+                Article article= new Article(title.getText().toString(), context.getText().toString(), Status.nickName
+                        , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>());
+                ref.setValue(article);
+                finish();
+            }
+        }
     }
 
     @OnClick(R.id.articlePublish_cancel)
@@ -82,8 +114,75 @@ public class ArticlePublishActivity extends AppCompatActivity{
         dialogMaker.show(getSupportFragmentManager(), "cancel publish");
     }
 
+    @OnClick(R.id.articlePublish_imageUpload)
+    void uploadImage(){
+        if(checkPermission()== PackageManager.PERMISSION_GRANTED){
+            Intent galleryIntent = new Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(galleryIntent ,123 );
+        }else{
+            getPermission();
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 123 :
+                if (null != data) {
+                    Cursor cursor = getContentResolver().query(data.getData(), null, null, null, null );
+                    cursor.moveToNext();
+                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
+                    cursor.close();
+
+                    imagePath= path;
+                }
+                break;
+        }
+    }
+
     @Override
     public void onBackPressed() {
         cancel();
+    }
+
+    private int checkPermission(){
+        return ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    private void getPermission(){
+        //권한이 부여되어 있는지 확인
+        int permissonCheck= checkPermission();
+
+        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this, "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
+
+            //권한설정 dialog에서 거부를 누르면
+            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
+            //단, 사용자가 "Don't ask again"을 체크한 경우
+            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)){
+                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
+                Toast.makeText(this, "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
+            }else{
+                ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE},123);
+            }
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int grantResults[]){
+        switch(requestCode){
+            case 123:
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+
+                }else{
+                    Toast.makeText(this, "이 권한이 없으면 이미지 업로드가 제한됩니다", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 }

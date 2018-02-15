@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,11 +16,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -492,7 +497,51 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
     void openFreeboard(){
-        startActivity(new Intent(getContext(), FreeboardActivity.class));
+        if(Status.canUseFreeboard== false){
+            Toast.makeText(getContext(), "관리자에 의해 본 사용자의 자유게시판 이용이 불가능합니다.", Toast.LENGTH_SHORT).show();
+        }else{
+            if(Status.nickName== null){
+                DialogMaker dialog= new DialogMaker();
+                final View childView= getLayoutInflater().inflate(R.layout.dialog_setnickname, null);
+                dialog.setValue("", "설정", "취소",
+                        new DialogMaker.Callback() {
+                            @Override
+                            public void callbackMethod() {
+                                EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
+                                if(checkNickName(inputNickname.getText().toString())){
+                                    //Success to set
+                                    startActivity(new Intent(getContext(), FreeboardActivity.class));
+                                }
+                            }
+                        }, null, childView);
+                dialog.show(getActivity().getSupportFragmentManager(), "set NickName");
+            }else{
+                startActivity(new Intent(getContext(), FreeboardActivity.class));
+            }
+        }
+    }
+
+    private boolean checkNickName(String nickName){
+        if(nickName!= null){
+            //Check Length
+            if(nickName.length()>= 2 || nickName.length()<= 12){
+                if(nickName.equals("관리자")){
+                    Toast.makeText(getContext(), "해당 닉네임은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }else{
+                    FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getUid()+ "/status/nickName/").setValue(nickName);
+                    Toast.makeText(getContext(), nickName+ "으로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            }else{
+                Toast.makeText(getContext(), "닉네임은 2자 이상, 12자 이하로 설정해야 합니다.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }else if(nickName.equals("")){
+            Toast.makeText(getContext(), "닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return false;
     }
 
     @Override

@@ -2,13 +2,16 @@ package com.example.windows7.gichulgenerator;
 
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
+import android.Manifest;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
@@ -133,9 +139,22 @@ public class MainPageLodingFragment extends Fragment {
                             @Override
                             public void success(DataSnapshot snapshot) {
                                 getActivity().getIntent().putExtra("schedule", (String)snapshot.getValue());
-                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
 
-                                dialog.dismiss();
+                                //Load UserStatus
+                                FirebaseConnection.getInstance().loadData("userdata/" + FirebaseAuth.getInstance().getUid() + "/status", new FirebaseConnection.Callback() {
+                                    @Override
+                                    public void success(DataSnapshot snapshot) {
+                                        Status.setValues((HashMap<String, String>)snapshot.getValue());
+                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+                                        dialog.dismiss();
+                                    }
+
+                                    @Override
+                                    public void fail(String errorMessage) {
+                                        Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                                        getActivity().finish();
+                                    }
+                                });
                             }
 
                             @Override
@@ -214,4 +233,7 @@ public class MainPageLodingFragment extends Fragment {
         }
         super.onDestroy();
     }
+
+
+
 }
