@@ -69,22 +69,8 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_border"
-                android:id="@+id/freeboard_prev"
-                android:text="이전"/>
-            <Button
-                android:layout_weight="1"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_border"
                 android:id="@+id/freeboard_publishArticle"
                 android:text="글쓰기"/>
-            <Button
-                android:layout_weight="1"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_border"
-                android:id="@+id/freeboard_next"
-                android:text="다음"/>
             <Button
                 android:layout_weight="1"
                 android:layout_width="1dp"

@@ -1,13 +1,18 @@
 package com.example.windows7.gichulgenerator;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.telecom.Call;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,16 +31,19 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.File;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -59,6 +67,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.scheduler) TextView schedular;
     @BindView(R.id.monthInfo) TextView monthInfo;
     @BindView(R.id.subjectInfo) TextView subjectInfo;
+    @BindView(R.id.mainmenu_univImage) ImageView univImage;
 
     // Menu List
     private boolean isOpenedMenuList= false;
@@ -98,6 +107,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     private void init(){
         setBackground();
+        setMyGoal();
         resizeMenuListElements();
 
         setTodayReport();
@@ -231,10 +241,22 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private void setBackground(){
         int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        Bitmap bitmap= null;
 
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+        String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
+        if(backgroundPath.equals("")){
+            //Not set background
+            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+        }else{
+            File backgroundFile= new File(backgroundPath);
+            if(backgroundFile== null || backgroundFile.exists()== false){
+                //No Exist File
+                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+            }else{
+                bitmap= BitmapFactory.decodeFile(backgroundPath);
+            }
+        }
         bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
-
         BitmapDrawable background= new BitmapDrawable(bitmap);
 
         mainContainer.setBackgroundDrawable(background);
@@ -273,7 +295,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.disappear_menulist));
         menuList.setVisibility(View.GONE);
         isOpenedMenuList= false;
-
     }
 
     @OnClick({R.id.historyListBtn, R.id.menuList_historyList})
@@ -494,11 +515,65 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
     }
+    @OnClick(R.id.menuList_changeBackground)
+    void changeBackground(){
+        if(checkPermission()== PackageManager.PERMISSION_GRANTED){
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(galleryIntent ,123 );
+        }else{
+            getPermission();
+        }
+    }
 
+    @OnClick(R.id.menuList_devInfo)
+    void devInfo(){
+        final DialogMaker dialog= new DialogMaker();
+        View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_devinfo, null);
+        final TextView blogLink= childView.findViewById(R.id.devInfo_blogLink);
+        blogLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = blogLink.getText().toString();
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
+        dialog.setValue(null, null, null, null, null, childView);
+        dialog.show(getActivity().getSupportFragmentManager(), "Open Developer Information");
+    }
+
+    private int checkPermission(){
+        return ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    private void getPermission(){
+        //권한이 부여되어 있는지 확인
+        int permissonCheck= checkPermission();
+
+        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getContext(), "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
+
+            //권한설정 dialog에서 거부를 누르면
+            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
+            //단, 사용자가 "Don't ask again"을 체크한 경우
+            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
+            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)){
+                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
+                Toast.makeText(getContext(), "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
+            }else{
+                Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE},123);
+            }
+        }
+    }
     @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
     void openFreeboard(){
         if(Status.canUseFreeboard== false){
-            Toast.makeText(getContext(), "관리자에 의해 본 사용자의 자유게시판 이용이 불가능합니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "관리자에 의해 자유게시판 이용이 정지되었습니다.", Toast.LENGTH_SHORT).show();
         }else{
             if(Status.nickName== null){
                 DialogMaker dialog= new DialogMaker();
@@ -519,6 +594,49 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 startActivity(new Intent(getContext(), FreeboardActivity.class));
             }
         }
+    }
+
+    @OnClick(R.id.menuList_qna)
+    void openQna(){
+        Toast.makeText(getContext(), "준비중입니다...", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.menuList_notification)
+    void setNotificationStatus(){
+        Toast.makeText(getContext(), "준비중입니다...", Toast.LENGTH_SHORT).show();
+    }
+    @OnClick(R.id.mainmenu_univImage)
+    void changeMyGoal(){
+        if(checkPermission()== PackageManager.PERMISSION_GRANTED){
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(galleryIntent ,155 );
+        }else{
+            getPermission();
+        }
+    }
+
+    void setMyGoal(){
+        int width= 128;
+        int height= 128;
+        Bitmap bitmap= null;
+
+        String imagePath= getActivity().getSharedPreferences("goal", MODE_PRIVATE).getString("path", "");
+        if(imagePath.equals("")){
+            //Not set background
+            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
+        }else{
+            File imageFile= new File(imagePath);
+            if(imageFile== null || imageFile.exists()== false){
+                //No Exist File
+                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
+            }else{
+                bitmap= BitmapFactory.decodeFile(imagePath);
+            }
+        }
+        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
+        BitmapDrawable image= new BitmapDrawable(bitmap);
+
+        univImage.setBackgroundDrawable(image);
     }
 
     private boolean checkNickName(String nickName){
@@ -562,6 +680,44 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        init();
+        switch (requestCode){
+            case 123:
+                //change background image
+                if (null != data) {
+                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
+                    cursor.moveToNext();
+                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
+                    cursor.close();
+
+                    //save
+                    SharedPreferences pref = getActivity().getSharedPreferences("background", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("path", path);
+                    editor.commit();
+
+                    setBackground();
+                }
+                break;
+            case 155:
+                //change univ image
+                if (null != data) {
+                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
+                    cursor.moveToNext();
+                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
+                    cursor.close();
+
+                    //save
+                    SharedPreferences pref = getActivity().getSharedPreferences("goal", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("path", path);
+                    editor.commit();
+
+                    setMyGoal();
+                }
+                break;
+            default:
+                init();
+                break;
+        }
     }
 }

@@ -2,16 +2,13 @@ package com.example.windows7.gichulgenerator;
 
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +30,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 
+import java.io.File;
 import java.util.HashMap;
-import android.Manifest;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
@@ -56,18 +55,36 @@ public class MainPageLodingFragment extends Fragment {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_loading, container, false);
 
 
-        int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
-        int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
-        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
-        BitmapDrawable background= new BitmapDrawable(bitmap);
-        RelativeLayout loadingContainer= rootView.findViewById(R.id.loadingContainer);
-        loadingContainer.setBackgroundDrawable(background);
-
+        RelativeLayout mainConatiner= rootView.findViewById(R.id.loadingContainer);
+        setBackground(mainConatiner);
         login_google();
 
         return rootView;
     }
+    void setBackground(RelativeLayout mainContainer){
+        int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        Bitmap bitmap= null;
+
+        String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
+        if(backgroundPath.equals("")){
+            //Not set background
+            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+        }else{
+            File backgroundFile= new File(backgroundPath);
+            if(backgroundFile== null || backgroundFile.exists()== false){
+                //No Exist File
+                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+            }else{
+                bitmap= BitmapFactory.decodeFile(backgroundPath);
+            }
+        }
+        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
+        BitmapDrawable background= new BitmapDrawable(bitmap);
+
+        mainContainer.setBackgroundDrawable(background);
+    }
+
 
 
     public void login_google(){

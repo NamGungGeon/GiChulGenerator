@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,8 @@ public class ArticleActivity extends AppCompatActivity {
     RelativeLayout loadingContainer;
     @BindView(R.id.article_comment)
     Button commentBtn;
+    @BindView(R.id.article_articleImage)
+    ImageView image;
 
     private Unbinder unbinder;
     Article article;
@@ -78,6 +81,7 @@ public class ArticleActivity extends AppCompatActivity {
                         userName.setText(article.getUserName());
                     }
                     context.setText(article.getText());
+                    FirebaseConnection.getInstance().loadImage("freeboard/"+ article.getKey(), image, getApplicationContext());
                 }
             }
 

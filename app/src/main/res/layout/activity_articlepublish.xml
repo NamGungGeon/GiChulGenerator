@@ -39,11 +39,28 @@
                 android:layout_height="300dp"
                 android:background="@drawable/button_border"
                 android:hint="본문을 입력하세요" />
-            <Button
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="이미지 업로드"
-                android:id="@+id/articlePublish_imageUpload"/>
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_weight="1"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:text="이미지 업로드"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/button_border"
+                    android:id="@+id/articlePublish_imageUpload"/>
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="150dp"
+                    android:layout_margin="10dp"
+                    android:layout_height="150dp"
+                    android:background="@drawable/button_border"
+                    android:id="@+id/articlePublish_imagePreview"/>
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

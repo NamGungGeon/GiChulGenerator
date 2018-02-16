@@ -183,8 +183,7 @@
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:layout_toRightOf="@id/myWish"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/konkuk" />
+                            android:layout_centerVertical="true"/>
                     </RelativeLayout>
                     <TextView
                         android:id="@+id/todayInfo"

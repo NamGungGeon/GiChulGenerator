@@ -14,9 +14,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,6 +83,7 @@ public class CommentActivity extends AppCompatActivity {
                                             loadingContainer.setVisibility(View.GONE);
                                             container.setVisibility(View.VISIBLE);
                                             init();
+
                                         }else{
                                             Toast.makeText(getApplicationContext(), "본인이 작성한 댓글이 아닙니다.", Toast.LENGTH_SHORT).show();
                                         }

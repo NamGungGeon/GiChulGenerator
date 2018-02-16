@@ -123,10 +123,11 @@ public class FirebaseConnection {
     public void uploadImage(String key, File localFile, final Callback callback){
         if(localFile== null || localFile.length()>= 1024*512){
             callback.fail("512KB 이하의 파일만 업로드 할 수 있습니다.");
+            return;
         }
 
         Uri file = Uri.fromFile(localFile);
-        StorageReference riversRef = storage.getReference().child("freeboard/"+key+".jpg");
+        StorageReference riversRef = storage.getReference().child("freeboard/"+key+".png");
         UploadTask uploadTask = riversRef.putFile(file);
 
         // Register observers to listen for when the download is done or if it fails
@@ -144,5 +145,10 @@ public class FirebaseConnection {
         });
     }
 
+    public void deleteImage(String path){
+        path+= ".png";
+        StorageReference ref= storage.getReference().child(path);
+        ref.delete();
+    }
 
 }

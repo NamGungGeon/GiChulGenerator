@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import com.google.firebase.database.Query;
 
 /**
  * Created by WINDOWS7 on 2018-02-11.
@@ -77,7 +77,7 @@ public class FreeboardActivity extends AppCompatActivity {
                         list.setAdapter(adapter);
                         list.deferNotifyDataSetChanged();
                         if(listNumber!= 15){
-                            list.setSelection(listNumber-15);
+                            list.setSelection(listNumber-20);
                         }
 
                         loadingContainer.setVisibility(View.GONE);
@@ -103,6 +103,7 @@ public class FreeboardActivity extends AppCompatActivity {
                                                 if(articles.get(i).getUid().equals(FirebaseAuth.getInstance().getUid())
                                                         || Status.nickName.equals("관리자")){
                                                     FirebaseConnection.getInstance().getReference("freeboard/"+ articles.get(i).getKey()+ "/").removeValue();
+                                                    FirebaseConnection.getInstance().deleteImage("freeboard/"+ articles.get(i).getKey());
                                                     Toast.makeText(FreeboardActivity.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                                                     refresh();
                                                 }else{
@@ -146,11 +147,6 @@ public class FreeboardActivity extends AppCompatActivity {
                 });
 
     }
-    @OnClick(R.id.freeboard_prev)
-    void prevList(){
-
-    }
-
     @OnClick(R.id.freeboard_search)
     void searchBtn(){
         final DialogMaker dialog= new DialogMaker();

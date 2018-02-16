@@ -1,16 +1,22 @@
 package com.example.windows7.gichulgenerator;
 
-import android.*;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -36,6 +41,10 @@ public class ArticlePublishActivity extends AppCompatActivity{
     EditText title;
     @BindView(R.id.articlePublish_context)
     EditText context;
+    @BindView(R.id.articlePublish_imageUpload)
+    Button imageUploadBtn;
+    @BindView(R.id.articlePublish_imagePreview)
+    ImageView previewImage;
 
     private Unbinder unbinder;
     private String imagePath= null;
@@ -54,6 +63,18 @@ public class ArticlePublishActivity extends AppCompatActivity{
     }
 
     private void init(){
+        resizeView(imageUploadBtn);
+        resizeView(previewImage);
+    }
+
+    private void resizeView(View view){
+        view.measure(0, 0);
+
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = view.getMeasuredWidth();
+        params.width= params.height;
+        view.setLayoutParams(params);
+        view.requestLayout();
     }
 
     private void openWarningMessage(){
@@ -75,7 +96,6 @@ public class ArticlePublishActivity extends AppCompatActivity{
 
             final DatabaseReference ref= FirebaseConnection.getInstance().getReference("freeboard").push();
             if(imagePath!= null){
-                Toast.makeText(this, imagePath, Toast.LENGTH_SHORT).show();
                 FirebaseConnection.getInstance().uploadImage(ref.getKey(), new File(imagePath), new FirebaseConnection.Callback() {
                     @Override
                     public void success(DataSnapshot snapshot) {
@@ -137,6 +157,13 @@ public class ArticlePublishActivity extends AppCompatActivity{
                     cursor.close();
 
                     imagePath= path;
+
+                    //Set Preview Image
+                    Bitmap bitmap= null;
+                    bitmap= BitmapFactory.decodeFile(imagePath);
+                    bitmap= Bitmap.createScaledBitmap(bitmap, 128, 128, true);
+                    BitmapDrawable background= new BitmapDrawable(bitmap);
+                    previewImage.setBackground(background);
                 }
                 break;
         }
@@ -169,6 +196,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
                 Toast.makeText(this, "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
             }else{
+                Toast.makeText(this, "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE},123);
             }
         }
@@ -178,7 +206,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
         switch(requestCode){
             case 123:
                 if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-
+                    Toast.makeText(this, "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(this, "이 권한이 없으면 이미지 업로드가 제한됩니다", Toast.LENGTH_SHORT).show();
                 }

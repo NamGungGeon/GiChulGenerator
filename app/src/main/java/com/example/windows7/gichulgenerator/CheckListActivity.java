@@ -6,11 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by WINDOWS7 on 2018-02-09.
@@ -18,7 +22,9 @@ import java.util.HashMap;
 
 public class CheckListActivity extends AppCompatActivity {
 
-    private ListView checkList;
+    @BindView(R.id.checkList) ListView checkList;
+    @BindView(R.id.checkList_filter) Spinner filter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,25 +35,62 @@ public class CheckListActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_checklist);
-
+        ButterKnife.bind(this);
         init();
     }
 
     private void init(){
-        setListView_checkList();
+        //setListView with filter
+        setListView(convertFilterValue());
+        filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setListView(convertFilterValue());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
-    private void setListView_checkList(){
+    private String convertFilterValue(){
+        String subjectFilter= filter.getSelectedItem().toString();
+        //Converting...
+        if(subjectFilter.equals("상관없음")){
+            subjectFilter= null;
+        }else if(subjectFilter.equals("수학(이과)")){
+            subjectFilter= "imath";
+        }else if(subjectFilter.equals("수학(문과)")){
+            subjectFilter= "mmath";
+        }else if(subjectFilter.equals("국어")){
+            subjectFilter= "korean";
+        }else if(subjectFilter.equals("영어")){
+            subjectFilter= "english";
+        }else if(subjectFilter.equals("사회탐구")){
+            subjectFilter= "social";
+        }else if(subjectFilter.equals("과학탐구")){
+            subjectFilter= "science";
+        }
+        return subjectFilter;
+    }
+
+    private void setListView(String subjectFilter){
         // checkList - ListView setting
-        checkList= findViewById(R.id.checkList);
         final ArrayList<Exam> checkListData= new ArrayList<>();
 
         //Load data...
         HashMap<String, Exam> loadedData= CheckList.getInstance().getCheckList();
-        int index=0;
         for(String key: loadedData.keySet()){
-            checkListData.add(index, loadedData.get(key));
-            index++;
+            if(subjectFilter== null){
+                //상관없음
+                checkListData.add(loadedData.get(key));
+            }else{
+                if (subjectFilter.equals(loadedData.get(key).getSubject())){
+                    checkListData.add(loadedData.get(key));
+                }
+            }
         }
         Collections.sort(checkListData, new Comparator<Exam>() {
             @Override

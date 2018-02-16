@@ -1,6 +1,8 @@
 package com.example.windows7.gichulgenerator;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -93,6 +95,11 @@ public class DialogMaker extends DialogFragment{
                 });
             }
         });
+        return dialog;
+    }
+
+    public ProgressDialog showProgressDialog(Activity activity, String title, String message){
+        ProgressDialog dialog = ProgressDialog.show(activity, title,message, true);
         return dialog;
     }
 }
