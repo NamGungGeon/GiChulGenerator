@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
 import butterknife.BindView;
@@ -39,6 +40,7 @@ public class ArticleActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
     Article article;
+    private String articleType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +51,13 @@ public class ArticleActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_article);
         unbinder= ButterKnife.bind(this);
+        articleType= getIntent().getStringExtra("articleType");
         init();
     }
 
     private void init(){
         String key= getIntent().getStringExtra("articleKey");
-        FirebaseConnection.getInstance().loadData("freeboard/" + key + "/", new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadData(articleType+ "/" + key + "/", new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 loadingContainer.setVisibility(View.GONE);
@@ -81,7 +84,7 @@ public class ArticleActivity extends AppCompatActivity {
                         userName.setText(article.getUserName());
                     }
                     context.setText(article.getText());
-                    FirebaseConnection.getInstance().loadImage("freeboard/"+ article.getKey(), image, getApplicationContext());
+                    FirebaseConnection.getInstance().loadImage(articleType+ "/"+ article.getKey(), image, getApplicationContext());
                 }
             }
 
@@ -97,6 +100,7 @@ public class ArticleActivity extends AppCompatActivity {
     void openCommnetLIst(){
         Intent intent= new Intent(getApplicationContext(), CommentActivity.class);
         intent.putExtra("articleKey", getIntent().getStringExtra("articleKey"));
+        intent.putExtra("articleType", articleType);
         startActivityForResult(intent, 1);
     }
 
@@ -105,5 +109,29 @@ public class ArticleActivity extends AppCompatActivity {
         loadingContainer.setVisibility(View.VISIBLE);
         container.setVisibility(View.GONE);
         init();
+    }
+
+    @OnClick(R.id.article_delete)
+    void delete(){
+        DialogMaker dialog= new DialogMaker();;
+        dialog.setValue("게시글을 삭제하시겠습니까?\n(본인만 삭제가 가능합니다)", "예", "아니오",
+                new DialogMaker.Callback() {
+                    @Override
+                    public void callbackMethod() {
+                        if(article.getUid().equals(FirebaseAuth.getInstance().getUid())){
+                            FirebaseConnection.getInstance().getReference(articleType+ "/"+ article.getKey()).removeValue();
+                            Toast.makeText(ArticleActivity.this, "삭제되었습니다", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }else{
+                            Toast.makeText(ArticleActivity.this, "본인이 작성한 글만 삭제할 수 있습니다", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, null);
+        dialog.show(getSupportFragmentManager(), "");
+    }
+
+    @OnClick(R.id.article_correct)
+    void correct(){
+
     }
 }

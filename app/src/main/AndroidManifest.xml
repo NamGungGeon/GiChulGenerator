@@ -25,6 +25,7 @@
         <activity android:name=".ArticleActivity"></activity>
         <activity android:name=".ArticlePublishActivity"></activity>
         <activity android:name=".CommentActivity"></activity>
+        <activity android:name=".QnaBoardActivity"></activity>
         <service
             android:name=".FirebaseMessageService" android:enabled="true">
             <intent-filter>

@@ -84,6 +84,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.menuList_checkList) Button menu_checkListBtn;
     @BindView(R.id.menuList_calendar) Button menu_calendar;
     @BindView(R.id.menuList_historyList) Button menu_historyList;
+    @BindView(R.id.menuList_checkAppVersion) Button menu_checkAppVersion;
 
     // Bottom Menu
     @BindView(R.id.menuListBtn) ImageView menuListBtn;
@@ -93,6 +94,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
+    private String appVersion= "0.9";
 
     @Nullable
     @Override
@@ -100,7 +102,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
         unbinder= ButterKnife.bind(this, rootView);
         init();
-
 
         return rootView;
     }
@@ -118,19 +119,26 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
         //Set Schedule
         String between= "";
+        String year= "";
         SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
         try {
             String sunung= getActivity().getIntent().getStringExtra("schedule");
             Date sunungDate= format.parse(sunung);
+
             long currentDate= Calendar.getInstance().getTime().getTime();
             long differentMills= sunungDate.getTime()- currentDate;
             long differentDays= differentMills/(1000*60*60*24);
-
             between= String.valueOf(differentDays);
+
+            Calendar sunungCalendar= Calendar.getInstance();
+            sunungCalendar.setTimeInMillis(sunungDate.getTime());
+            year+= sunungCalendar.get(Calendar.YEAR)+ 1;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        schedular.setText("2019학년도 수능까지 \n\n"+ between+"일 남았습니다");
+
+
+        schedular.setText(year+ "학년도 수능까지 \n\n"+ between+"일 남았습니다");
 
         // Prevent to call closeMenuList() from listener of mainContainer
         mainContainer.setOnClickListener(new View.OnClickListener() {
@@ -275,6 +283,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         resizeMenuListElement(menu_checkListBtn);
         resizeMenuListElement(menu_calendar);
         resizeMenuListElement(menu_historyList);
+        resizeMenuListElement(menu_checkAppVersion);
     }
 
     private void resizeMenuListElement(View view){
@@ -554,7 +563,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         if(permissonCheck == PackageManager.PERMISSION_GRANTED){
             Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
         }else{
-            Toast.makeText(getContext(), "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
 
             //권한설정 dialog에서 거부를 누르면
             //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
@@ -562,7 +571,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
             if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)){
                 //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(getContext(), "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
             }else{
                 Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
@@ -572,6 +581,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
     @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
     void openFreeboard(){
+        if(AppData.freeboardStatus== null || AppData.freeboardStatus.equals("close")){
+            Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if(Status.canUseFreeboard== false){
             Toast.makeText(getContext(), "관리자에 의해 자유게시판 이용이 정지되었습니다.", Toast.LENGTH_SHORT).show();
         }else{
@@ -596,15 +610,59 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         }
     }
 
-    @OnClick(R.id.menuList_qna)
+    @OnClick({R.id.menuList_qna, R.id.qna})
     void openQna(){
-        Toast.makeText(getContext(), "준비중입니다...", Toast.LENGTH_SHORT).show();
+        if(AppData.qnaStatus== null || AppData.qnaStatus.equals("close")){
+            Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        if(Status.canUseQna== false){
+            Toast.makeText(getContext(), "관리자에 의해 질문과 답변 게시판 이용이 정지되었습니다.", Toast.LENGTH_SHORT).show();
+        }else{
+            if(Status.nickName== null){
+                DialogMaker dialog= new DialogMaker();
+                final View childView= getLayoutInflater().inflate(R.layout.dialog_setnickname, null);
+                dialog.setValue("", "설정", "취소",
+                        new DialogMaker.Callback() {
+                            @Override
+                            public void callbackMethod() {
+                                EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
+                                if(checkNickName(inputNickname.getText().toString())){
+                                    //Success to set
+                                    startActivity(new Intent(getContext(), QnaBoardActivity.class));
+                                }
+                            }
+                        }, null, childView);
+                dialog.show(getActivity().getSupportFragmentManager(), "set NickName");
+            }else{
+                startActivity(new Intent(getContext(), QnaBoardActivity.class));
+            }
+        }
     }
 
     @OnClick(R.id.menuList_notification)
     void setNotificationStatus(){
         Toast.makeText(getContext(), "준비중입니다...", Toast.LENGTH_SHORT).show();
     }
+
+    @OnClick(R.id.menuList_checkAppVersion)
+    void checkAppVersion(){
+        final DialogMaker dialog= new DialogMaker();
+        String message;
+        if(appVersion.equals(AppData.currentVersion)){
+            message= "앱이 최신 버전입니다.";
+        }else{
+            message= "앱이 최신 버전이 아닙니다.\n업데이트가 필요합니다.\n\n";
+            message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
+            message+= "최신 앱 버전: "+ AppData.currentVersion+ "\n";
+        }
+        dialog.setValue(message, null, null, null, null);
+        dialog.show(getActivity().getSupportFragmentManager(), "Check App Version");
+    }
+
+
     @OnClick(R.id.mainmenu_univImage)
     void changeMyGoal(){
         if(checkPermission()== PackageManager.PERMISSION_GRANTED){

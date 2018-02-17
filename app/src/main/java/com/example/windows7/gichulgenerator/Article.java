@@ -62,6 +62,4 @@ public class Article{
     public long getTimeStamp() {
         return timeStamp;
     }
-
-
 }

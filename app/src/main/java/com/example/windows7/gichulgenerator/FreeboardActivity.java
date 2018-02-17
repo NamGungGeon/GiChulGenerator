@@ -89,6 +89,7 @@ public class FreeboardActivity extends AppCompatActivity {
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                 Intent intent= new Intent(getApplicationContext(), ArticleActivity.class);
                                 intent.putExtra("articleKey", articles.get(i).getKey());
+                                intent.putExtra("articleType", "freeboard");
                                 startActivityForResult(intent, ARTICLE_ACTIVITY);
                             }
                         });
@@ -186,7 +187,9 @@ public class FreeboardActivity extends AppCompatActivity {
 
     @OnClick(R.id.freeboard_publishArticle)
     void publishArticle(){
-        startActivityForResult(new Intent(getApplicationContext(), ArticlePublishActivity.class), PUBLISH_ACTIVITY);
+        Intent intent= new Intent(getApplicationContext(), ArticlePublishActivity.class);
+        intent.putExtra("articleType", "freeboard");
+        startActivityForResult(intent, PUBLISH_ACTIVITY);
     }
 
     @Override

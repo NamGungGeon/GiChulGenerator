@@ -103,6 +103,18 @@
                         <Button
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:id="@+id/qna"
+                            android:background="@drawable/qna_icon"/>
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#99000000"
+                        android:visibility="gone"
+                        android:layout_margin="10dp">
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:id="@+id/calender"
                             android:background="@drawable/calendar_icon"/>
                     </FrameLayout>
@@ -344,18 +356,18 @@
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:id="@+id/menuList_notification"
-                            android:background="@drawable/notification_icon"/>
-                        <Button
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:id="@+id/menuList_calendar"
-                            android:background="@drawable/calendar_icon"/>
-                        <Button
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
                             android:id="@+id/menuList_changeBackground"
                             android:background="@drawable/background_icon"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/donation_icon"
+                            android:id="@+id/menuList_donation"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/delete_icon"
+                            android:id="@+id/menuList_allHistoryDelete"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -370,14 +382,21 @@
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:background="@drawable/donation_icon"
-                            android:id="@+id/menuList_donation"/>
-                        <Button
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:background="@drawable/delete_icon"
-                            android:id="@+id/menuList_allHistoryDelete"/>
+                            android:id="@+id/menuList_checkAppVersion"
+                            android:background="@drawable/check_icon"/>
                     </LinearLayout>
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/menuList_calendar"
+                        android:visibility="gone"
+                        android:background="@drawable/calendar_icon"/>
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:visibility="gone"
+                        android:id="@+id/menuList_notification"
+                        android:background="@drawable/notification_icon"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

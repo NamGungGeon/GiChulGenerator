@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content">
                 <Button
                     android:layout_weight="1"
-                    android:layout_width="150dp"
+                    android:layout_width="1dp"
                     android:layout_height="150dp"
                     android:text="이미지 업로드"
                     android:layout_margin="10dp"
@@ -55,7 +55,7 @@
                     android:id="@+id/articlePublish_imageUpload"/>
                 <ImageView
                     android:layout_weight="1"
-                    android:layout_width="150dp"
+                    android:layout_width="1dp"
                     android:layout_margin="10dp"
                     android:layout_height="150dp"
                     android:background="@drawable/button_border"
@@ -66,6 +66,7 @@
                 android:layout_height="60dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:layout_marginBottom="30dp"
                 android:orientation="horizontal">
                 <Button
                     android:layout_margin="10dp"
@@ -73,6 +74,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/articlePublish_publish"
+                    android:textSize="18dp"
                     android:text="등록"
                     android:background="@drawable/button_border"/>
                 <Button
@@ -80,6 +82,7 @@
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:textSize="18dp"
                     android:id="@+id/articlePublish_cancel"
                     android:text="취소"
                     android:background="@drawable/button_border"/>

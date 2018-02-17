@@ -89,15 +89,36 @@
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:id="@+id/article_menuBar"
+            android:background="#313131"
             android:orientation="horizontal">
             <Button
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:textSize="20dp"
-                android:background="@drawable/button_border"
+                android:textColor="#FFFFFF"
                 android:id="@+id/article_comment"
+                android:background="#313131"
                 android:text="댓글"/>
+            <Button
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="20dp"
+                android:textColor="#FFFFFF"
+                android:background="#313131"
+                android:id="@+id/article_delete"
+                android:text="삭제"/>
+            <Button
+                android:visibility="gone"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="20dp"
+                android:background="#313131"
+                android:textColor="#FFFFFF"
+                android:id="@+id/article_correct"
+                android:text="수정"/>
         </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

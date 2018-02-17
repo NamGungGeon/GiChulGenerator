@@ -156,14 +156,27 @@ public class MainPageLodingFragment extends Fragment {
                             @Override
                             public void success(DataSnapshot snapshot) {
                                 getActivity().getIntent().putExtra("schedule", (String)snapshot.getValue());
-
                                 //Load UserStatus
                                 FirebaseConnection.getInstance().loadData("userdata/" + FirebaseAuth.getInstance().getUid() + "/status", new FirebaseConnection.Callback() {
                                     @Override
                                     public void success(DataSnapshot snapshot) {
                                         Status.setValues((HashMap<String, String>)snapshot.getValue());
-                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
-                                        dialog.dismiss();
+                                        //Load AppData
+                                        FirebaseConnection.getInstance().loadData("appdata/", new FirebaseConnection.Callback() {
+                                            @Override
+                                            public void success(DataSnapshot snapshot) {
+                                                AppData.setValue((HashMap<String, String>)snapshot.getValue());
+
+                                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+                                                dialog.dismiss();
+                                            }
+
+                                            @Override
+                                            public void fail(String errorMessage) {
+                                                Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                                                getActivity().finish();
+                                            }
+                                        });
                                     }
 
                                     @Override

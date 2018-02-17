@@ -64,6 +64,6 @@
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textSize="14dp"
-        android:text="불편, 요구사항등의 문의할 내용은 블로그나 이메일을 이용해주세요."/>
+        android:text="불편, 요구, 문의사항 등은 블로그나 이메일을 이용해주세요."/>
 
 </LinearLayout>

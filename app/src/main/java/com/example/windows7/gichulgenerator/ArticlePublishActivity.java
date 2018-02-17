@@ -48,6 +48,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
 
     private Unbinder unbinder;
     private String imagePath= null;
+    private String articleType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,31 +58,23 @@ public class ArticlePublishActivity extends AppCompatActivity{
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_articlepublish);
+
         unbinder= ButterKnife.bind(this);
-        init();
+        articleType= getIntent().getStringExtra("articleType");
         openWarningMessage();
+
+        init();
     }
 
     private void init(){
-        resizeView(imageUploadBtn);
-        resizeView(previewImage);
-    }
-
-    private void resizeView(View view){
-        view.measure(0, 0);
-
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.height = view.getMeasuredWidth();
-        params.width= params.height;
-        view.setLayoutParams(params);
-        view.requestLayout();
     }
 
     private void openWarningMessage(){
         final DialogMaker dialog= new DialogMaker();
         String message= "게시판에 욕설, 음란한 내용이나 링크, 사진을 공유할 시 사용자의 서비스 이용이 중지됩니다.\n" +
                 "또한, 정보통신망법에 의거 처벌 받을 수 있으니 유의해 주시기 바랍니다.\n\n" +
-                "그 외에도 도배와 같은 다른 사용자에게 불편을 줄 수 있는 행위를 하는 사용자는 관리자의 판단 하에 삭제되거나 이용이 정지될 수 있습니다.";
+                "그 외에도 도배와 같은 다른 사용자에게 불편을 줄 수 있는 행위를 하는 사용자는 관리자의 판단 하에 삭제되거나 이용이 정지될 수 있습니다.\n\n"+
+                "서로 배려하며 다른 이용자의 불편을 야기할 수 있는 행동은 자제해주세요.";
         dialog.setValue(message, "알겠습니다", "", null, null);
         dialog.show(getSupportFragmentManager(), "Waring Message");
     }
@@ -94,9 +87,9 @@ public class ArticlePublishActivity extends AppCompatActivity{
             final ProgressDialog dialog = ProgressDialog.show(this, "","글을 업로드하는 중입니다...", true);
             dialog.show();
 
-            final DatabaseReference ref= FirebaseConnection.getInstance().getReference("freeboard").push();
+            final DatabaseReference ref= FirebaseConnection.getInstance().getReference(articleType+"/").push();
             if(imagePath!= null){
-                FirebaseConnection.getInstance().uploadImage(ref.getKey(), new File(imagePath), new FirebaseConnection.Callback() {
+                FirebaseConnection.getInstance().uploadImage(articleType+"/"+ ref.getKey(), new File(imagePath), new FirebaseConnection.Callback() {
                     @Override
                     public void success(DataSnapshot snapshot) {
                         Article article= new Article(title.getText().toString(), context.getText().toString(), Status.nickName
@@ -145,6 +138,23 @@ public class ArticlePublishActivity extends AppCompatActivity{
             getPermission();
         }
     }
+    @OnClick(R.id.articlePublish_imagePreview)
+    void deleteImage(){
+        if(imagePath!= null){
+            final DialogMaker dialog= new DialogMaker();
+            dialog.setValue("이미지 업로드를 취소하시겠습니까?", "예", "아니오",
+                    new DialogMaker.Callback() {
+                        @Override
+                        public void callbackMethod() {
+                            imagePath= null;
+                            previewImage.setBackground(getResources().getDrawable(R.drawable.button_border, null));
+                            dialog.dismiss();
+                        }
+                    }, null);
+            dialog.show(getSupportFragmentManager(), "");
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

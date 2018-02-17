@@ -36,6 +36,7 @@ public class CommentActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
     private ArrayList<Comment> loadedComments;
+    private String articleType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +55,10 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void setCommentList(){
+        articleType= getIntent().getStringExtra("articleType");
         String key= getIntent().getStringExtra("articleKey");
 
-        FirebaseConnection.getInstance().loadDataWithQuery(FirebaseConnection.getInstance().getReference("freeboard/" + key + "/comments/").orderByKey(), new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadDataWithQuery(FirebaseConnection.getInstance().getReference(articleType+ "/" + key + "/comments/").orderByKey(), new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 loadedComments= new ArrayList<>();
@@ -77,7 +79,7 @@ public class CommentActivity extends AppCompatActivity {
                                     public void callbackMethod() {
                                         if(loadedComments.get(i).getUid().equals(FirebaseAuth.getInstance().getUid())
                                                 || Status.nickName.equals("관리자")){
-                                            FirebaseConnection.getInstance().getReference("freeboard/"+ getIntent().getStringExtra("articleKey")+ "/comments/"+ loadedComments.get(i).getKey()+ "/").removeValue();
+                                            FirebaseConnection.getInstance().getReference(articleType+ "/"+ getIntent().getStringExtra("articleKey")+ "/comments/"+ loadedComments.get(i).getKey()+ "/").removeValue();
                                             Toast.makeText(getApplicationContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
 
                                             loadingContainer.setVisibility(View.GONE);
@@ -122,7 +124,7 @@ public class CommentActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "");
 
             //Check whether article is removed
-            FirebaseConnection.getInstance().loadData("freeboard/" + getIntent().getStringExtra("articleKey") + "/", new FirebaseConnection.Callback() {
+            FirebaseConnection.getInstance().loadData(articleType+ "/" + getIntent().getStringExtra("articleKey") + "/", new FirebaseConnection.Callback() {
                 @Override
                 public void success(DataSnapshot snapshot) {
                     dialog.dismiss();
@@ -132,7 +134,7 @@ public class CommentActivity extends AppCompatActivity {
                         finish();
                     }else{
                         //Case: Article is not removed
-                        DatabaseReference ref= FirebaseConnection.getInstance().getReference("freeboard/"+ getIntent().getStringExtra("articleKey")+ "/comments/").push();
+                        DatabaseReference ref= FirebaseConnection.getInstance().getReference(articleType+ "/"+ getIntent().getStringExtra("articleKey")+ "/comments/").push();
 
                         String uid= FirebaseAuth.getInstance().getUid();
 
