@@ -1,12 +1,19 @@
 package com.example.windows7.gichulgenerator;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -103,10 +110,17 @@ public class FirebaseConnection {
         });
     }
 
-    public void loadImage(String fileName, ImageView imageView, Context context){
+    public void loadImage(String fileName, final ImageView imageView, Context context){
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
-        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).into(imageView);
+        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
+                imageView.setImageBitmap(resource);
+                attacher.update();
+            }
+        });
     }
 
 

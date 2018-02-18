@@ -66,6 +66,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
+                    android:scaleType="matrix"
+                    android:adjustViewBounds="true"
                     android:id="@+id/searchResult_question"/>
                 <RadioGroup
                     android:id="@+id/searchResult_answer_radio"

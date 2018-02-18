@@ -129,7 +129,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
 
     @OnClick(R.id.articlePublish_imageUpload)
     void uploadImage(){
-        if(checkPermission()== PackageManager.PERMISSION_GRANTED){
+        if(checkPermission()==1 || checkPermission()== PackageManager.PERMISSION_GRANTED){
             Intent galleryIntent = new Intent(
                     Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -185,6 +185,11 @@ public class ArticlePublishActivity extends AppCompatActivity{
     }
 
     private int checkPermission(){
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            //not need permission
+            return 1;
+        }
+
         return ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 

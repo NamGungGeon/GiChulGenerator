@@ -67,9 +67,11 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
                 if(inputAnswer.equals(rightAnswer)){
                     //정답
                     solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ inputAnswer+" 입니다.");
+                    solutionTitle.setTextColor(getResources().getColor(R.color.green));
                 }else{
                     //오답
                     solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ inputAnswer+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
+                    solutionTitle.setTextColor(getResources().getColor(R.color.red));
                 }
 
                 loadingContainer.setVisibility(View.INVISIBLE);

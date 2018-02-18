@@ -89,9 +89,11 @@ public class SearchResultSolutionFragment extends Fragment {
         if(inputAnswer.equals(rightAnswer)){
             //정답
             answerChecker.setText("정답입니다! \n입력하신 답안은 "+ inputAnswer+" 입니다.");
+            answerChecker.setTextColor(getResources().getColor(R.color.green));
         }else{
             //오답
             answerChecker.setText("오답입니다! \n입력하신 답안은 "+ inputAnswer+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
+            answerChecker.setTextColor(getResources().getColor(R.color.red));
         }
     }
 

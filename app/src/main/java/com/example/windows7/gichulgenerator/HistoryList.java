@@ -105,9 +105,18 @@ public class HistoryList {
         if(todayNumber== 0){
             return 0;
         }else{
+            Calendar today= Calendar.getInstance();
+            today.setTimeInMillis(System.currentTimeMillis());
+
+            Calendar todayChecker;
             int right= 0;
+
             for(String key: historyList.keySet()){
-                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                todayChecker= Calendar.getInstance();
+                todayChecker.setTimeInMillis(Long.valueOf(key));
+                if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
+                        && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
+                        && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
                     right++;
                 }
             }

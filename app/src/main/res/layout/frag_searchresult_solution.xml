@@ -62,11 +62,15 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:scaleType="matrix"
+                    android:adjustViewBounds="true"
                     android:id="@+id/searchResult_solution_solution"/>
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    android:scaleType="matrix"
+                    android:adjustViewBounds="true"
                     android:id="@+id/rsearchResult_solution_question"/>
             </LinearLayout>
         </ScrollView>

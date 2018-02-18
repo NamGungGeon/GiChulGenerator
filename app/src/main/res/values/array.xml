@@ -2,10 +2,10 @@
 <resources>
     <string-array name="instituteArray">
         <item>
-            수능
+            상관없음
         </item>
         <item>
-            상관없음
+            수능
         </item>
         <item>
             교육청
@@ -16,13 +16,13 @@
     </string-array>
     <string-array name="subjectArray">
         <item>
-            수학(이과)
-        </item>
-        <item>
             상관없음
         </item>
         <item>
             국어
+        </item>
+        <item>
+            수학(이과)
         </item>
         <item>
             수학(문과)
@@ -57,9 +57,6 @@
     </string-array>
     <string-array name="periodArray">
         <item>
-            2017
-        </item>
-        <item>
             상관없음
         </item>
         <item>
@@ -67,6 +64,9 @@
         </item>
         <item>
             최근 3년 내
+        </item>
+        <item>
+            2017
         </item>
         <item>
             2016

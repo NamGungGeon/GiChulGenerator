@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
@@ -94,7 +95,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "0.9";
+    private String appVersion= "1.0";
 
     @Nullable
     @Override
@@ -526,7 +527,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
     @OnClick(R.id.menuList_changeBackground)
     void changeBackground(){
-        if(checkPermission()== PackageManager.PERMISSION_GRANTED){
+        if(checkPermission()== 1 || checkPermission()== PackageManager.PERMISSION_GRANTED){
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent ,123 );
         }else{
@@ -553,10 +554,19 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private int checkPermission(){
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            //not need permission
+            return 1;
+        }
+
         return ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
     private void getPermission(){
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            //not need permission
+        }
+
         //권한이 부여되어 있는지 확인
         int permissonCheck= checkPermission();
 

@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -252,6 +254,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
     private void setQuestion(){
         examFileName= generateExamFileName();
         FirebaseConnection.getInstance().loadImage(examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"/"+examFileName, questionImage, getContext());
+        PhotoViewAttacher attacher= new PhotoViewAttacher(questionImage);
 
         // below value must be saved before converting.
         getActivity().getIntent().putExtra("potential", examPotential);
