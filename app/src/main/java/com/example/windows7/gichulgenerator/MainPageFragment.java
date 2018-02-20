@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -594,16 +595,18 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             Toast.makeText(getContext(), "관리자에 의해 자유게시판 이용이 정지되었습니다.", Toast.LENGTH_SHORT).show();
         }else{
             if(Status.nickName== null){
-                DialogMaker dialog= new DialogMaker();
+                final DialogMaker dialog= new DialogMaker();
                 final View childView= getLayoutInflater().inflate(R.layout.dialog_setnickname, null);
                 dialog.setValue("", "설정", "취소",
                         new DialogMaker.Callback() {
                             @Override
                             public void callbackMethod() {
                                 EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
-                                if(checkNickName(inputNickname.getText().toString())){
+                                if(checkNickName(inputNickname.getText().toString())== true){
                                     //Success to set
+                                    Status.nickName= inputNickname.getText().toString();
                                     startActivity(new Intent(getContext(), FreeboardActivity.class));
+                                    dialog.dismiss();
                                 }
                             }
                         }, null, childView);
@@ -635,6 +638,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                                 EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
                                 if(checkNickName(inputNickname.getText().toString())){
                                     //Success to set
+                                    Status.nickName= inputNickname.getText().toString();
                                     startActivity(new Intent(getContext(), QnaBoardActivity.class));
                                 }
                             }
@@ -704,7 +708,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private boolean checkNickName(String nickName){
         if(nickName!= null){
             //Check Length
-            if(nickName.length()>= 2 || nickName.length()<= 12){
+            if(nickName.length()>= 2 && nickName.length()<= 12){
+                if(nickName.contains(" ") || nickName.contains("\n")){
+                    Toast.makeText(getContext(), "공백과 개행은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
                 if(nickName.equals("관리자")){
                     Toast.makeText(getContext(), "해당 닉네임은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
                     return false;
@@ -717,11 +725,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 Toast.makeText(getContext(), "닉네임은 2자 이상, 12자 이하로 설정해야 합니다.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-        }else if(nickName.equals("")){
-            Toast.makeText(getContext(), "닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getContext(), "사용할 닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        return false;
     }
 
     @Override
