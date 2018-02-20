@@ -39,12 +39,12 @@ public class ListViewAdapter_CheckList extends BaseAdapter {
         }
 
         Exam item=data.get(position);
-
         TextView examTitle= convertView.findViewById(R.id.checkListItem_examTitle);
+        TextView examInfo= convertView.findViewById(R.id.checkListItem_examInfo);
+
         examTitle.setText(item.getTitle());
 
         // Decide Text Color
-        TextView examInfo= convertView.findViewById(R.id.checkListItem_examInfo);
         String info= item.getInputAnswer();
         int sec= Integer.valueOf(data.get(position).getTime());
         int min= 0;

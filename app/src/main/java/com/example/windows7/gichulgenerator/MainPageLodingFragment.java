@@ -49,6 +49,7 @@ public class MainPageLodingFragment extends Fragment {
     private FirebaseAuth firebaseAuth=null;
 
 
+    private Bitmap bitmap= null;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +65,6 @@ public class MainPageLodingFragment extends Fragment {
     void setBackground(RelativeLayout mainContainer){
         int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
-        Bitmap bitmap= null;
 
         String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
         if(backgroundPath.equals("")){
@@ -124,8 +124,8 @@ public class MainPageLodingFragment extends Fragment {
                     if(mGoogleApiClient!=null && mGoogleApiClient.isConnected()){
                         mGoogleApiClient.stopAutoManage(getActivity());
                         mGoogleApiClient.disconnect();
-                        getActivity().finish();
                     }
+                    getActivity().finish();
                 }
                 break;
 
@@ -166,7 +166,7 @@ public class MainPageLodingFragment extends Fragment {
                                             @Override
                                             public void success(DataSnapshot snapshot) {
                                                 AppData.setValue((HashMap<String, String>)snapshot.getValue());
-
+                                                bitmap.recycle();
                                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                                                 dialog.dismiss();
                                             }

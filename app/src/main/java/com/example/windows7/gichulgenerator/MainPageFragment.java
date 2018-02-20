@@ -176,16 +176,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         helpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final DialogMaker dialog= new DialogMaker();
-                DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
-                    @Override
-                    public void callbackMethod() {
-                        dialog.dismiss();
-                    }
-                };
-                View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_help, null);
-                dialog.setValue("도움말", "확인", "", pos_callback, null, childView);
-                dialog.show(getActivity().getSupportFragmentManager(), "Open Help Dialog");
+                String url = "http://satisfactoryplace.tistory.com/47";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
     }

@@ -75,7 +75,9 @@ public class QnaBoardActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot= snapshot;
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     Article article= postSnapshot.getValue(Article.class);
-                    articles.add(article);
+                    if(article!= null){
+                        articles.add(article);
+                    }
                 }
 
                 //sorting

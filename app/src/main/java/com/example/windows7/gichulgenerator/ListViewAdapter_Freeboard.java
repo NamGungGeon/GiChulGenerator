@@ -48,24 +48,40 @@ public class ListViewAdapter_Freeboard extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(layout, parent, false);
         }
+        if(data== null){
+            convertView.setVisibility(View.GONE);
+            return convertView;
+        }
 
-        int commentNumber= 0;
+        TextView title= convertView.findViewById(R.id.freeboardListItem_title);
+        TextView userName= convertView.findViewById(R.id.freeboardListItem_userName);
+
+        // Title is "title [commentNumber]"
+        int commentNumber;
         if(data.get(position).getComments()== null || data.get(position).getComments().size()== 0){
             commentNumber= 0;
         }else{
             commentNumber= data.get(position).getComments().size();
         }
 
-        TextView title= convertView.findViewById(R.id.freeboardListItem_title);
-        title.setText(data.get(position).getTitle()+ " ["+ commentNumber+ "]");
-        TextView userName= convertView.findViewById(R.id.freeboardListItem_userName);
-        userName.setText(data.get(position).getUserName());
-
-
-        if(data.get(position).getUserName().equals("관리자")){
-            userName.setText("관리자");
-            userName.setTextColor(context.getResources().getColor(R.color.red));
+        if(data.get(position).getTitle()!= null){
+            title.setText(data.get(position).getTitle()+ " ["+ commentNumber+ "]");
+        }else{
+            title.setText("???");
         }
+
+        if(data.get(position).getUserName()!= null){
+            if(data.get(position).getUserName().equals("관리자")){
+                userName.setText("관리자");
+                userName.setTextColor(context.getResources().getColor(R.color.red));
+            }else{
+                userName.setText(data.get(position).getUserName());
+            }
+        }else{
+            userName.setText("???");
+        }
+
+
 
         return convertView;
     }

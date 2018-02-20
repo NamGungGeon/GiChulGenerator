@@ -76,14 +76,30 @@ public class ArticleActivity extends AppCompatActivity {
                         }
                     });
                 }else{
-                    title.setText(article.getTitle());
-                    if(article.getUserName().equals("관리자")){
-                        userName.setText("관리자");
-                        userName.setTextColor(getResources().getColor(R.color.red));
+                    //Set Title
+                    if(article.getTitle()!= null){
+                        title.setText(article.getTitle());
                     }else{
-                        userName.setText(article.getUserName());
+                        title.setText("???");
                     }
-                    context.setText(article.getText());
+                    //Set UserName
+                    if(article.getUserName()!= null){
+                        if(article.getUserName().equals("관리자")){
+                            userName.setText("관리자");
+                            userName.setTextColor(getResources().getColor(R.color.red));
+                        }else{
+                            userName.setText(article.getUserName());
+                        }
+                    }else{
+                        userName.setText("???");
+                    }
+                    //Set Text
+                    if(article.getText()!= null){
+                        context.setText(article.getText());
+                    }else{
+                        context.setText("???");
+                    }
+
                     FirebaseConnection.getInstance().loadImage(articleType+ "/"+ article.getKey(), image, getApplicationContext());
                 }
             }

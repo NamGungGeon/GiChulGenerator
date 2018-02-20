@@ -12,8 +12,8 @@ public class Status {
     private Status(){}
 
     static String nickName;
-    static boolean canUseFreeboard;
-    static boolean canUseQna;
+    static boolean canUseFreeboard= true;
+    static boolean canUseQna= true;
 
     static void setValues(HashMap<String, String> values){
         if(values!= null){
@@ -32,6 +32,10 @@ public class Status {
             }else{
                 canUseQna= Boolean.valueOf(useQna);
             }
+        }else{
+            nickName= null;
+            canUseFreeboard= true;
+            canUseQna= true;
         }
     }
 }

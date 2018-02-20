@@ -117,7 +117,9 @@ public class HistoryList {
                 if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
                         && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
                         && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
-                    right++;
+                    if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                        right++;
+                    }
                 }
             }
             return (int)(((float)right/(float)todayNumber)*100);
