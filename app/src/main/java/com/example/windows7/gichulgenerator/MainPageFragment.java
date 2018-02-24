@@ -558,15 +558,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void getPermission(){
-        if (android.os.Build.VERSION.SDK_INT < 23) {
-            //not need permission
-        }
-
         //권한이 부여되어 있는지 확인
         int permissonCheck= checkPermission();
 
         if(permissonCheck == PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+            //Permission Granted
         }else{
             Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
 

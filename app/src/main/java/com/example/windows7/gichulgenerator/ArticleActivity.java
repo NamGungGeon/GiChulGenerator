@@ -129,7 +129,7 @@ public class ArticleActivity extends AppCompatActivity {
 
     @OnClick(R.id.article_delete)
     void delete(){
-        DialogMaker dialog= new DialogMaker();;
+        final DialogMaker dialog= new DialogMaker();;
         dialog.setValue("게시글을 삭제하시겠습니까?\n(본인만 삭제가 가능합니다)", "예", "아니오",
                 new DialogMaker.Callback() {
                     @Override
@@ -137,9 +137,11 @@ public class ArticleActivity extends AppCompatActivity {
                         if(article.getUid().equals(FirebaseAuth.getInstance().getUid())){
                             FirebaseConnection.getInstance().getReference(articleType+ "/"+ article.getKey()).removeValue();
                             Toast.makeText(ArticleActivity.this, "삭제되었습니다", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                             finish();
                         }else{
                             Toast.makeText(ArticleActivity.this, "본인이 작성한 글만 삭제할 수 있습니다", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                         }
                     }
                 }, null);

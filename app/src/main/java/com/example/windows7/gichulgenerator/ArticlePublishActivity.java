@@ -89,7 +89,12 @@ public class ArticlePublishActivity extends AppCompatActivity{
 
             final DatabaseReference ref= FirebaseConnection.getInstance().getReference(articleType+"/").push();
             if(imagePath!= null){
-                FirebaseConnection.getInstance().uploadImage(articleType+"/"+ ref.getKey(), new File(imagePath), new FirebaseConnection.Callback() {
+                File imageFile= new File(imagePath);
+                if(imageFile!= null && imageFile.exists() && imageFile.length()>= 1024*512){
+                    Toast.makeText(this, "512KB 크기 이상의 이미지는 압축되어 업로드됩니다.", Toast.LENGTH_SHORT).show();
+                }
+
+                FirebaseConnection.getInstance().uploadImage(articleType+"/"+ ref.getKey(), imageFile, new FirebaseConnection.Callback() {
                     @Override
                     public void success(DataSnapshot snapshot) {
                         Article article= new Article(title.getText().toString(), context.getText().toString(), Status.nickName
@@ -189,8 +194,12 @@ public class ArticlePublishActivity extends AppCompatActivity{
             //not need permission
             return 1;
         }
-
-        return ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+            return PackageManager.PERMISSION_GRANTED;
+        }else{
+            return PackageManager.PERMISSION_DENIED;
+        }
     }
 
     private void getPermission(){
@@ -198,30 +207,18 @@ public class ArticlePublishActivity extends AppCompatActivity{
         int permissonCheck= checkPermission();
 
         if(permissonCheck == PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(this, "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+            //Permission Granted
         }else{
-            Toast.makeText(this, "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
-
-            //권한설정 dialog에서 거부를 누르면
-            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
-            //단, 사용자가 "Don't ask again"을 체크한 경우
-            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)){
-                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(this, "파일 읽기 권한 없음", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
-            }else{
-                Toast.makeText(this, "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE},123);
-            }
+            Toast.makeText(this, "파일 권한이 있어야 이미지 업로드가 가능합니다", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
         }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int grantResults[]){
         switch(requestCode){
             case 123:
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(this, "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]== PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "파일 권한 있음", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(this, "이 권한이 없으면 이미지 업로드가 제한됩니다", Toast.LENGTH_SHORT).show();
                 }

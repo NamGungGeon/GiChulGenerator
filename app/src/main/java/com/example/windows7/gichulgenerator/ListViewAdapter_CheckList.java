@@ -53,7 +53,21 @@ public class ListViewAdapter_CheckList extends BaseAdapter {
             sec= sec%60;
         }
 
-        String result= min+"분 "+ sec+ " 초 소요. 정답률 "+ data.get(position).getPotential()+"%. ";
+        int potential= Integer.valueOf(data.get(position).getPotential());
+        String potentialText= "정답률: ";
+        if(potential>= 80){
+            potentialText+= "매우높음.";
+        }else if(potential>= 60){
+            potentialText+= "높음.";
+        }else if(potential>= 40){
+            potentialText+= "보통.";
+        }else if(potential>= 20){
+            potentialText+= "낮음.";
+        }else{
+            potentialText+= "매우낮음.";
+        }
+
+        String result= min+"분 "+ sec+ " 초 소요. "+ potentialText+" ";
         if(info.equals(item.getRightAnswer())){
             //정답
             examInfo.setTextColor(context.getResources().getColor(R.color.green));

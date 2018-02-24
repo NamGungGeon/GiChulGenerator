@@ -6,7 +6,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -73,7 +72,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        final ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_examtry, container, false);
+        ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_examtry, container, false);
 
         setSubjectIdentifier();
         setInstituteIdentifier();
@@ -84,11 +83,17 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
+                if(snapshot.getValue()== null){
+                    // No data at that path
+                    getActivity().finish();
+                    Toast.makeText(getContext(), "데이터베이스 통신 실패", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 ArrayList<Long> temp= (ArrayList<Long>)snapshot.getValue();
                 for(int i=1; i<temp.size(); i++){
                     potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
                 }
-                init(rootView);
+                init();
 
                 loadingContainer.setVisibility(View.GONE);
                 examTryContainer.setVisibility(View.VISIBLE);
@@ -96,7 +101,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
             @Override
             public void fail(String errorMessage) {
-                Toast.makeText(getActivity().getApplicationContext(), "데이터베이스 통신 실패: "+ errorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "데이터베이스 통신 실패: "+ errorMessage, Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
         });
@@ -179,11 +184,29 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
     }
 
-    private void init(final ViewGroup rootView){
+    private void init(){
         setQuestion();
-
+        if(examFileName== null){
+            //No Exist Exam as filter
+            return;
+        }
         title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
-        potential.setText("정답률 "+ examPotential + "%");
+
+        // Hide real potential
+        int _potential= Integer.valueOf(examPotential);
+        String potentialText= "정답률: ";
+        if(_potential>= 80){
+            potentialText+= "매우높음";
+        }else if(_potential>=60){
+            potentialText+= "높음";
+        }else if(_potential>= 40){
+            potentialText+= "보통";
+        }else if(_potential>= 20){
+            potentialText+= "낮음";
+        }else{
+            potentialText+= "매우낮음";
+        }
+        potential.setText(potentialText);
 
         if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
             if(Integer.valueOf(examNumber)>=22){
@@ -253,6 +276,11 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
     private void setQuestion(){
         examFileName= generateExamFileName();
+        if(examFileName== null){
+            //No Exist Exam as filter
+            return;
+        }
+
         FirebaseConnection.getInstance().loadImage(examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"/"+examFileName, questionImage, getContext());
         PhotoViewAttacher attacher= new PhotoViewAttacher(questionImage);
 
@@ -327,6 +355,13 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
                     numberList.add(number);
                 }
             }
+        }
+
+        //Case: No Exist Exam as filter
+        if(numberList.size()== 0){
+            Toast.makeText(getContext(), "해당되는 조건의 문제가 없습니다", Toast.LENGTH_LONG).show();
+            getActivity().finish();
+            return null;
         }
 
         //Decide number

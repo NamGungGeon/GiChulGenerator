@@ -29,8 +29,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ScrollView
+            android:layout_above="@+id/recheck_imageChange"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -55,35 +56,29 @@
                     android:textColor="#000000"
                     android:gravity="right"
                     android:textSize="15dp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000000"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:textSize="18dp"
-                    android:text="문제" />
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="matrix"
                     android:adjustViewBounds="true"
                     android:id="@+id/recheck_exam"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000000"
-                    android:layout_marginTop="15dp"
-                    android:textSize="18dp"
-                    android:layout_marginBottom="15dp"
-                    android:text="해설" />
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="matrix"
+                    android:visibility="gone"
                     android:adjustViewBounds="true"
                     android:id="@+id/recheck_solution"/>
             </LinearLayout>
         </ScrollView>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_border"
+            android:layout_alignParentBottom="true"
+            android:textSize="18dp"
+            android:text="해설 확인"
+            android:id="@+id/recheck_imageChange"
+            android:layout_margin="20dp"/>
     </RelativeLayout>
 </FrameLayout>

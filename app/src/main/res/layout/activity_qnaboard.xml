@@ -6,7 +6,6 @@
     <RelativeLayout
         android:id="@+id/qna_loadingContainer"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:background="#313131"
         android:layout_height="match_parent">
         <ProgressBar

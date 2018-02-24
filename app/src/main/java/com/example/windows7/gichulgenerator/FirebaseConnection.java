@@ -2,8 +2,11 @@ package com.example.windows7.gichulgenerator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +30,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.StringTokenizer;
 /**
  * Created by WINDOWS7 on 2018-01-21.
@@ -135,28 +142,75 @@ public class FirebaseConnection {
     }
 
     public void uploadImage(/*Include Key*/String path, File localFile, final Callback callback){
-        if(localFile== null || localFile.length()>= 1024*512){
-            callback.fail("512KB 이하의 파일만 업로드 할 수 있습니다.");
+        if(localFile== null || localFile.exists()== false){
+            //Case: No exist File
+            callback.fail("파일이 존재하지 않습니다");
             return;
+        }else if(localFile.length()>= 1024*512){
+            //Case: Need DownSizing
+            Bitmap bitmap= BitmapFactory.decodeFile(localFile.getAbsolutePath());
+
+            int width= bitmap.getWidth();
+            int height= bitmap.getHeight();
+            while(width>= 512 && height>= 512){
+                width/= 2;
+                height/= 2;
+            }
+            bitmap= Bitmap.createScaledBitmap(bitmap, width, height, false);
+
+            //Make Resized Image File
+            String tempFileName= String.valueOf(System.currentTimeMillis())+ ".png";
+            String tempPath= Environment.getExternalStorageDirectory().getPath();
+
+            OutputStream outputStream= null;
+            try{
+                outputStream= new FileOutputStream(tempPath+ File.separator+ tempFileName);
+            }catch (Exception e){
+                callback.fail("Cannot make Stream: "+ e.getMessage());
+                return;
+            }
+
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            final File imageFile= new File(tempPath+ File.separator+ tempFileName);
+            Uri file = Uri.fromFile(imageFile);
+            StorageReference riversRef = storage.getReference().child(path+".png");
+            UploadTask uploadTask = riversRef.putFile(file);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    callback.fail(exception.getMessage());
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    imageFile.delete();
+                    callback.success(null);
+                }
+            });
+        }else{
+            //Case: Normal Image
+            Uri file = Uri.fromFile(localFile);
+            StorageReference riversRef = storage.getReference().child(path+".png");
+            UploadTask uploadTask = riversRef.putFile(file);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    callback.fail(exception.getMessage());
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    callback.success(null);
+                }
+            });
         }
 
-        Uri file = Uri.fromFile(localFile);
-        StorageReference riversRef = storage.getReference().child(path+".png");
-        UploadTask uploadTask = riversRef.putFile(file);
-
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                callback.fail(exception.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                callback.success(null);
-            }
-        });
     }
 
     public void deleteImage(String path){

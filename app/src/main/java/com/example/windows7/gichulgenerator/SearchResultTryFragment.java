@@ -102,7 +102,22 @@ public class SearchResultTryFragment extends Fragment {
 
     private void init(){
         title.setText(titleText);
-        potential.setText("정답률 "+ examPotential+ "%");
+
+        // Hide real potential
+        int _potential= Integer.valueOf(examPotential);
+        String potentialText= "정답률: ";
+        if(_potential>= 80){
+            potentialText+= "매우높음";
+        }else if(_potential>=60){
+            potentialText+= "높음";
+        }else if(_potential>= 40){
+            potentialText+= "보통";
+        }else if(_potential>= 20){
+            potentialText+= "낮음";
+        }else{
+            potentialText+= "매우낮음";
+        }
+        potential.setText(potentialText);
 
         Intent intent= getActivity().getIntent();
         String imagePath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
