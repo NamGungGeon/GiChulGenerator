@@ -26,7 +26,7 @@ import butterknife.Unbinder;
  * Created by WINDOWS7 on 2018-01-20.
  */
 
-public class ExamSolutionFragment extends Fragment implements OnBackPressedListener{
+public class ExamSolutionFragment extends Fragment{
     //해답 파일 명명 규칙
     //타입_기간(년)_기간(월)_주최기관_과목_문제번호
     private String solutionFileName= "";
@@ -74,8 +74,6 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
                     solutionTitle.setTextColor(getResources().getColor(R.color.red));
                 }
 
-                loadingContainer.setVisibility(View.INVISIBLE);
-                solutionContainer.setVisibility(View.VISIBLE);
 
                 saveHistory();
                 init();
@@ -103,8 +101,20 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
         String basicPath= getActivity().getIntent().getStringExtra("period_y")+ "_"+ getActivity().getIntent().getStringExtra("period_m")+ "_"+
                 getActivity().getIntent().getStringExtra("institute")+ "_"+ getActivity().getIntent().getStringExtra("subject");
 
-        FirebaseConnection.getInstance().loadImage(basicPath+ "/"+ solutionFileName, solutionImage, getContext());
-        FirebaseConnection.getInstance().loadImage(basicPath+ "/"+ getActivity().getIntent().getStringExtra("examFileName"), recheckExamImage, getContext());
+        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + solutionFileName, solutionImage, getContext(), new FirebaseConnection.ImageLoadFinished() {
+            @Override
+            public void success() {
+                loadingContainer.setVisibility(View.INVISIBLE);
+                solutionContainer.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void fail() {
+                Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
+        FirebaseConnection.getInstance().loadImage("exam/"+ basicPath+ "/"+ getActivity().getIntent().getStringExtra("examFileName"), recheckExamImage, getContext());
     }
 
     private void setSolutionFileName(){
@@ -153,6 +163,7 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
                         .addToList(new Exam(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
                                 getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                 dialog.dismiss();
+                Toast.makeText(getContext(), "오답노트에 저장되었습니다", Toast.LENGTH_SHORT).show();
             }
         };
         DialogMaker.Callback nag_callback= new DialogMaker.Callback() {
@@ -181,8 +192,8 @@ public class ExamSolutionFragment extends Fragment implements OnBackPressedListe
     }
 
     @Override
-    public boolean onBackPressed() {
+    public void onDestroyView() {
         unbinder.unbind();
-        return true;
+        super.onDestroyView();
     }
 }

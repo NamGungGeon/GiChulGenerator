@@ -56,9 +56,6 @@ public class SearchResultSolutionFragment extends Fragment {
                 rightAnswer= snapshot.getValue().toString();
                 inputAnswer= intent.getStringExtra("inputAnswer");
 
-                loadingContainer.setVisibility(View.GONE);
-                solutionContainer.setVisibility(View.VISIBLE);
-
                 init();
             }
 
@@ -78,8 +75,20 @@ public class SearchResultSolutionFragment extends Fragment {
 
         String solutionPath= intent.getStringExtra("basicFileName")+"/"+ "a_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
         String questionPath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
-        FirebaseConnection.getInstance().loadImage(solutionPath, solution, getActivity().getApplicationContext());
-        FirebaseConnection.getInstance().loadImage(questionPath, question, getActivity().getApplicationContext());
+        FirebaseConnection.getInstance().loadImage("exam/" + solutionPath, solution, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+            @Override
+            public void success() {
+                loadingContainer.setVisibility(View.GONE);
+                solutionContainer.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void fail() {
+                Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
+        FirebaseConnection.getInstance().loadImage("exam/"+ questionPath, question, getActivity().getApplicationContext());
 
         checkAnswer();
         saveHistory();
@@ -135,10 +144,16 @@ public class SearchResultSolutionFragment extends Fragment {
                         .addToList(new Exam(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ getActivity().getIntent().getStringExtra("number"),
                                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                 dialog.dismiss();
+                Toast.makeText(getContext(), "오답노트에 저장되었습니다", Toast.LENGTH_SHORT).show();
             }
         }, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
     }
 
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
+    }
 
 }

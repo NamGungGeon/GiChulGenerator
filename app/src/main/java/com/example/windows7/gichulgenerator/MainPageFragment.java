@@ -198,9 +198,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         int todayMathPotential= historyList.getTodaySubjectPotential("imath")+ historyList.getTodaySubjectPotential("mmath");
         int todayMathNumber= historyList.getTodaySubjectNumber("imath")+ historyList.getTodaySubjectNumber("mmath");
         todayMessage+= "수학 "+ todayMathNumber+"문제 중 정답률 "+ todayMathPotential+ "%\n";
-        todayMessage+= "영어 "+ historyList.getTodaySubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("english")+ "%\n";
+        todayMessage+= "영어 "+ historyList.getTodaySubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("english")+ "%";
+        /*
         todayMessage+= "사회탐구 "+ historyList.getTodaySubjectNumber("social")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("social")+ "%\n";
         todayMessage+= "과학탐구 "+ historyList.getTodaySubjectNumber("science")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("science")+ "%";
+        */
 
         todayInfo.setText(todayMessage);
     }
@@ -217,9 +219,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         int todayMathPotential= historyList.getMonthSubjectPotential("imath")+ historyList.getMonthSubjectPotential("mmath");
         int todayMathNumber= historyList.getMonthSubjectNumber("imath")+ historyList.getMonthSubjectNumber("mmath");
         monthMessage+= "수학 "+ todayMathNumber+"문제 중 정답률 "+ todayMathPotential+ "%\n";
-        monthMessage+= "영어 "+ historyList.getMonthSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("english")+ "%\n";
+        monthMessage+= "영어 "+ historyList.getMonthSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("english")+ "%";
+        /*
         monthMessage+= "사회탐구 "+ historyList.getMonthSubjectNumber("social")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("social")+ "%\n";
         monthMessage+= "과학탐구 "+ historyList.getMonthSubjectNumber("science")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("science")+ "%";
+        */
 
         monthInfo.setText(monthMessage);
     }
@@ -236,9 +240,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         int totalMathPotential= historyList.getTotalSubjectPotential("imath")+ historyList.getTotalSubjectPotential("mmath");
         int totalMathNumber= historyList.getTotalSubjectNumber("imath")+ historyList.getTotalSubjectNumber("mmath");
         totalMessage+= "수학 "+ totalMathNumber+"문제 중 정답률 "+ totalMathPotential+ "%\n";
-        totalMessage+= "영어 "+ historyList.getTotalSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("english")+ "%\n";
+        totalMessage+= "영어 "+ historyList.getTotalSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("english")+ "%";
+        /*
         totalMessage+= "사회탐구 "+ historyList.getTotalSubjectNumber("social")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("social")+ "%\n";
         totalMessage+= "과학탐구 "+ historyList.getTotalSubjectNumber("science")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("science")+ "%";
+        */
 
         subjectInfo.setText(totalMessage);
     }

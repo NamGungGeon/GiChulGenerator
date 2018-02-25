@@ -79,7 +79,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
         setPeriodIdentifier();
 
         unbinder= ButterKnife.bind(this, rootView);
-
+        Toast.makeText(getContext(), "potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, Toast.LENGTH_LONG).show();
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
@@ -94,9 +94,6 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
                     potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
                 }
                 init();
-
-                loadingContainer.setVisibility(View.GONE);
-                examTryContainer.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -111,10 +108,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
     private void setSubjectIdentifier(){
         String filter_subj= getActivity().getIntent().getStringExtra("subj");
         // Decide Subject
-        if(filter_subj.equals("상관없음")){
-            String[] subjectList= getResources().getStringArray(R.array.subjectArray);
-            examSubject= subjectList[new Random().nextInt(subjectList.length)];
-        } else if (filter_subj.equals("수학(이과)")) {
+        if (filter_subj.equals("수학(이과)")) {
             examSubject= "imath";
         }else if (filter_subj.equals("수학(문과)")) {
             examSubject= "mmath";
@@ -223,8 +217,6 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
             answer_radio.setVisibility(View.VISIBLE);
             examType= choiceType;
         }
-
-        startTimer();
     }
 
     private void startTimer(){
@@ -281,7 +273,22 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
             return;
         }
 
-        FirebaseConnection.getInstance().loadImage(examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"/"+examFileName, questionImage, getContext());
+        FirebaseConnection.getInstance().loadImage("exam/" + examPeriod_y + "_" + examPeriod_m + "_" + examInstitute + "_" + examSubject + "/" + examFileName
+                , questionImage, getContext(), new FirebaseConnection.ImageLoadFinished() {
+                    @Override
+                    public void success() {
+                        loadingContainer.setVisibility(View.GONE);
+                        examTryContainer.setVisibility(View.VISIBLE);
+
+                        startTimer();
+                    }
+
+                    @Override
+                    public void fail() {
+                        Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                });
         PhotoViewAttacher attacher= new PhotoViewAttacher(questionImage);
 
         // below value must be saved before converting.
@@ -408,6 +415,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
     @OnClick(R.id.regenerateBtn)
     void regenerateExam(){
+        stopTimer();
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamTryFragment()).commit();
     }
 
@@ -422,7 +430,7 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
                     Toast.makeText(getContext(), "아직 정답을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
                 }else{
                     //submit user's answer. move solution page
-                    isRunningTimer= false;
+                    stopTimer();
                     submitSolution();
                 }
                 dialog.dismiss();
@@ -442,20 +450,22 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
         getActivity().getIntent().putExtra("min", timeSaver[1]);
 
-
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new ExamSolutionFragment()).commit();
     }
 
     @Override
     public boolean onBackPressed() {
-        isRunningTimer= false;
-        try {
-            timerThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        unbinder.unbind();
+        stopTimer();
         return true;
+    }
+
+    private void stopTimer(){
+        isRunningTimer= false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }

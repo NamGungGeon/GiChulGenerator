@@ -84,9 +84,6 @@ public class SearchResultTryFragment extends Fragment {
             @Override
             public void success(DataSnapshot snapshot) {
                 examPotential= snapshot.getValue().toString();
-
-                loadingContainer.setVisibility(View.GONE);
-                mainContainer.setVisibility(View.VISIBLE);
                 init();
             }
 
@@ -122,8 +119,20 @@ public class SearchResultTryFragment extends Fragment {
         Intent intent= getActivity().getIntent();
         String imagePath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
         Log.i("PATH: ", imagePath);
-        FirebaseConnection.getInstance().loadImage(imagePath, question, getActivity().getApplicationContext());
-        startTimer();
+        FirebaseConnection.getInstance().loadImage("exam/" + imagePath, question, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+            @Override
+            public void success() {
+                loadingContainer.setVisibility(View.GONE);
+                mainContainer.setVisibility(View.VISIBLE);
+                startTimer();
+            }
+
+            @Override
+            public void fail() {
+                Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
     }
 
     private void setExamIdentifier(){
@@ -216,6 +225,9 @@ public class SearchResultTryFragment extends Fragment {
         };
         timerThread.start();
     }
+    private void stopTimer(){
+        isRunningTimer= false;
+    }
 
     private String getUserAnswer(){
         String result= "";
@@ -257,7 +269,6 @@ public class SearchResultTryFragment extends Fragment {
             @Override
             public void callbackMethod() {
                 //submit user's answer. move solution page
-                isRunningTimer= false;
                 submitSolution();
                 dialog.dismiss();
             }
@@ -273,6 +284,8 @@ public class SearchResultTryFragment extends Fragment {
     }
 
     private void submitSolution(){
+        stopTimer();
+
         String answer= getUserAnswer();
         if(answer.charAt(answer.length()-1)== '번'){
             answer= String.valueOf(answer.charAt(0));
@@ -297,4 +310,10 @@ public class SearchResultTryFragment extends Fragment {
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.searchResultContainer, new SearchResultSolutionFragment()).commit();
     }
 
+    @Override
+    public void onDestroyView() {
+        stopTimer();
+        unbinder.unbind();
+        super.onDestroyView();
+    }
 }

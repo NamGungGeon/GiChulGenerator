@@ -98,8 +98,8 @@ public class DialogMaker extends DialogFragment{
         return dialog;
     }
 
-    public ProgressDialog showProgressDialog(Activity activity, String title, String message){
-        ProgressDialog dialog = ProgressDialog.show(activity, title,message, true);
+    public static ProgressDialog showProgressDialog(Activity activity, String title, String message){
+        ProgressDialog dialog = ProgressDialog.show(activity, title, message, true);
         return dialog;
     }
 }

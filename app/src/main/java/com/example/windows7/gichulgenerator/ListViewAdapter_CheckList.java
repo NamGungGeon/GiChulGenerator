@@ -82,6 +82,9 @@ public class ListViewAdapter_CheckList extends BaseAdapter {
 
         TextView examMemo= convertView.findViewById(R.id.checkListItem_examMemo);
         examMemo.setText(item.getMemo());
+        if(examMemo.getText().toString().length()== 0){
+            examMemo.setVisibility(View.GONE);
+        }
 
         return convertView;
     }

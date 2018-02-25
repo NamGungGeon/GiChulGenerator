@@ -3,6 +3,7 @@ package com.example.windows7.gichulgenerator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -126,6 +127,32 @@ public class FirebaseConnection {
                 PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
                 imageView.setImageBitmap(resource);
                 attacher.update();
+            }
+        });
+    }
+
+    public interface ImageLoadFinished{
+        void success();
+        void fail();
+    }
+    public void loadImage(String fileName, final ImageView imageView, Context context, final ImageLoadFinished loadFinished){
+        // Create a reference to a file from a Google Cloud Storage URI
+        StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
+        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
+                imageView.setImageBitmap(resource);
+                attacher.update();
+
+                loadFinished.success();
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                super.onLoadFailed(e, errorDrawable);
+
+                loadFinished.fail();
             }
         });
     }

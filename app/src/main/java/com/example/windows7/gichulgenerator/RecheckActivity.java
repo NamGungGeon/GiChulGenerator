@@ -1,5 +1,6 @@
 package com.example.windows7.gichulgenerator;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,6 +26,8 @@ public class RecheckActivity extends AppCompatActivity {
     private final int solution= 115223;
     private int imageStatus= exam;
 
+    private ProgressDialog progressDialog= null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,8 @@ public class RecheckActivity extends AppCompatActivity {
     }
 
     private void init(){
+        progressDialog= DialogMaker.showProgressDialog(this, "", "문제와 해답을 가져오는 중입니다...");
+
         title= findViewById(R.id.recheck_title);
         title.setText(getIntent().getStringExtra("title"));
 
@@ -91,7 +96,24 @@ public class RecheckActivity extends AppCompatActivity {
         basicPath+= token.nextToken()+"_";
         basicPath+= token.nextToken();
 
-        FirebaseConnection.getInstance().loadImage(basicPath+"/"+ "q_"+ getIntent().getStringExtra("fileName"), examImage, getApplicationContext());
-        FirebaseConnection.getInstance().loadImage(basicPath+"/"+ "a_"+ getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext());
+        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + "q_" + getIntent().getStringExtra("fileName"), examImage, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+            @Override
+            public void success() {
+                if(progressDialog!= null){
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void fail() {
+                if(progressDialog!= null){
+                    progressDialog.dismiss();
+                }
+
+                Toast.makeText(RecheckActivity.this, "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        FirebaseConnection.getInstance().loadImage("exam/"+ basicPath+"/"+ "a_"+ getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext());
     }
 }
