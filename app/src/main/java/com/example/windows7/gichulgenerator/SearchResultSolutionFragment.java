@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,8 @@ public class SearchResultSolutionFragment extends Fragment {
 
         String solutionPath= intent.getStringExtra("basicFileName")+"/"+ "a_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
         String questionPath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
+
+        Log.i("Solution Image Path", solutionPath);
         FirebaseConnection.getInstance().loadImage("exam/" + solutionPath, solution, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success() {

@@ -37,7 +37,7 @@
                 android:textSize="18dp"
                 android:paddingLeft="25dp"
                 android:id="@+id/checkList_filter"
-                android:entries="@array/subjectArray">
+                android:entries="@array/filter_subjectArray">
             </Spinner>
         </LinearLayout>
         <ScrollView

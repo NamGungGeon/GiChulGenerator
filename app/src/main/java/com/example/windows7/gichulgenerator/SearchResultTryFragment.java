@@ -158,8 +158,6 @@ public class SearchResultTryFragment extends Fragment {
         }else if(examInstitute.equals("교육과정평가원")){
             examInstitute= "pyeong";
         }
-
-
     }
 
     private void examTypeCheck(){
@@ -264,6 +262,11 @@ public class SearchResultTryFragment extends Fragment {
 
     @OnClick(R.id.searchResult_submit)
     void recheckAnswer(){
+        if(getUserAnswer()== null || getUserAnswer().equals("")){
+            Toast.makeText(getContext(), "아직 답안을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         final DialogMaker dialog= new DialogMaker();
         DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
             @Override
@@ -287,8 +290,10 @@ public class SearchResultTryFragment extends Fragment {
         stopTimer();
 
         String answer= getUserAnswer();
-        if(answer.charAt(answer.length()-1)== '번'){
-            answer= String.valueOf(answer.charAt(0));
+        if(examType== choiceType){
+            if(answer.charAt(answer.length()-1)== '번'){
+                answer= String.valueOf(answer.charAt(0));
+            }
         }
 
         getActivity().getIntent().putExtra("inputAnswer", answer);

@@ -153,10 +153,21 @@ public class HistoryList {
             return 0;
         }else{
             int right= 0;
+
+            Calendar today= Calendar.getInstance();
+            today.setTimeInMillis(System.currentTimeMillis());
+
+            Calendar todayChecker;
             for(String key: historyList.keySet()){
-                if(historyList.get(key).getSubject().equals(subject)){
-                    if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
-                        right++;
+                todayChecker= Calendar.getInstance();
+                todayChecker.setTimeInMillis(Long.valueOf(key));
+                if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
+                        && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
+                        && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)) {
+                    if(historyList.get(key).getSubject().equals(subject)){
+                        if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                            right++;
+                        }
                     }
                 }
             }
@@ -223,10 +234,20 @@ public class HistoryList {
             return 0;
         }else{
             int right= 0;
+
+            Calendar today= Calendar.getInstance();
+            today.setTimeInMillis(System.currentTimeMillis());
+
+            Calendar todayChecker;
             for(String key: historyList.keySet()){
-                if(historyList.get(key).getSubject().equals(subject)){
-                    if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
-                        right++;
+                todayChecker= Calendar.getInstance();
+                todayChecker.setTimeInMillis(Long.valueOf(key));
+                if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
+                        && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)) {
+                    if(historyList.get(key).getSubject().equals(subject)){
+                        if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                            right++;
+                        }
                     }
                 }
             }

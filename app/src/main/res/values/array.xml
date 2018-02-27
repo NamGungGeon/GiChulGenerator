@@ -16,7 +16,15 @@
     </string-array>
     <string-array name="subjectArray">
         <item>
-            국어
+            수학(이과)
+        </item>
+        <item>
+            수학(문과)
+        </item>
+    </string-array>
+    <string-array name="filter_subjectArray">
+        <item>
+            상관없음
         </item>
         <item>
             수학(이과)
@@ -24,37 +32,28 @@
         <item>
             수학(문과)
         </item>
-        <item>
-            영어
-        </item>
     </string-array>
     <string-array name="probabilityArray">
         <item>
             상관없음
         </item>
         <item>
-            80%~ 100%
+            매우높음
         </item>
         <item>
-            60%~ 80%
+            높음
         </item>
         <item>
-            40%~ 60%
+            보통
         </item>
         <item>
-            20%~ 40%
+            낮음
         </item>
         <item>
-            20% 이하
+            매우낮음
         </item>
     </string-array>
     <string-array name="periodArray">
-        <item>
-            상관없음
-        </item>
-        <item>
-            최근 6년 내
-        </item>
         <item>
             최근 3년 내
         </item>
@@ -67,15 +66,6 @@
         <item>
             2015
         </item>
-        <item>
-            2014
-        </item>
-        <item>
-            2013
-        </item>
-        <item>
-            2012
-        </item>
     </string-array>
 
     <string-array name="periodArray_y">
@@ -87,15 +77,6 @@
         </item>
         <item>
             2015
-        </item>
-        <item>
-            2014
-        </item>
-        <item>
-            2013
-        </item>
-        <item>
-            2012
         </item>
     </string-array>
     <string-array name="search_institute">
@@ -111,16 +92,10 @@
     </string-array>
     <string-array name="search_subject">
         <item>
-            국어
-        </item>
-        <item>
             수학(이과)
         </item>
         <item>
             수학(문과)
-        </item>
-        <item>
-            영어
         </item>
     </string-array>
     <string-array name="emptyArray">

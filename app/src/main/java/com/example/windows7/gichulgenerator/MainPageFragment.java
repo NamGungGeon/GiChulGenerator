@@ -194,16 +194,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         todayMessage+= "오늘 "+ todayNumber+ "문제를 풀었습니다\n";
         todayMessage+= "오늘 나의 정답률은 "+HistoryList.getInstance().getTodayPotential()+ "% 입니다\n\n";
 
-        todayMessage+= "국어 "+ historyList.getTodaySubjectNumber("korean")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("korean")+ "%\n";
-        int todayMathPotential= historyList.getTodaySubjectPotential("imath")+ historyList.getTodaySubjectPotential("mmath");
-        int todayMathNumber= historyList.getTodaySubjectNumber("imath")+ historyList.getTodaySubjectNumber("mmath");
-        todayMessage+= "수학 "+ todayMathNumber+"문제 중 정답률 "+ todayMathPotential+ "%\n";
-        todayMessage+= "영어 "+ historyList.getTodaySubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("english")+ "%";
-        /*
-        todayMessage+= "사회탐구 "+ historyList.getTodaySubjectNumber("social")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("social")+ "%\n";
-        todayMessage+= "과학탐구 "+ historyList.getTodaySubjectNumber("science")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("science")+ "%";
-        */
-
+        todayMessage+= "수학(문과) "+ historyList.getTodaySubjectNumber("mmath")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("mmath")+ "%\n";
+        todayMessage+= "수학(이과) "+ historyList.getTodaySubjectNumber("imath")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("imath")+ "%";
         todayInfo.setText(todayMessage);
     }
 
@@ -215,16 +207,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         monthMessage+= "이번 달에 "+ monthNumber+ "문제를 풀었습니다\n";
         monthMessage+= "이번 달 나의 정답률은 "+ HistoryList.getInstance().getMonthPotential()+ "% 입니다\n\n";
 
-        monthMessage+= "국어 "+ historyList.getMonthSubjectNumber("korean")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("korean")+ "%\n";
-        int todayMathPotential= historyList.getMonthSubjectPotential("imath")+ historyList.getMonthSubjectPotential("mmath");
-        int todayMathNumber= historyList.getMonthSubjectNumber("imath")+ historyList.getMonthSubjectNumber("mmath");
-        monthMessage+= "수학 "+ todayMathNumber+"문제 중 정답률 "+ todayMathPotential+ "%\n";
-        monthMessage+= "영어 "+ historyList.getMonthSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("english")+ "%";
-        /*
-        monthMessage+= "사회탐구 "+ historyList.getMonthSubjectNumber("social")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("social")+ "%\n";
-        monthMessage+= "과학탐구 "+ historyList.getMonthSubjectNumber("science")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("science")+ "%";
-        */
-
+        monthMessage+= "수학(문과) "+ historyList.getMonthSubjectNumber("mmath")+"문제 중 정답률 "+ historyList.getMonthSubjectPotential("mmath")+ "%\n";
+        monthMessage+= "수학(이과) "+ historyList.getMonthSubjectNumber("imath")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("imath")+ "%";
         monthInfo.setText(monthMessage);
     }
 
@@ -236,18 +220,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         totalMessage+= "전체 "+ totalNumber+ "문제를 풀었습니다\n";
         totalMessage+= "전체 나의 정답률은 "+ HistoryList.getInstance().getTotalPotential()+ "% 입니다\n\n";
 
-        totalMessage+= "국어 "+ historyList.getTotalSubjectNumber("korean")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("korean")+ "%\n";
-        int totalMathPotential= historyList.getTotalSubjectPotential("imath")+ historyList.getTotalSubjectPotential("mmath");
-        int totalMathNumber= historyList.getTotalSubjectNumber("imath")+ historyList.getTotalSubjectNumber("mmath");
-        totalMessage+= "수학 "+ totalMathNumber+"문제 중 정답률 "+ totalMathPotential+ "%\n";
-        totalMessage+= "영어 "+ historyList.getTotalSubjectNumber("english")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("english")+ "%";
-        /*
-        totalMessage+= "사회탐구 "+ historyList.getTotalSubjectNumber("social")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("social")+ "%\n";
-        totalMessage+= "과학탐구 "+ historyList.getTotalSubjectNumber("science")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("science")+ "%";
-        */
-
+        totalMessage+= "수학(문과) "+ historyList.getTotalSubjectNumber("mmath")+"문제 중 정답률 "+ historyList.getTotalSubjectPotential("mmath")+ "%\n";
+        totalMessage+= "수학(이과) "+ historyList.getTotalSubjectNumber("imath")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("imath")+ "%";
         subjectInfo.setText(totalMessage);
     }
+
     private void setBackground(){
         int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
@@ -326,6 +303,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             public void callbackMethod() {
                 CheckList.getInstance().deleteAllData();
                 HistoryList.getInstance().deleteAllData();
+                Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 init();
                 dialog.dismiss();
             }
@@ -659,7 +637,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @OnClick(R.id.menuList_checkAppVersion)
     void checkAppVersion(){
-        final DialogMaker dialog= new DialogMaker();
         String message;
         if(appVersion.equals(AppData.currentVersion)){
             message= "앱이 최신 버전입니다.";
@@ -668,8 +645,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
             message+= "최신 앱 버전: "+ AppData.currentVersion+ "\n";
         }
-        dialog.setValue(message, null, null, null, null);
-        dialog.show(getActivity().getSupportFragmentManager(), "Check App Version");
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -720,7 +696,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                     return false;
                 }else{
                     FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getUid()+ "/status/nickName/").setValue(nickName);
-                    Toast.makeText(getContext(), nickName+ "으로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), nickName+ "(으)로 설정되었습니다.", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             }else{

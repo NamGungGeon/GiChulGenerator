@@ -79,7 +79,6 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
         setPeriodIdentifier();
 
         unbinder= ButterKnife.bind(this, rootView);
-        Toast.makeText(getContext(), "potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, Toast.LENGTH_LONG).show();
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
@@ -332,31 +331,31 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
         //Decide potential
         if(filter_prob.equals("상관없음")){
             numberList.addAll(potentialList.keySet());
-        }else if(filter_prob.equals("80%~ 100%")){
+        }else if(filter_prob.equals("매우높음")){
             for(String number: potentialList.keySet()){
                 if(Integer.valueOf(potentialList.get(number))>=80){
                     numberList.add(number);
                 }
             }
-        }else if(filter_prob.equals("60%~ 80%")){
+        }else if(filter_prob.equals("높음")){
             for(String number: potentialList.keySet()){
                 if(Integer.valueOf(potentialList.get(number))>=60 || Integer.valueOf(potentialList.get(number))<=80){
                     numberList.add(number);
                 }
             }
-        }else if(filter_prob.equals("40%~ 60%")){
+        }else if(filter_prob.equals("보통")){
             for(String number: potentialList.keySet()){
                 if(Integer.valueOf(potentialList.get(number))>=40 || Integer.valueOf(potentialList.get(number))<=60){
                     numberList.add(number);
                 }
             }
-        }else if(filter_prob.equals("20%~ 40%")){
+        }else if(filter_prob.equals("낮음")){
             for(String number: potentialList.keySet()){
                 if(Integer.valueOf(potentialList.get(number))>=20 || Integer.valueOf(potentialList.get(number))<=40){
                     numberList.add(number);
                 }
             }
-        }else if(filter_prob.equals("20% 이하")){
+        }else if(filter_prob.equals("매우낮음")){
             for(String number: potentialList.keySet()){
                 if(Integer.valueOf(potentialList.get(number))<=20){
                     numberList.add(number);

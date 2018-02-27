@@ -31,9 +31,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.StringTokenizer;
 /**
@@ -124,8 +122,8 @@ public class FirebaseConnection {
         Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
                 imageView.setImageBitmap(resource);
+                PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
                 attacher.update();
             }
         });

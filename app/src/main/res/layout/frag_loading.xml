@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="합격 가즈아!! for 수능"
+            android:text="수 학 박 사"
             android:layout_centerHorizontal="true"
             android:textSize="20dp"
             android:textColor="#FFFFFF"

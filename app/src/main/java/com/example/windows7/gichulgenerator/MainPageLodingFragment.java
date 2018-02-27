@@ -247,6 +247,14 @@ public class MainPageLodingFragment extends Fragment {
                 });
     }
 
+    private void checkExamFiles(){
+
+    }
+
+    private void downloadExamFiles(){
+
+    }
+
     @Override
     public void onStart() {
         super.onStart();
