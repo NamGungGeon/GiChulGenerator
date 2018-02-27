@@ -193,6 +193,13 @@ public class ExamSolutionFragment extends Fragment{
 
     @Override
     public void onDestroyView() {
+        if(solutionImage.getDrawingCache()!= null){
+            solutionImage.getDrawingCache().recycle();
+        }
+        if(recheckExamImage.getDrawingCache()!= null){
+            recheckExamImage.getDrawingCache().recycle();
+        }
+
         unbinder.unbind();
         super.onDestroyView();
     }

@@ -318,6 +318,10 @@ public class SearchResultTryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         stopTimer();
+        if(question.getDrawingCache()!= null){
+            question.getDrawingCache().recycle();
+        }
+
         unbinder.unbind();
         super.onDestroyView();
     }

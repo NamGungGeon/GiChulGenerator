@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +29,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
@@ -271,6 +269,15 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         params.width= params.height;
         view.setLayoutParams(params);
         view.requestLayout();
+
+        Bitmap bitmap= view.getDrawingCache();
+        if(bitmap!= null){
+            Bitmap resizedBitmap= Bitmap.createScaledBitmap(bitmap, params.width, params.height, false);
+            BitmapDrawable bitmapDrawable= new BitmapDrawable(resizedBitmap);
+            view.setBackground(bitmapDrawable);
+
+            bitmap.recycle();
+        }
     }
 
     private void openMenuList(){

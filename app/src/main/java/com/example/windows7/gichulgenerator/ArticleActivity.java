@@ -16,7 +16,6 @@ import com.google.firebase.database.DataSnapshot;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * Created by Windows10 on 2018-02-12.
@@ -38,7 +37,6 @@ public class ArticleActivity extends AppCompatActivity {
     @BindView(R.id.article_articleImage)
     ImageView image;
 
-    private Unbinder unbinder;
     Article article;
     private String articleType;
 
@@ -50,7 +48,7 @@ public class ArticleActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_article);
-        unbinder= ButterKnife.bind(this);
+        ButterKnife.bind(this);
         articleType= getIntent().getStringExtra("articleType");
         init();
     }
@@ -150,6 +148,13 @@ public class ArticleActivity extends AppCompatActivity {
 
     @OnClick(R.id.article_correct)
     void correct(){
+    }
 
+    @Override
+    protected void onDestroy() {
+        if(image.getDrawingCache()!= null){
+            image.getDrawingCache().recycle();
+        }
+        super.onDestroy();
     }
 }

@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
@@ -464,6 +464,10 @@ public class ExamTryFragment extends Fragment implements OnBackPressedListener{
 
     @Override
     public void onDestroyView() {
+        if(questionImage.getDrawingCache()!= null){
+            questionImage.getDrawingCache().recycle();
+        }
+
         unbinder.unbind();
         super.onDestroyView();
     }

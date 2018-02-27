@@ -116,4 +116,15 @@ public class RecheckActivity extends AppCompatActivity {
         });
         FirebaseConnection.getInstance().loadImage("exam/"+ basicPath+"/"+ "a_"+ getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext());
     }
+
+    @Override
+    protected void onDestroy() {
+        if(examImage.getDrawingCache()!= null){
+            examImage.getDrawingCache().recycle();
+        }
+        if(solutionImage.getDrawingCache()!= null){
+            solutionImage.getDrawingCache().recycle();
+        }
+        super.onDestroy();
+    }
 }

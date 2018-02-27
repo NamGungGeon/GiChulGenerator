@@ -48,15 +48,16 @@ public class MainPageLodingFragment extends Fragment {
     private GoogleApiClient mGoogleApiClient=null;
     private FirebaseAuth firebaseAuth=null;
 
+    private RelativeLayout mainConatiner;
+    private Bitmap backgroundBitmap = null;
 
-    private Bitmap bitmap= null;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_loading, container, false);
 
 
-        RelativeLayout mainConatiner= rootView.findViewById(R.id.loadingContainer);
+        mainConatiner= rootView.findViewById(R.id.loadingContainer);
         setBackground(mainConatiner);
         login_google();
 
@@ -69,18 +70,18 @@ public class MainPageLodingFragment extends Fragment {
         String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
         if(backgroundPath.equals("")){
             //Not set background
-            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+            backgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
         }else{
             File backgroundFile= new File(backgroundPath);
             if(backgroundFile== null || backgroundFile.exists()== false){
                 //No Exist File
-                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+                backgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
             }else{
-                bitmap= BitmapFactory.decodeFile(backgroundPath);
+                backgroundBitmap = BitmapFactory.decodeFile(backgroundPath);
             }
         }
-        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
-        BitmapDrawable background= new BitmapDrawable(bitmap);
+        backgroundBitmap = Bitmap.createScaledBitmap(backgroundBitmap, width, height, true);
+        BitmapDrawable background= new BitmapDrawable(backgroundBitmap);
 
         mainContainer.setBackgroundDrawable(background);
     }
@@ -166,7 +167,7 @@ public class MainPageLodingFragment extends Fragment {
                                             @Override
                                             public void success(DataSnapshot snapshot) {
                                                 AppData.setValue((HashMap<String, String>)snapshot.getValue());
-                                                bitmap.recycle();
+                                                backgroundBitmap.recycle();
                                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                                                 dialog.dismiss();
                                             }
@@ -247,14 +248,6 @@ public class MainPageLodingFragment extends Fragment {
                 });
     }
 
-    private void checkExamFiles(){
-
-    }
-
-    private void downloadExamFiles(){
-
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -272,6 +265,12 @@ public class MainPageLodingFragment extends Fragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onDestroyView() {
+        if(backgroundBitmap!= null){
+            backgroundBitmap.recycle();
+        }
 
-
+        super.onDestroyView();
+    }
 }

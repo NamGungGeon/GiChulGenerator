@@ -82,7 +82,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:id="@+id/historyListBtn"
-                            android:background="@drawable/history_icon"/>
+                            android:background="@drawable/checkhistory_icon"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="90dp"
@@ -325,7 +325,7 @@
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:id="@+id/menuList_historyList"
-                            android:background="@drawable/history_icon"/>
+                            android:background="@drawable/checkhistory_icon"/>
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"

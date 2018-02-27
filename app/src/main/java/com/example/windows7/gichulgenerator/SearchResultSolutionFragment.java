@@ -155,6 +155,13 @@ public class SearchResultSolutionFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if(question.getDrawingCache()!= null){
+            question.getDrawingCache().recycle();
+        }
+        if(solution.getDrawingCache()!= null){
+            solution.getDrawingCache().recycle();
+        }
+
         unbinder.unbind();
         super.onDestroyView();
     }

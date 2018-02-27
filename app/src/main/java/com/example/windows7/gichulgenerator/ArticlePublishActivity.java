@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,13 +58,12 @@ public class ArticlePublishActivity extends AppCompatActivity{
         setContentView(R.layout.activity_articlepublish);
 
         unbinder= ButterKnife.bind(this);
-        articleType= getIntent().getStringExtra("articleType");
-        openWarningMessage();
-
         init();
     }
 
     private void init(){
+        articleType= getIntent().getStringExtra("articleType");
+        openWarningMessage();
     }
 
     private void openWarningMessage(){
@@ -101,6 +98,11 @@ public class ArticlePublishActivity extends AppCompatActivity{
                                 , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>());
                         ref.setValue(article);
                         dialog.dismiss();
+
+                        if(previewImage.getDrawingCache()!= null){
+                            previewImage.getDrawingCache().recycle();
+                        }
+
                         finish();
                     }
 
@@ -151,9 +153,14 @@ public class ArticlePublishActivity extends AppCompatActivity{
                     new DialogMaker.Callback() {
                         @Override
                         public void callbackMethod() {
+                            if(previewImage.getDrawingCache()!= null){
+                                previewImage.getDrawingCache().recycle();
+                            }
+
                             imagePath= null;
                             previewImage.setBackground(getResources().getDrawable(R.drawable.button_border, null));
                             dialog.dismiss();
+
                         }
                     }, null);
             dialog.show(getSupportFragmentManager(), "");
