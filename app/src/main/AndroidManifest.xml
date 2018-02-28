@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ExamActivity"></activity>
+        <activity android:name=".RandomQuestionActivity"></activity>
         <activity android:name=".CalendarActivity"></activity>
         <activity android:name=".HistoryListActivity"></activity>
         <activity android:name=".CheckListActivity"></activity>
@@ -29,6 +29,8 @@
         <activity android:name=".ArticlePublishActivity"></activity>
         <activity android:name=".CommentActivity"></activity>
         <activity android:name=".QnaBoardActivity"></activity>
+        <activity android:name=".ExamActivity"></activity>
+        <activity android:name=".WebViewActivity"></activity>
         <service
             android:name=".FirebaseMessageService" android:enabled="true">
             <intent-filter>

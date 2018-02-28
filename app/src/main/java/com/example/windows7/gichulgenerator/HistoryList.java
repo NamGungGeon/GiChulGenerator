@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 //Before using data, Should call loadHistoryListFromFirebase() to sync firebase database.
 public class HistoryList {
-    private HashMap<String, Exam> historyList;
+    private HashMap<String, Question> historyList;
 
     private static HistoryList inst= null;
     private HistoryList() {}
@@ -24,12 +24,12 @@ public class HistoryList {
         return inst;
     }
 
-    public HashMap<String, Exam> getHistoryList(){
+    public HashMap<String, Question> getHistoryList(){
         return historyList;
     }
 
-    public void addToList(Exam exam){
-        historyList.put(String.valueOf(System.currentTimeMillis()), exam);
+    public void addToList(Question question){
+        historyList.put(String.valueOf(System.currentTimeMillis()), question);
         saveHistoryListToServer();
     }
 
@@ -59,7 +59,7 @@ public class HistoryList {
                     //Case: Success to read
                     for(String key: temp.keySet()){
                         HashMap<String, String> value= temp.get(key);
-                        Exam info= new Exam(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
+                        Question info= new Question(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
                                 value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
                         historyList.put(key, info);
                     }

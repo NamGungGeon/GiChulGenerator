@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 
 public class CheckList {
-    private HashMap<String, Exam> checkList= new HashMap<>();
+    private HashMap<String, Question> checkList= new HashMap<>();
 
     private static CheckList inst= null;
     private CheckList() {
@@ -25,18 +25,18 @@ public class CheckList {
         return inst;
     }
 
-    public HashMap<String, Exam> getCheckList(){
+    public HashMap<String, Question> getCheckList(){
         return checkList;
     }
 
-    public void addToList(Exam exam){
-        checkList.put(String.valueOf(System.currentTimeMillis()), exam);
+    public void addToList(Question question){
+        checkList.put(String.valueOf(System.currentTimeMillis()), question);
         saveCheckListToServer();
     }
 
-    public void deleteFromList(Exam exam){
+    public void deleteFromList(Question question){
         for(String key: checkList.keySet()){
-            if(checkList.get(key).getTimeStamp()== exam.getTimeStamp()){
+            if(checkList.get(key).getTimeStamp()== question.getTimeStamp()){
                 checkList.remove(key);
                 saveCheckListToServer();
                 return;
@@ -69,7 +69,7 @@ public class CheckList {
                     //Case: Success to read
                     for(String key: temp.keySet()){
                         HashMap<String, String> value= temp.get(key);
-                        Exam info= new Exam(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
+                        Question info= new Question(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
                                 value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
                         checkList.put(key, info);
                     }

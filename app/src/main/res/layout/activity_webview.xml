@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/webview_title"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="25dp"
+        android:padding="15dp"
+        android:background="#313131"
+        android:text="문제 정보"/>
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/webview_progress"
+        android:layout_below="@id/webview_title"/>
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/webview"
+        android:layout_above="@+id/webview_close"
+        android:layout_below="@+id/webview_progress"></WebView>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/webview_close"
+        android:text="닫기"
+        android:textSize="18dp"
+        android:textColor="#FFFFFF"
+        android:background="#313131"/>
+
+</RelativeLayout>

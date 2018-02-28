@@ -128,8 +128,8 @@ public class FirebaseConnection {
     }
 
     public interface ImageLoadFinished{
-        void success();
-        void fail();
+        void success(Bitmap bitmap);
+        void fail(Exception e);
     }
     public void loadImage(String fileName, final ImageView imageView, Context context, final ImageLoadFinished loadFinished){
         // Create a reference to a file from a Google Cloud Storage URI
@@ -137,18 +137,19 @@ public class FirebaseConnection {
         Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
-                imageView.setImageBitmap(resource);
-                attacher.update();
+                if(imageView!= null){
+                    PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
+                    imageView.setImageBitmap(resource);
+                    attacher.update();
+                }
 
-                loadFinished.success();
+                loadFinished.success(resource);
             }
 
             @Override
             public void onLoadFailed(Exception e, Drawable errorDrawable) {
                 super.onLoadFailed(e, errorDrawable);
-
-                loadFinished.fail();
+                loadFinished.fail(e);
             }
         });
     }

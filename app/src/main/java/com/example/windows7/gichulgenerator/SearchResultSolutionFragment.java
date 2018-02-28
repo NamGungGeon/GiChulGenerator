@@ -1,6 +1,8 @@
 package com.example.windows7.gichulgenerator;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -80,13 +82,13 @@ public class SearchResultSolutionFragment extends Fragment {
         Log.i("Solution Image Path", solutionPath);
         FirebaseConnection.getInstance().loadImage("exam/" + solutionPath, solution, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
-            public void success() {
+            public void success(Bitmap bitmap) {
                 loadingContainer.setVisibility(View.GONE);
                 solutionContainer.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void fail() {
+            public void fail(Exception e) {
                 Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
@@ -114,7 +116,7 @@ public class SearchResultSolutionFragment extends Fragment {
         String basicFileName= getActivity().getIntent().getStringExtra("basicFileName");
 
         HistoryList.getInstance().addToList(
-                new Exam(getActivity().getIntent().getStringExtra("title"), basicFileName+ "_"+ getActivity().getIntent().getStringExtra("number"),
+                new Question(getActivity().getIntent().getStringExtra("title"), basicFileName+ "_"+ getActivity().getIntent().getStringExtra("number"),
                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
     }
 
@@ -144,7 +146,7 @@ public class SearchResultSolutionFragment extends Fragment {
                 EditText memoBox= childView.findViewById(R.id.memoBox);
                 int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
                 CheckList.getInstance()
-                        .addToList(new Exam(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ getActivity().getIntent().getStringExtra("number"),
+                        .addToList(new Question(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ getActivity().getIntent().getStringExtra("number"),
                                 getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                 dialog.dismiss();
                 Toast.makeText(getContext(), "오답노트에 저장되었습니다", Toast.LENGTH_SHORT).show();
@@ -153,17 +155,26 @@ public class SearchResultSolutionFragment extends Fragment {
         dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
     }
 
+    @OnClick(R.id.searchResult_searchSolution)
+    void searchSolution(){
+        Toast.makeText(getContext(), "메가스터디 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
+
+        Intent intent= new Intent(getContext(), WebViewActivity.class);
+        intent.putExtra("title", title.getText());
+        intent.putExtra("url", "https://m.megastudy.net/mobile/smart/entinfo/lecture/explain_search.asp#_blank");
+        startActivity(intent);
+    }
     @Override
-    public void onDestroyView() {
-        if(question.getDrawingCache()!= null){
-            question.getDrawingCache().recycle();
+    public void onDestroy() {
+        if(question.getDrawable()!= null){
+            ((BitmapDrawable)question.getDrawable()).getBitmap().recycle();
         }
-        if(solution.getDrawingCache()!= null){
-            solution.getDrawingCache().recycle();
+        if(question.getDrawable()!= null){
+            ((BitmapDrawable)question.getDrawable()).getBitmap().recycle();
         }
 
         unbinder.unbind();
-        super.onDestroyView();
+        super.onDestroy();
     }
 
 }

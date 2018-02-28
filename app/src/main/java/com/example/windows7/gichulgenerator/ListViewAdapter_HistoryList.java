@@ -15,11 +15,11 @@ import java.util.ArrayList;
 
 public class ListViewAdapter_HistoryList extends BaseAdapter{
     private LayoutInflater inflater;
-    private ArrayList<Exam> data;
+    private ArrayList<Question> data;
     private int layout;
     private Context context;
 
-    public ListViewAdapter_HistoryList(Context context, int layout, ArrayList<Exam> data){
+    public ListViewAdapter_HistoryList(Context context, int layout, ArrayList<Question> data){
         this.inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.context= context;
         this.data=data;
@@ -38,7 +38,7 @@ public class ListViewAdapter_HistoryList extends BaseAdapter{
             convertView=inflater.inflate(layout, parent,false);
         }
 
-        Exam item=data.get(position);
+        Question item=data.get(position);
 
         TextView examTitle= convertView.findViewById(R.id.historyListItem_examTitle);
         examTitle.setText(item.getTitle());

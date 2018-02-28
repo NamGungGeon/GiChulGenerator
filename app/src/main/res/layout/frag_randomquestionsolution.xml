@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/solutionLoadingContainer"
+        android:layout_width="match_parent"
+        android:background="#313131"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/solutionLoadingBar"
+            android:progressTint="@android:color/black" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text= "서버에서 문제의 답을 가져오는 중입니다..."
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="20dp"
+            android:textSize="15dp"
+            android:layout_below="@+id/solutionLoadingBar"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/solutionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/solutionMenu"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:layout_marginBottom="15dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20dp"
+                    android:background="#313131"
+                    android:padding="15dp"
+                    android:id="@+id/solution_examInfo"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:layout_marginBottom="15dp"
+                    android:textColor="#FF0000"
+                    android:padding="15dp"
+                    android:textSize="19dp"
+                    android:id="@+id/solutionTitle"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="matrix"
+                    android:adjustViewBounds="true"
+                    android:id="@+id/solutionImage"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="matrix"
+                    android:adjustViewBounds="true"
+                    android:visibility="gone"
+                    android:id="@+id/recheck_examImage"/>
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout
+            android:id="@+id/solutionMenu"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/changeImageBtn"
+                    android:background="@drawable/button_border"
+                    android:text="문제 다시 확인"/>
+                <Button
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/solutionSearch"
+                    android:text="해설강의 검색"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/button_border"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:layout_margin="15dp"
+                    android:layout_weight="1"
+                    android:id="@+id/addToCheckListBtn"
+                    android:background="@drawable/button_border"
+                    android:text= "오답노트에 추가"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:layout_weight="1"
+                    android:id="@+id/continueTryBtn"
+                    android:background="@drawable/button_border"
+                    android:text= "문제 계속 풀기"
+                    android:layout_margin="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>

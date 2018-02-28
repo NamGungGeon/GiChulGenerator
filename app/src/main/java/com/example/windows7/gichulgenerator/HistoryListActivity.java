@@ -79,8 +79,8 @@ public class HistoryListActivity extends AppCompatActivity {
 
     private void setListView(String subjectFilter) {
         //Load data...
-        final ArrayList<Exam> historyListData = new ArrayList<>();
-        HashMap<String, Exam> loadedData = HistoryList.getInstance().getHistoryList();
+        final ArrayList<Question> historyListData = new ArrayList<>();
+        HashMap<String, Question> loadedData = HistoryList.getInstance().getHistoryList();
 
         for (String key : loadedData.keySet()) {
             if (subjectFilter == null) {
@@ -92,9 +92,9 @@ public class HistoryListActivity extends AppCompatActivity {
                 }
             }
         }
-        Collections.sort(historyListData, new Comparator<Exam>() {
+        Collections.sort(historyListData, new Comparator<Question>() {
             @Override
-            public int compare(Exam e1, Exam e2) {
+            public int compare(Question e1, Question e2) {
                 return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
             }
         });

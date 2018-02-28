@@ -497,7 +497,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 String periodOption= (String)periodSpinner.getSelectedItem();
 
                 //move Activity
-                Intent intent= new Intent(getActivity(), ExamActivity.class);
+                Intent intent= new Intent(getActivity(), RandomQuestionActivity.class);
                 intent.putExtra("subj", subjectOption);
                 intent.putExtra("prob", probOption);
                 intent.putExtra("inst", instOption);
@@ -653,6 +653,127 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             message+= "최신 앱 버전: "+ AppData.currentVersion+ "\n";
         }
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.goToExam)
+    void goToExam(){
+        final DialogMaker dialog= new DialogMaker();
+        View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
+
+        final Spinner subject= childView.findViewById(R.id.searchSubject);
+        final Spinner institute= childView.findViewById(R.id.searchInstitute);
+        final Spinner period_y= childView.findViewById(R.id.searchPeriod_y);
+        final Spinner period_m= childView.findViewById(R.id.searchPeriod_m);
+        final Spinner number= childView.findViewById(R.id.searchNumber);
+        TextView numberExplain= childView.findViewById(R.id.searchNumber_text);
+
+        //Not Need Number
+        number.setVisibility(View.GONE);
+        numberExplain.setVisibility(View.GONE);
+
+        subject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ArrayAdapter<String> adapter;
+
+                if(subject.getSelectedItem().equals("수학(이과)") || institute.getSelectedItem().equals("수학(문과)")){
+                    ArrayList<String> numbers= new ArrayList<>();
+                    for(int k=0; k<30; k++){
+                        numbers.add(String.valueOf(k+1));
+                    }
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+                    number.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+        institute.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ArrayAdapter<String> adapter;
+
+                if(institute.getSelectedItem().equals("대학수학능력평가시험")){
+                    String list[]= {"11"};
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                    period_m.setAdapter(adapter);
+                }else if(institute.getSelectedItem().equals("교육청")){
+                    String list[]= {"3", "4", "7", "10"};
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                    period_m.setAdapter(adapter);
+                }else if(institute.getSelectedItem().equals("교육과정평가원")){
+                    String list[]= {"6", "9"};
+                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                    period_m.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        dialog.setValue("문제 검색", "검색", "취소",
+                new DialogMaker.Callback() {
+                    @Override
+                    public void callbackMethod() {
+                        Intent intent= new Intent(getActivity().getApplicationContext(), ExamActivity.class);
+
+                        String basicFileName= "";
+
+                        //Decide period_y
+                        String filter_period_y= period_y.getSelectedItem().toString();
+                        if(filter_period_y.equals("2017")){
+                            basicFileName+= "2017";
+                        }else if(filter_period_y.equals("2016")){
+                            basicFileName+= "2016";
+                        }else if(filter_period_y.equals("2015")){
+                            basicFileName+= "2015";
+                        }
+                        basicFileName+= "_";
+
+                        //Decide period_m
+                        String filter_period_m= period_m.getSelectedItem().toString();
+                        basicFileName+= filter_period_m;
+                        basicFileName+= "_";
+
+                        //Decide institute
+                        String filter_institute= institute.getSelectedItem().toString();
+                        if(filter_institute.equals("대학수학능력평가시험")){
+                            basicFileName+= "sunung";
+                            intent.putExtra("encodedInstitute", "sunung");
+                        }else if(filter_institute.equals("교육청")){
+                            basicFileName+= "gyoyuk";
+                            intent.putExtra("encodedInstitute", "gyoyuk");
+                        }else if(filter_institute.equals("교육과정평가원")){
+                            basicFileName+= "pyeong";
+                            intent.putExtra("encodedInstitute", "pyeong");
+                        }
+                        basicFileName+="_";
+
+                        // Decide Subject
+                        String filter_subj= subject.getSelectedItem().toString();
+                        if (filter_subj.equals("수학(이과)")) {
+                            basicFileName+= "imath";
+                            intent.putExtra("encodedSubject", "imath");
+                        }else if (filter_subj.equals("수학(문과)")) {
+                            basicFileName+= "mmath";
+                            intent.putExtra("encodedSubject", "mmath");
+                        }
+
+                        //Go to result page
+                        intent.putExtra("period_y", filter_period_y);
+                        intent.putExtra("period_m", filter_period_m);
+                        intent.putExtra("institute", filter_institute);
+                        intent.putExtra("subject", filter_subj);
+                        // basicFileName is not include "Number"
+                        intent.putExtra("basicFileName", basicFileName);
+
+                        startActivityForResult(intent, 1335);
+                        dialog.dismiss();
+                    }
+                }, null, childView);
+        dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
 

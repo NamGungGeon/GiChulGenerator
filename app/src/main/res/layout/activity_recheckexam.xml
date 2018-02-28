@@ -40,7 +40,7 @@
             android:text="다시 확인"/>
         <ScrollView
             android:layout_below="@id/recheck_title"
-            android:layout_above="@+id/recheck_imageChange"
+            android:layout_above="@+id/recheck_bottomContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
@@ -72,14 +72,30 @@
                     android:id="@+id/recheck_solution"/>
             </LinearLayout>
         </ScrollView>
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_border"
             android:layout_alignParentBottom="true"
-            android:textSize="18dp"
-            android:text="해설 확인"
-            android:id="@+id/recheck_imageChange"
-            android:layout_margin="20dp"/>
+            android:id="@+id/recheck_bottomContainer"
+            android:orientation="horizontal">
+            <Button
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_border"
+                android:textSize="18dp"
+                android:text="해설 확인"
+                android:layout_margin="20dp"
+                android:id="@+id/recheck_imageChange"/>
+            <Button
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/recheck_searchSolution"
+                android:text="해설강의 검색"
+                android:textSize="18dp"
+                android:layout_margin="20dp"
+                android:background="@drawable/button_border"/>
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

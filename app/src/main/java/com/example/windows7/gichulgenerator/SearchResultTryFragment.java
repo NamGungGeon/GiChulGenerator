@@ -1,6 +1,8 @@
 package com.example.windows7.gichulgenerator;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -121,14 +123,14 @@ public class SearchResultTryFragment extends Fragment {
         Log.i("PATH: ", imagePath);
         FirebaseConnection.getInstance().loadImage("exam/" + imagePath, question, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
-            public void success() {
+            public void success(Bitmap bitmap) {
                 loadingContainer.setVisibility(View.GONE);
                 mainContainer.setVisibility(View.VISIBLE);
                 startTimer();
             }
 
             @Override
-            public void fail() {
+            public void fail(Exception e) {
                 Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
@@ -316,13 +318,14 @@ public class SearchResultTryFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         stopTimer();
-        if(question.getDrawingCache()!= null){
-            question.getDrawingCache().recycle();
+
+        if(question.getDrawable()!= null){
+            ((BitmapDrawable)question.getDrawable()).getBitmap().recycle();
         }
 
         unbinder.unbind();
-        super.onDestroyView();
+        super.onDestroy();
     }
 }

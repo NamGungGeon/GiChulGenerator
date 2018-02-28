@@ -1,6 +1,8 @@
 package com.example.windows7.gichulgenerator;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -152,8 +154,10 @@ public class ArticleActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if(image.getDrawingCache()!= null){
-            image.getDrawingCache().recycle();
+        Bitmap imageBitmap= ((BitmapDrawable)image.getDrawable()).getBitmap();
+
+        if(imageBitmap!= null){
+            imageBitmap.recycle();
         }
         super.onDestroy();
     }

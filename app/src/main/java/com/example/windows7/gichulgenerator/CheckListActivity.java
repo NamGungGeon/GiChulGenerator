@@ -78,10 +78,10 @@ public class CheckListActivity extends AppCompatActivity {
 
     private void setListView(String subjectFilter){
         // checkList - ListView setting
-        final ArrayList<Exam> checkListData= new ArrayList<>();
+        final ArrayList<Question> checkListData= new ArrayList<>();
 
         //Load data...
-        HashMap<String, Exam> loadedData= CheckList.getInstance().getCheckList();
+        HashMap<String, Question> loadedData= CheckList.getInstance().getCheckList();
         for(String key: loadedData.keySet()){
             if(subjectFilter== null){
                 //상관없음
@@ -92,9 +92,9 @@ public class CheckListActivity extends AppCompatActivity {
                 }
             }
         }
-        Collections.sort(checkListData, new Comparator<Exam>() {
+        Collections.sort(checkListData, new Comparator<Question>() {
             @Override
-            public int compare(Exam e1, Exam e2) {
+            public int compare(Question e1, Question e2) {
                 return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
             }
         });
