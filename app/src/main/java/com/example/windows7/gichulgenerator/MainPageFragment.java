@@ -85,6 +85,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.menuList_calendar) Button menu_calendar;
     @BindView(R.id.menuList_historyList) Button menu_historyList;
     @BindView(R.id.menuList_checkAppVersion) Button menu_checkAppVersion;
+    @BindView(R.id.menuList_examResult) Button menu_examResult;
+    @BindView(R.id.menuList_goExam) Button menu_goExam;
 
     // Bottom Menu
     @BindView(R.id.menuListBtn) ImageView menuListBtn;
@@ -261,8 +263,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         resizeMenuListElement(menu_calendar);
         resizeMenuListElement(menu_historyList);
         resizeMenuListElement(menu_checkAppVersion);
+        resizeMenuListElement(menu_goExam);
+        resizeMenuListElement(menu_examResult);
     }
 
+    //Only used in resizedMenuListElements
     private void resizeMenuListElement(View view){
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.height = getActivity().getWindowManager().getDefaultDisplay().getWidth()/3;
@@ -655,7 +660,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    @OnClick(R.id.goToExam)
+    @OnClick({R.id.goToExam, R.id.menuList_goExam})
     void goToExam(){
         final DialogMaker dialog= new DialogMaker();
         View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
@@ -766,6 +771,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         intent.putExtra("period_m", filter_period_m);
                         intent.putExtra("institute", filter_institute);
                         intent.putExtra("subject", filter_subj);
+
                         // basicFileName is not include "Number"
                         intent.putExtra("basicFileName", basicFileName);
 
@@ -776,6 +782,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
+    @OnClick({R.id.examResultBtn, R.id.menuList_examResult})
+    void openExamResult(){
+        Toast.makeText(getContext(), "Dev..", Toast.LENGTH_SHORT).show();
+    }
 
     @OnClick(R.id.mainmenu_univImage)
     void changeMyGoal(){

@@ -335,8 +335,8 @@
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:id="@+id/menuList_checkList"
-                            android:background="@drawable/checklist_icon"/>
+                            android:id="@+id/menuList_goExam"
+                            android:background="@drawable/goexam_icon"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -351,6 +351,22 @@
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
+                            android:id="@+id/menuList_checkList"
+                            android:background="@drawable/checklist_icon"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/menuList_examResult"
+                            android:background="@drawable/examresult_icon"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
                             android:id="@+id/menuList_qna"
                             android:background="@drawable/qna_icon"/>
                         <Button
@@ -358,6 +374,11 @@
                             android:layout_height="50dp"
                             android:background="@drawable/freeboard_icon"
                             android:id="@+id/menuList_freeBoard"/>
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/donation_icon"
+                            android:id="@+id/menuList_donation"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -372,13 +393,13 @@
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:background="@drawable/donation_icon"
-                            android:id="@+id/menuList_donation"/>
+                            android:background="@drawable/delete_icon"
+                            android:id="@+id/menuList_allHistoryDelete"/>
                         <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:background="@drawable/delete_icon"
-                            android:id="@+id/menuList_allHistoryDelete"/>
+                            android:id="@+id/menuList_checkAppVersion"
+                            android:background="@drawable/check_icon"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -390,11 +411,6 @@
                             android:layout_height="50dp"
                             android:id="@+id/menuList_devInfo"
                             android:background="@drawable/devinfo_icon"/>
-                        <Button
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:id="@+id/menuList_checkAppVersion"
-                            android:background="@drawable/check_icon"/>
                     </LinearLayout>
                     <Button
                         android:layout_width="50dp"

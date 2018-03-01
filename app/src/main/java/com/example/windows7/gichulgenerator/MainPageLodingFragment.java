@@ -1,6 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -137,26 +138,24 @@ public class MainPageLodingFragment extends Fragment {
         Toast.makeText(getContext(), firebaseAuth.getCurrentUser().getDisplayName()+ "님 로그인되었습니다.", Toast.LENGTH_SHORT).show();
 
         //Open Loading dialog
-        final DialogMaker dialog= new DialogMaker();
-        View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_loding, null);
-        dialog.setValue(null, "", "", null, null, childView);
-        dialog.setCancelable(false);
-        dialog.show(getActivity().getSupportFragmentManager(), "Open Loading Dialog");
-
+        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "오답노트 가져오는 중...");
         //Start to connection firebase and Load data
         //Load CheckList
         CheckList.getInstance().loadCheckListFromServer(new CheckList.Callback() {
             @Override
             public void success() {
+                progressDialog.setMessage("문제 기록 가져오는 중...");
                 //Load HistoryList
                 HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
                     @Override
                     public void success() {
                         //Load Schedule
+                        progressDialog.setMessage("시험 일정 가져오는 중...");
                         FirebaseConnection.getInstance().loadData("appdata/schedule/sunung", new FirebaseConnection.Callback() {
                             @Override
                             public void success(DataSnapshot snapshot) {
                                 getActivity().getIntent().putExtra("schedule", (String)snapshot.getValue());
+                                progressDialog.setMessage("사용자 정보 가져오는 중...");
                                 //Load UserStatus
                                 FirebaseConnection.getInstance().loadData("userdata/" + FirebaseAuth.getInstance().getUid() + "/status", new FirebaseConnection.Callback() {
                                     @Override
@@ -166,10 +165,11 @@ public class MainPageLodingFragment extends Fragment {
                                         FirebaseConnection.getInstance().loadData("appdata/", new FirebaseConnection.Callback() {
                                             @Override
                                             public void success(DataSnapshot snapshot) {
+                                                progressDialog.setMessage("앱 정보 가져오는 중...");
                                                 AppData.setValue((HashMap<String, String>)snapshot.getValue());
                                                 backgroundBitmap.recycle();
                                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
-                                                dialog.dismiss();
+                                                progressDialog.dismiss();
                                             }
 
                                             @Override

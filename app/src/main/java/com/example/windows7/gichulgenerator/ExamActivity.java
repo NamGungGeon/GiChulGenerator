@@ -1,10 +1,7 @@
 package com.example.windows7.gichulgenerator;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-
-import butterknife.ButterKnife;
 
 /**
  * Created by WINDOWS7 on 2018-02-28.

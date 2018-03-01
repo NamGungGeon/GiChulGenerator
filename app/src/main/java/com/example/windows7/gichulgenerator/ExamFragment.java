@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -269,7 +269,8 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
     }
 
     @OnClick(R.id.exam_submit)
-    void submit(){
+    void clickedSubmitBtn(){
+        //Check whether all answer are wrote
         boolean allCheckedAnswer= true;
         for(int answer: answers){
             if(answer== -1){
@@ -286,14 +287,35 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                     new DialogMaker.Callback() {
                         @Override
                         public void callbackMethod() {
-                            // Submit
-                            recycleAllBitmap();
-                            stopTimer();
                             dialogMaker.dismiss();
+                            submit();
+
                         }
                     }, null);
             dialogMaker.show(getActivity().getSupportFragmentManager(), "Exam Submit");
         }
+    }
+
+    private void submit(){
+        //Convert inputAnswers to ArrayList type
+        ArrayList<Integer> inputAnswerArray= new ArrayList<>();
+        for(int i=0; i<answers.length; i++){
+            inputAnswerArray.add(i);
+        }
+
+        // Submit
+        Bundle bundle= new Bundle();
+        bundle.putIntegerArrayList("inputAnswers", inputAnswerArray);
+        getActivity().getIntent().putExtras(bundle);
+
+        getActivity().getIntent().putExtra("title", title.getText().toString());
+
+        recycleAllBitmap();
+        stopTimer();
+
+        //change fragment to resultFragment
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examActivity_container, new ExamResultFragment()).commit();
+
     }
 
     @Override
