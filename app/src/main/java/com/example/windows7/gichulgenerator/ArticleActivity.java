@@ -154,10 +154,12 @@ public class ArticleActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Bitmap imageBitmap= ((BitmapDrawable)image.getDrawable()).getBitmap();
+        if(image.getDrawable()!= null){
+            Bitmap imageBitmap= ((BitmapDrawable)image.getDrawable()).getBitmap();
 
-        if(imageBitmap!= null){
-            imageBitmap.recycle();
+            if(imageBitmap!= null){
+                imageBitmap.recycle();
+            }
         }
         super.onDestroy();
     }

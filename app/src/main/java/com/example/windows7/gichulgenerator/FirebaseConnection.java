@@ -117,7 +117,7 @@ public class FirebaseConnection {
     public void loadImage(String fileName, final ImageView imageView, Context context){
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
-        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().into(new SimpleTarget<Bitmap>() {
+        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().skipMemoryCache(true).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 imageView.setImageBitmap(resource);
@@ -134,7 +134,7 @@ public class FirebaseConnection {
     public void loadImage(String fileName, final ImageView imageView, Context context, final ImageLoadFinished loadFinished){
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
-        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().into(new SimpleTarget<Bitmap>() {
+        Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().skipMemoryCache(true).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 if(imageView!= null){

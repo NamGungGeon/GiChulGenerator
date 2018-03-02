@@ -151,7 +151,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
     // Only called when finish activity
     private void recycleAllBitmap(){
         for(int i=0; i<30; i++){
-            if(examBitmap[i]!= null){
+            if(examBitmap[i]!= null && examBitmap[i].isRecycled()){
                 examBitmap[i].recycle();
                 examBitmap[i]= null;
             }
