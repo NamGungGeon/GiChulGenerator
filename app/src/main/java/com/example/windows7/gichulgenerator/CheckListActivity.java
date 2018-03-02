@@ -106,7 +106,7 @@ public class CheckListActivity extends AppCompatActivity {
         checkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent= new Intent(getApplicationContext(), RecheckActivity.class);
+                Intent intent= new Intent(getApplicationContext(), RecheckQuestionActivity.class);
                 intent.putExtra("fileName", checkListData.get(i).getFileName());
                 intent.putExtra("title", checkListData.get(i).getTitle());
                 intent.putExtra("potential", checkListData.get(i).getPotential());

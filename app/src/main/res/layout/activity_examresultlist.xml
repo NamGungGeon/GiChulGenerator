@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#313131"
+        android:textSize="25dp"
+        android:padding="15dp"
+        android:textColor="#FFFFFF"
+        android:id="@+id/examResultList_title"
+        android:text="시험 결과"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/examResultList_title"
+        android:fillViewport="true">
+        <ListView
+            android:id="@+id/examResultList"
+            android:divider="#AAAAAA"
+            android:dividerHeight="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+    </ScrollView>
+</RelativeLayout>

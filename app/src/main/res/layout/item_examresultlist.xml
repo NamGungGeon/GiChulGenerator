@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="historyTitle"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:id="@+id/examResultListItem_examTitle"/>
+    <TextView
+        android:layout_below="@id/examResultListItem_examTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/examResultListItem_examInfo"
+        android:text="historyInfo"
+        android:textSize="18dp"
+        android:textColor="#A0A0A0"/>
+</RelativeLayout>

@@ -99,8 +99,8 @@ public class ArticlePublishActivity extends AppCompatActivity{
                         ref.setValue(article);
                         dialog.dismiss();
 
-                        if(previewImage.getDrawingCache()!= null){
-                            previewImage.getDrawingCache().recycle();
+                        if(previewImage.getDrawable()!= null && ((BitmapDrawable)previewImage.getDrawable()).getBitmap().isRecycled()== false){
+                            ((BitmapDrawable)previewImage.getDrawable()).getBitmap().recycle();
                         }
 
                         finish();

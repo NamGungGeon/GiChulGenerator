@@ -157,7 +157,7 @@ public class ArticleActivity extends AppCompatActivity {
         if(image.getDrawable()!= null){
             Bitmap imageBitmap= ((BitmapDrawable)image.getDrawable()).getBitmap();
 
-            if(imageBitmap!= null){
+            if(imageBitmap!= null && imageBitmap.isRecycled()== false){
                 imageBitmap.recycle();
             }
         }

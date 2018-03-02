@@ -120,7 +120,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                                 }
                             }
                             answers[currentCursor-1]= Integer.valueOf(inputAnswer.getText().toString());
-                            listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_green, null));
+                            listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_blue, null));
                         }
                     }else{
                         // timer is started when user click exam firstly.
@@ -145,16 +145,6 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                     attacher.update();
                 }
             });
-        }
-    }
-
-    // Only called when finish activity
-    private void recycleAllBitmap(){
-        for(int i=0; i<30; i++){
-            if(examBitmap[i]!= null && examBitmap[i].isRecycled()){
-                examBitmap[i].recycle();
-                examBitmap[i]= null;
-            }
         }
     }
 
@@ -200,7 +190,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
     }
     private void setTitle(){
         String titleString= "";
-        titleString+= period_y+ "년 "+ period_m+ "월 "+ institute+ "\n"+ subject+ "과목";
+        titleString+= period_y+ "년 "+ institute+ "\n"+ subject+ "과목 "+ period_m+ "월 시험";
         title.setText(titleString);
     }
     private void examImageLoad(){
@@ -280,6 +270,21 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
 
         if(allCheckedAnswer== false){
             Toast.makeText(getContext(), "아직 입력하지 않은 답안이 있습니다", Toast.LENGTH_SHORT).show();
+
+
+            //TEST CODE
+            final DialogMaker dialogMaker=  new DialogMaker();
+            dialogMaker.setValue("답안을 제출하시겠습니까?\n(다시한번 검토해보세요.)", "예", "아니오",
+                    new DialogMaker.Callback() {
+                        @Override
+                        public void callbackMethod() {
+                            dialogMaker.dismiss();
+                            submit();
+
+                        }
+                    }, null);
+            dialogMaker.show(getActivity().getSupportFragmentManager(), "Exam Submit");
+            //TEST CODE
             return;
         }else{
             final DialogMaker dialogMaker=  new DialogMaker();
@@ -300,17 +305,24 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         //Convert inputAnswers to ArrayList type
         ArrayList<Integer> inputAnswerArray= new ArrayList<>();
         for(int i=0; i<answers.length; i++){
-            inputAnswerArray.add(i);
+            inputAnswerArray.add(answers[i]);
+        }
+
+        //Convert bitmap[] to ArrayList
+        ArrayList<Bitmap> bitmapArrayList= new ArrayList<>();
+        for(int i=0; i< examBitmap.length; i++){
+            bitmapArrayList.add(examBitmap[i]);
         }
 
         // Submit
         Bundle bundle= new Bundle();
         bundle.putIntegerArrayList("inputAnswers", inputAnswerArray);
+        bundle.putSerializable("examBitmaps", bitmapArrayList);
         getActivity().getIntent().putExtras(bundle);
 
         getActivity().getIntent().putExtra("title", title.getText().toString());
+        getActivity().getIntent().putExtra("timer", sec);
 
-        recycleAllBitmap();
         stopTimer();
 
         //change fragment to resultFragment
@@ -324,7 +336,6 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         dialog.setValue("정말 시험을 그만두고 나가시겠습니까?", "예", "아니오", new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
-                recycleAllBitmap();
                 stopTimer();
                 dialog.dismiss();
                 getActivity().finish();

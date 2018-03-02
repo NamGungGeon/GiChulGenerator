@@ -57,7 +57,7 @@ public class CheckList {
 
     // Load CheckList from firebase
     public void loadCheckListFromServer(final Callback callback){
-        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checkList", new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)snapshot.getValue();
@@ -90,6 +90,6 @@ public class CheckList {
 
     // Save CheckList to firebase
     private void saveCheckListToServer(){
-        FirebaseConnection.getInstance().saveData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checklist", checkList);
+        FirebaseConnection.getInstance().saveData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checkList", checkList);
     }
 }

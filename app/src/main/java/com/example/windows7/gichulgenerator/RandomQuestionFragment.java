@@ -466,7 +466,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
     @Override
     public void onDestroy() {
-        if(questionImage.getDrawable()!= null){
+        if(questionImage.getDrawable()!= null && ((BitmapDrawable)questionImage.getDrawable()).getBitmap().isRecycled()== false){
             ((BitmapDrawable)questionImage.getDrawable()).getBitmap().recycle();
         }
         unbinder.unbind();

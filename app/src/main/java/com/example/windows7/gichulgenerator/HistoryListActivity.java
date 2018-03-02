@@ -106,7 +106,7 @@ public class HistoryListActivity extends AppCompatActivity {
         historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), RecheckActivity.class);
+                Intent intent = new Intent(getApplicationContext(), RecheckQuestionActivity.class);
                 intent.putExtra("fileName", historyListData.get(i).getFileName());
                 intent.putExtra("title", historyListData.get(i).getTitle());
                 intent.putExtra("potential", historyListData.get(i).getPotential());

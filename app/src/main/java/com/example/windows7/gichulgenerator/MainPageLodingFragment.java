@@ -161,17 +161,28 @@ public class MainPageLodingFragment extends Fragment {
                                     @Override
                                     public void success(DataSnapshot snapshot) {
                                         Status.setValues((HashMap<String, String>)snapshot.getValue());
+                                        progressDialog.setMessage("앱 정보 가져오는 중...");
                                         //Load AppData
                                         FirebaseConnection.getInstance().loadData("appdata/", new FirebaseConnection.Callback() {
                                             @Override
                                             public void success(DataSnapshot snapshot) {
-                                                progressDialog.setMessage("앱 정보 가져오는 중...");
                                                 AppData.setValue((HashMap<String, String>)snapshot.getValue());
-                                                backgroundBitmap.recycle();
-                                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
-                                                progressDialog.dismiss();
-                                            }
+                                                progressDialog.setMessage("시험 기록 가져오는 중...");
+                                                ExamResultList.getInstance().loadExamResultListFromFirebase(new ExamResultList.Callback() {
+                                                    @Override
+                                                    public void success() {
+                                                        backgroundBitmap.recycle();
+                                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+                                                        progressDialog.dismiss();
+                                                    }
 
+                                                    @Override
+                                                    public void fail() {
+                                                        Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+                                                        getActivity().finish();
+                                                    }
+                                                });
+                                            }
                                             @Override
                                             public void fail(String errorMessage) {
                                                 Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();

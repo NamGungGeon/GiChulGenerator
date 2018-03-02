@@ -784,7 +784,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @OnClick({R.id.examResultBtn, R.id.menuList_examResult})
     void openExamResult(){
-        Toast.makeText(getContext(), "Dev..", Toast.LENGTH_SHORT).show();
+        Intent intent= new Intent(getContext(), ExamResultListActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.mainmenu_univImage)
