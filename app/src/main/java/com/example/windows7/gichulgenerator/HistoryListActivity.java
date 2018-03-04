@@ -8,6 +8,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +30,8 @@ public class HistoryListActivity extends AppCompatActivity {
     ListView historyList;
     @BindView(R.id.historyList_filter)
     Spinner filter;
+    @BindView(R.id.historyListAd)
+    AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,13 @@ public class HistoryListActivity extends AppCompatActivity {
 
             }
         });
+        setAdView();
+    }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/8285897711");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private String convertFilterValue() {
@@ -79,25 +92,15 @@ public class HistoryListActivity extends AppCompatActivity {
 
     private void setListView(String subjectFilter) {
         //Load data...
-        final ArrayList<Question> historyListData = new ArrayList<>();
-        HashMap<String, Question> loadedData = HistoryList.getInstance().getHistoryList();
+        final ArrayList<Question> historyListData = HistoryList.getInstance().getHistoryList();
 
-        for (String key : loadedData.keySet()) {
-            if (subjectFilter == null) {
-                //상관없음
-                historyListData.add(loadedData.get(key));
-            } else {
-                if (subjectFilter.equals(loadedData.get(key).getSubject())) {
-                    historyListData.add(loadedData.get(key));
-                }
-            }
-        }
         Collections.sort(historyListData, new Comparator<Question>() {
             @Override
             public int compare(Question e1, Question e2) {
                 return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
             }
         });
+
 
         ListViewAdapter_HistoryList historyListAdapter = new ListViewAdapter_HistoryList(getApplicationContext(), R.layout.item_historylist, historyListData);
         historyList.setAdapter(historyListAdapter);

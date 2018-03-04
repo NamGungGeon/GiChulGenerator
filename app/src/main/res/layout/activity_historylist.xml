@@ -45,6 +45,7 @@
             android:layout_below="@+id/historyList_filterContainer"
             android:layout_width="match_parent"
             android:fillViewport="true"
+            android:layout_above="@id/historyListAd"
             android:layout_height="match_parent">
             <ListView
                 android:id="@+id/historyList"
@@ -54,5 +55,16 @@
                 android:layout_height="match_parent">
             </ListView>
         </ScrollView>
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/historyListAd"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/1464913467">
+        </com.google.android.gms.ads.AdView>
     </RelativeLayout>
 </FrameLayout>

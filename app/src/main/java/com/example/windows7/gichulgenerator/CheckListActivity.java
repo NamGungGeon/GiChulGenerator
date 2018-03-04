@@ -8,6 +8,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,6 +28,9 @@ public class CheckListActivity extends AppCompatActivity {
 
     @BindView(R.id.checkList) ListView checkList;
     @BindView(R.id.checkList_filter) Spinner filter;
+
+    @BindView(R.id.checkListAd)
+    AdView adView;
 
 
     @Override
@@ -53,7 +60,15 @@ public class CheckListActivity extends AppCompatActivity {
 
             }
         });
+        setAdView();
     }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/8285897711");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
 
     private String convertFilterValue(){
         String subjectFilter= filter.getSelectedItem().toString();
@@ -78,20 +93,8 @@ public class CheckListActivity extends AppCompatActivity {
 
     private void setListView(String subjectFilter){
         // checkList - ListView setting
-        final ArrayList<Question> checkListData= new ArrayList<>();
+        final ArrayList<Question> checkListData= CheckList.getInstance().getCheckList();
 
-        //Load data...
-        HashMap<String, Question> loadedData= CheckList.getInstance().getCheckList();
-        for(String key: loadedData.keySet()){
-            if(subjectFilter== null){
-                //상관없음
-                checkListData.add(loadedData.get(key));
-            }else{
-                if (subjectFilter.equals(loadedData.get(key).getSubject())){
-                    checkListData.add(loadedData.get(key));
-                }
-            }
-        }
         Collections.sort(checkListData, new Comparator<Question>() {
             @Override
             public int compare(Question e1, Question e2) {

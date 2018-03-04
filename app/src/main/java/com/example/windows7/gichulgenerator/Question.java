@@ -30,6 +30,9 @@ public class Question {
 
     private long timeStamp;
 
+    //Only used to load from Firebase
+    public Question(){}
+
     public Question(String title, String period_y, String period_m, String institute, String subject, String number, String potential, String inputAnswer, String rightAnswer, String time, String memo) {
         this.title= title;
         this.period_y = period_y;

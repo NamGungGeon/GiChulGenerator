@@ -9,6 +9,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +36,8 @@ public class CommentActivity extends AppCompatActivity {
     RelativeLayout loadingContainer;
     @BindView(R.id.comment_container)
     RelativeLayout container;
+    @BindView(R.id.commentAd)
+    AdView adView;
 
     private Unbinder unbinder;
     private ArrayList<Comment> loadedComments;
@@ -52,7 +57,15 @@ public class CommentActivity extends AppCompatActivity {
 
     private void init(){
         setCommentList();
+        setAdView();
     }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/5225454251");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
 
     private void setCommentList(){
         articleType= getIntent().getStringExtra("articleType");

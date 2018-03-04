@@ -13,6 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
@@ -39,6 +42,8 @@ public class ArticleActivity extends AppCompatActivity {
     Button commentBtn;
     @BindView(R.id.article_articleImage)
     ImageView image;
+    @BindView(R.id.articleAd)
+    AdView adView;
 
     Article article;
     private String articleType;
@@ -57,6 +62,8 @@ public class ArticleActivity extends AppCompatActivity {
     }
 
     private void init(){
+        setAdView();
+
         String key= getIntent().getStringExtra("articleKey");
         FirebaseConnection.getInstance().loadData(articleType+ "/" + key + "/", new FirebaseConnection.Callback() {
             @Override
@@ -127,6 +134,12 @@ public class ArticleActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/9915083275");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @OnClick(R.id.article_comment)

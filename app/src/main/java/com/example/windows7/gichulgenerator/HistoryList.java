@@ -3,6 +3,7 @@ package com.example.windows7.gichulgenerator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -12,7 +13,7 @@ import java.util.HashMap;
 
 //Before using data, Should call loadHistoryListFromFirebase() to sync firebase database.
 public class HistoryList {
-    private HashMap<String, Question> historyList;
+    private ArrayList<Question> historyList;
 
     private static HistoryList inst= null;
     private HistoryList() {}
@@ -24,17 +25,17 @@ public class HistoryList {
         return inst;
     }
 
-    public HashMap<String, Question> getHistoryList(){
+    public ArrayList<Question> getHistoryList(){
         return historyList;
     }
 
     public void addToList(Question question){
-        historyList.put(String.valueOf(System.currentTimeMillis()), question);
+        historyList.add(question);
         saveHistoryListToServer();
     }
 
     public void deleteAllData(){
-        historyList= new HashMap<>();
+        historyList= new ArrayList<>();
         saveHistoryListToServer();
     }
 
@@ -46,22 +47,20 @@ public class HistoryList {
 
     // Load CheckList from firebase
     public void loadHistoryListFromServer(final Callback callback){
-        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList", new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadDataWithQuery(FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList").orderByKey(),
+                new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
-                historyList= new HashMap<>();
-                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)snapshot.getValue();
+                historyList= new ArrayList<>();
 
                 //Case: There is no data in database
-                if(temp== null || temp.size()==0){
+                if(snapshot.getValue()== null){
 
                 }else{
                     //Case: Success to read
-                    for(String key: temp.keySet()){
-                        HashMap<String, String> value= temp.get(key);
-                        Question info= new Question(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
-                                value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
-                        historyList.put(key, info);
+                    for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                        // Action...
+                        historyList.add(postSnapshot.getValue(Question.class));
                     }
                 }
                 callback.success();
@@ -70,7 +69,7 @@ public class HistoryList {
             @Override
             public void fail(String errorMessage) {
                 //Case: Connection Fail
-                historyList= new HashMap<>();
+                historyList= new ArrayList<>();
                 callback.fail();
             }
         });
@@ -88,7 +87,8 @@ public class HistoryList {
         today.setTimeInMillis(System.currentTimeMillis());
 
         Calendar todayChecker;
-        for(String key: historyList.keySet()){
+        for(Question question: historyList){
+            String key= String.valueOf(question.getTimeStamp());
             todayChecker= Calendar.getInstance();
             todayChecker.setTimeInMillis(Long.valueOf(key));
             if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
@@ -111,13 +111,14 @@ public class HistoryList {
             Calendar todayChecker;
             int right= 0;
 
-            for(String key: historyList.keySet()){
+            for(Question question: historyList){
+                String key= String.valueOf(question.getTimeStamp());
                 todayChecker= Calendar.getInstance();
                 todayChecker.setTimeInMillis(Long.valueOf(key));
                 if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
                         && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
                         && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
-                    if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                    if(question.getInputAnswer().equals(question.getRightAnswer())){
                         right++;
                     }
                 }
@@ -133,13 +134,14 @@ public class HistoryList {
         today.setTimeInMillis(System.currentTimeMillis());
 
         Calendar todayChecker;
-        for(String key: historyList.keySet()){
+        for(Question question: historyList){
+            String key= String.valueOf(question.getTimeStamp());
             todayChecker= Calendar.getInstance();
             todayChecker.setTimeInMillis(Long.valueOf(key));
             if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
                     && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
                     && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
-                if(historyList.get(key).getSubject().equals(subject)){
+                if(question.getSubject().equals(subject)){
                     todayNumber++;
                 }
             }
@@ -158,14 +160,15 @@ public class HistoryList {
             today.setTimeInMillis(System.currentTimeMillis());
 
             Calendar todayChecker;
-            for(String key: historyList.keySet()){
+            for(Question question: historyList){
+                String key= String.valueOf(question.getTimeStamp());
                 todayChecker= Calendar.getInstance();
                 todayChecker.setTimeInMillis(Long.valueOf(key));
                 if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
                         && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
                         && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)) {
-                    if(historyList.get(key).getSubject().equals(subject)){
-                        if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                    if(question.getSubject().equals(subject)){
+                        if(question.getInputAnswer().equals(question.getRightAnswer())){
                             right++;
                         }
                     }
@@ -182,7 +185,8 @@ public class HistoryList {
         today.setTimeInMillis(System.currentTimeMillis());
 
         Calendar todayChecker;
-        for(String key: historyList.keySet()){
+        for(Question question: historyList){
+            String key= String.valueOf(question.getTimeStamp());
             todayChecker= Calendar.getInstance();
             todayChecker.setTimeInMillis(Long.valueOf(key));
             if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
@@ -199,8 +203,9 @@ public class HistoryList {
             return 0;
         }else{
             int right= 0;
-            for(String key: historyList.keySet()){
-                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+            for(Question question: historyList){
+                String key= String.valueOf(question.getTimeStamp());
+                if(question.getInputAnswer().equals(question.getRightAnswer())){
                     right++;
                 }
             }
@@ -215,12 +220,13 @@ public class HistoryList {
         today.setTimeInMillis(System.currentTimeMillis());
 
         Calendar todayChecker;
-        for(String key: historyList.keySet()){
+        for(Question question: historyList){
+            String key= String.valueOf(question.getTimeStamp());
             todayChecker= Calendar.getInstance();
             todayChecker.setTimeInMillis(Long.valueOf(key));
             if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
                     && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)){
-                if(historyList.get(key).getSubject().equals(subject)){
+                if(question.getSubject().equals(subject)){
                     monthNumber++;
                 }
             }
@@ -239,13 +245,14 @@ public class HistoryList {
             today.setTimeInMillis(System.currentTimeMillis());
 
             Calendar todayChecker;
-            for(String key: historyList.keySet()){
+            for(Question question: historyList){
+                String key= String.valueOf(question.getTimeStamp());
                 todayChecker= Calendar.getInstance();
                 todayChecker.setTimeInMillis(Long.valueOf(key));
                 if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
                         && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)) {
-                    if(historyList.get(key).getSubject().equals(subject)){
-                        if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+                    if(question.getSubject().equals(subject)){
+                        if(question.getInputAnswer().equals(question.getRightAnswer())){
                             right++;
                         }
                     }
@@ -266,8 +273,8 @@ public class HistoryList {
             return 0;
         }else{
             int right= 0;
-            for(String key: historyList.keySet()){
-                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+            for(Question question: historyList){
+                if(question.getInputAnswer().equals(question.getRightAnswer())){
                     right++;
                 }
             }
@@ -276,8 +283,8 @@ public class HistoryList {
     }
     public int getTotalSubjectNumber(String subject){
         int number= 0;
-        for(String key: historyList.keySet()){
-            if(historyList.get(key).getSubject().equals(subject)){
+        for(Question question: historyList){
+            if(question.getSubject().equals(subject)){
                 number++;
             }
         }
@@ -286,9 +293,9 @@ public class HistoryList {
     public int getTotalSubjectPotential(String subject){
         int totalNumber= getTotalSubjectNumber(subject);
         int right= 0;
-        for(String key: historyList.keySet()){
-            if(historyList.get(key).getSubject().equals(subject)){
-                if(historyList.get(key).getInputAnswer().equals(historyList.get(key).getRightAnswer())){
+        for(Question question: historyList){
+            if(question.getSubject().equals(subject)){
+                if(question.getInputAnswer().equals(question.getRightAnswer())){
                     right++;
                 }
             }

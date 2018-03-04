@@ -44,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/checkList_filterContainer"
+            android:layout_above="@id/checkListAd"
             android:fillViewport="true">
             <ListView
                 android:id="@+id/checkList"
@@ -53,5 +54,15 @@
                 android:layout_height="wrap_content">
             </ListView>
         </ScrollView>
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/checkListAd"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/8285897711">
+        </com.google.android.gms.ads.AdView>
     </RelativeLayout>
 </FrameLayout>

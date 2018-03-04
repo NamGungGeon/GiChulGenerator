@@ -1,5 +1,6 @@
 package com.example.windows7.gichulgenerator;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,6 +34,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 
 import java.io.File;
 import java.text.ParseException;
@@ -40,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,17 +114,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
         unbinder= ButterKnife.bind(this, rootView);
 
-
         init();
         return rootView;
     }
 
     private void init(){
-        //Set AdView
-        MobileAds.initialize(getActivity(), "ca-app-pub-5333091392909120/6072450302");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-
+        setAdView();
         setBackground();
         setMyGoal();
         resizeMenuListElements();
@@ -198,6 +196,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         });
     }
 
+    private void setAdView(){
+        MobileAds.initialize(getActivity(), "ca-app-pub-5333091392909120/6072450302");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
 
     private void setTodayReport(){
         HistoryList historyList= HistoryList.getInstance();
@@ -593,12 +596,45 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         new DialogMaker.Callback() {
                             @Override
                             public void callbackMethod() {
-                                EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
+                                final EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
                                 if(checkNickName(inputNickname.getText().toString())== true){
-                                    //Success to set
-                                    Status.nickName= inputNickname.getText().toString();
-                                    startActivity(new Intent(getContext(), FreeboardActivity.class));
-                                    dialog.dismiss();
+                                    final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "닉네임 설정 중입니다");
+                                    //Check if nickname is duplicated
+                                    FirebaseConnection.getInstance().loadData("nickNames/", new FirebaseConnection.Callback() {
+                                                @Override
+                                                public void success(DataSnapshot snapshot) {
+                                                    if(snapshot.getValue()!= null){
+                                                        //Case: Duplicated
+                                                        HashMap<String, String> loadedNicknames= ((HashMap<String, String>)snapshot.getValue());
+                                                        for(String value: loadedNicknames.keySet()){
+                                                            if(loadedNicknames.get(value).equals(inputNickname.getText().toString())){
+                                                                Toast.makeText(getContext(), "중복된 닉네임입니다.", Toast.LENGTH_SHORT).show();
+                                                                progressDialog.dismiss();
+                                                                return;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    //Case: Not Duplicated
+                                                    Status.nickName= inputNickname.getText().toString();
+
+                                                    //Save...
+                                                    FirebaseConnection.getInstance().getReference("nickNames").push().setValue(inputNickname.getText().toString());
+                                                    FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getUid()+ "/status/nickName/")
+                                                            .setValue(inputNickname.getText().toString());
+                                                    Toast.makeText(getContext(), inputNickname.getText().toString()+ "(으)로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+
+                                                    progressDialog.dismiss();
+                                                    dialog.dismiss();
+                                                    startActivity(new Intent(getContext(), FreeboardActivity.class));
+                                                }
+                                                @Override
+                                                public void fail(String errorMessage) {
+                                                    Toast.makeText(getContext(), "데이터베이스 통신 실패\n"+ errorMessage, Toast.LENGTH_SHORT).show();
+                                                    dialog.dismiss();
+                                                }
+                                            }
+                                    );
                                 }
                             }
                         }, null, childView);
@@ -801,7 +837,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     void setMyGoal(){
         int width= 128;
         int height= 128;
-        Bitmap bitmap= null;
+        Bitmap bitmap;
 
         String imagePath= getActivity().getSharedPreferences("goal", MODE_PRIVATE).getString("path", "");
         if(imagePath.equals("")){
@@ -830,12 +866,31 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                     Toast.makeText(getContext(), "공백과 개행은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
+
+                //Literal Check
+                boolean isCanUsingNickName= true;
+                for(int i=0; i<nickName.length(); i++){
+                    if(nickName.charAt(i)>= 'a' && nickName.charAt(i)<= 'z'){
+
+                    }else if(nickName.charAt(i)>= 'A' && nickName.charAt(i)<= 'Z'){
+
+                    }else if(nickName.charAt(i)>= '가' && nickName.charAt(i)<= '힣'){
+
+                    }else{
+                        //Incldue literal Not allowed
+                        isCanUsingNickName= false;
+                    }
+                }
+
+                if(isCanUsingNickName== false){
+                    Toast.makeText(getContext(), "닉네임에는 한국어와 영어만 사용 가능합니다\n(한국어 자음/모음 단독사용 불가)", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
                 if(nickName.equals("관리자")){
                     Toast.makeText(getContext(), "해당 닉네임은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
                     return false;
-                }else{
-                    FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getUid()+ "/status/nickName/").setValue(nickName);
-                    Toast.makeText(getContext(), nickName+ "(으)로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+                }else {
                     return true;
                 }
             }else{

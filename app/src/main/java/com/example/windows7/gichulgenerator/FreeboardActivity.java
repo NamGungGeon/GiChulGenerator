@@ -11,6 +11,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -33,7 +36,7 @@ public class FreeboardActivity extends AppCompatActivity {
     @BindView(R.id.freeboard_loadingContainer) RelativeLayout loadingContainer;
     @BindView(R.id.freeboard_container) RelativeLayout container;
     @BindView(R.id.freeboard_list) ListView list;
-
+    @BindView(R.id.freeboardAd) AdView adView;
     private final int PUBLISH_ACTIVITY= 1524;
     private final int ARTICLE_ACTIVITY= 1552;
 
@@ -52,6 +55,13 @@ public class FreeboardActivity extends AppCompatActivity {
 
         DatabaseReference reference= FirebaseConnection.getInstance().getReference("freeboard/");
         setArticleList(reference.orderByKey().limitToLast(listNumber));
+        setAdView();
+    }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/6882150859");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private void setArticleList(Query query){

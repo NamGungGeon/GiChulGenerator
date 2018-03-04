@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,7 +13,7 @@ import java.util.HashMap;
  */
 
 public class CheckList {
-    private HashMap<String, Question> checkList= new HashMap<>();
+    private ArrayList<Question> checkList= new ArrayList<>();
 
     private static CheckList inst= null;
     private CheckList() {
@@ -25,27 +26,21 @@ public class CheckList {
         return inst;
     }
 
-    public HashMap<String, Question> getCheckList(){
+    public ArrayList<Question> getCheckList(){
         return checkList;
     }
 
     public void addToList(Question question){
-        checkList.put(String.valueOf(System.currentTimeMillis()), question);
+        checkList.add(question);
         saveCheckListToServer();
     }
 
     public void deleteFromList(Question question){
-        for(String key: checkList.keySet()){
-            if(checkList.get(key).getTimeStamp()== question.getTimeStamp()){
-                checkList.remove(key);
-                saveCheckListToServer();
-                return;
-            }
-        }
+        checkList.remove(question);
     }
 
     public void deleteAllData(){
-        checkList= new HashMap<>();
+        checkList= new ArrayList<>();
         saveCheckListToServer();
     }
 
@@ -57,32 +52,27 @@ public class CheckList {
 
     // Load CheckList from firebase
     public void loadCheckListFromServer(final Callback callback){
-        FirebaseConnection.getInstance().loadData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checkList", new FirebaseConnection.Callback() {
+        FirebaseConnection.getInstance().loadDataWithQuery(FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/checkList").orderByKey(),
+                new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
-                HashMap<String, HashMap<String, String>> temp= (HashMap<String, HashMap<String, String>>)snapshot.getValue();
-
                 //Case: There is no data in database
-                if(checkList== null || temp== null){
-                    checkList= new HashMap<>();
+                if(snapshot.getValue()== null){
+
                 }else{
                     //Case: Success to read
-                    for(String key: temp.keySet()){
-                        HashMap<String, String> value= temp.get(key);
-                        Question info= new Question(value.get("title"), value.get("period_y"), value.get("period_m"), value.get("institute"), value.get("subject"), value.get("number"),
-                                value.get("potential"), value.get("inputAnswer"), value.get("rightAnswer"), value.get("time"), value.get("memo"));
-                        checkList.put(key, info);
+                    for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                        // Action...
+                        checkList.add(postSnapshot.getValue(Question.class));
                     }
                 }
-
-                Log.i("Firebase  Check", String.valueOf(checkList.size()));
                 callback.success();
             }
 
             @Override
             public void fail(String errorMessage) {
                 //Case: Connection Fail
-                checkList= new HashMap<>();
+                checkList= new ArrayList<>();
                 callback.fail();
             }
         });

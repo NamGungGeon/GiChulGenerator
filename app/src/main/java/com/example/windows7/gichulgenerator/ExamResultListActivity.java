@@ -8,6 +8,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -20,7 +24,8 @@ import butterknife.ButterKnife;
 public class ExamResultListActivity extends AppCompatActivity {
     @BindView(R.id.examResultList)
     ListView examResultList;
-
+    @BindView(R.id.examResultListAd)
+    AdView adView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +40,14 @@ public class ExamResultListActivity extends AppCompatActivity {
     }
 
     private void init(){
+        setAdView();
         setListView();
+    }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/8999734652");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private void setListView(){

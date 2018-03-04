@@ -384,11 +384,11 @@ public class ExamResultFragment extends Fragment {
 
     @OnClick(R.id.examResult_searchSolution)
     void searchSolution(){
-        Toast.makeText(getContext(), "메가스터디 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
 
         Intent intent= new Intent(getContext(), WebViewActivity.class);
         intent.putExtra("title", title.getText());
-        intent.putExtra("url", "https://m.megastudy.net/mobile/smart/entinfo/lecture/explain_search.asp#_blank");
+        intent.putExtra("url", "http://www.ebsi.co.kr/ebs/xip/xipa/retrieveSCVLastExamList.ebs");
         startActivity(intent);
     }
 

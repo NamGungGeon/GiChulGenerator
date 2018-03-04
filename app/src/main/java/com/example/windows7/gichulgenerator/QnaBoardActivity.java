@@ -11,6 +11,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -31,11 +34,10 @@ import butterknife.Unbinder;
 
 public class QnaBoardActivity extends AppCompatActivity {
 
-    @BindView(R.id.qna_loadingContainer)
-    RelativeLayout loadingContainer;
+    @BindView(R.id.qna_loadingContainer) RelativeLayout loadingContainer;
     @BindView(R.id.qna_container) RelativeLayout container;
-    @BindView(R.id.qna_list)
-    ListView list;
+    @BindView(R.id.qna_list) ListView list;
+    @BindView(R.id.qnaboardAd) AdView adView;
 
     private final int PUBLISH_ACTIVITY= 1524;
     private final int ARTICLE_ACTIVITY= 1552;
@@ -56,6 +58,13 @@ public class QnaBoardActivity extends AppCompatActivity {
         DatabaseReference reference= FirebaseConnection.getInstance().getReference("qna/");
         setArticleList(reference.orderByKey().limitToLast(listNumber));
         openWarningMessage();
+        setAdView();
+    }
+
+    private void setAdView(){
+        MobileAds.initialize(this, "ca-app-pub-5333091392909120/2751334157");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private void openWarningMessage(){
