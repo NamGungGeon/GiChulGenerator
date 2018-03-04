@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 
 public class ExamResult {
     private String title;
+    private String basicFileName;
     private String period_y= "";
     private String period_m= "";
     private String institute= "";
@@ -32,10 +33,19 @@ public class ExamResult {
         this.rightAnswers = rightAnswers;
         this.runningTime = runningTime;
         timeStamp= System.currentTimeMillis();
+        this.basicFileName= basicFileName;
     }
 
     // For loading from firebase
     public ExamResult(){}
+
+    public String getBasicFileName() {
+        return basicFileName;
+    }
+
+    public void setBasicFileName(String basicFileName) {
+        this.basicFileName = basicFileName;
+    }
 
     public String getTitle() {
         return title;

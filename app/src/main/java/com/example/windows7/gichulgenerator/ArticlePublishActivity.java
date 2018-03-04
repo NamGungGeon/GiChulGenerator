@@ -95,7 +95,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
                     @Override
                     public void success(DataSnapshot snapshot) {
                         Article article= new Article(title.getText().toString(), context.getText().toString(), Status.nickName
-                                , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>());
+                                , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>(), true);
                         ref.setValue(article);
                         dialog.dismiss();
 
@@ -114,7 +114,7 @@ public class ArticlePublishActivity extends AppCompatActivity{
                 });
             }else{
                 Article article= new Article(title.getText().toString(), context.getText().toString(), Status.nickName
-                        , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>());
+                        , FirebaseAuth.getInstance().getUid(), ref.getKey(), new HashMap<String, Comment>(), false);
                 ref.setValue(article);
                 finish();
             }

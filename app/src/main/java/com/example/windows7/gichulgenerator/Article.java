@@ -16,7 +16,9 @@ public class Article{
     private String uid;
     private String key;
 
-    public Article(String title, String text, String userName, String uid, String key, HashMap<String, Comment> comments) {
+    private boolean isExistImage;
+
+    public Article(String title, String text, String userName, String uid, String key, HashMap<String, Comment> comments, boolean isExistImage) {
         this.title = title;
         this.text = text;
         this.userName = userName;
@@ -24,6 +26,7 @@ public class Article{
         timeStamp= System.currentTimeMillis();
         this.uid= uid;
         this.key= key;
+        this.isExistImage= isExistImage;
     }
 
     public Article(){}
@@ -61,5 +64,13 @@ public class Article{
     }
     public long getTimeStamp() {
         return timeStamp;
+    }
+
+    public boolean getIsExistImage() {
+        return isExistImage;
+    }
+
+    public void setExistImage(boolean isExistImage) {
+        isExistImage = isExistImage;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.windows7.gichulgenerator;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -99,8 +100,24 @@ public class ArticleActivity extends AppCompatActivity {
                     }else{
                         context.setText("???");
                     }
+                    if(article.getIsExistImage()){
+                        final ProgressDialog dialog= DialogMaker.showProgressDialog(ArticleActivity.this, "", "이미지 로딩 중입니다.");
+                        FirebaseConnection.getInstance().loadImage(articleType + "/" + article.getKey(), image, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+                            @Override
+                            public void success(Bitmap bitmap) {
+                                dialog.dismiss();
+                            }
 
-                    FirebaseConnection.getInstance().loadImage(articleType+ "/"+ article.getKey(), image, getApplicationContext());
+                            @Override
+                            public void fail(Exception e) {
+                                Toast.makeText(ArticleActivity.this, "이미지 로딩 실패\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                ArticleActivity.this.finish();
+                            }
+                        });
+                    }else{
+                        // Not Need to load Image
+                    }
                 }
             }
 
@@ -129,7 +146,7 @@ public class ArticleActivity extends AppCompatActivity {
 
     @OnClick(R.id.article_delete)
     void delete(){
-        final DialogMaker dialog= new DialogMaker();;
+        final DialogMaker dialog= new DialogMaker();
         dialog.setValue("게시글을 삭제하시겠습니까?\n(본인만 삭제가 가능합니다)", "예", "아니오",
                 new DialogMaker.Callback() {
                     @Override

@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/frag_mainmenu"
     >
-    <!-- Ad is not using now -->
-    <!--
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/mainPageAd"
@@ -15,10 +13,10 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        ads:adUnitId="ca-app-pub-5333091392909120/6072450302">
     </com.google.android.gms.ads.AdView>
-    -->
     <RelativeLayout
+        android:layout_below="@id/mainPageAd"
         android:layout_above="@+id/bottomQuickMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

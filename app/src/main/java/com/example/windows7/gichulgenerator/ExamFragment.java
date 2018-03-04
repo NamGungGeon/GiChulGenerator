@@ -50,6 +50,10 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.exam_inputAnswer)
     EditText inputAnswer;
 
+
+    @BindView(R.id.exam_saveAnswer)
+    Button saveAnswerBtn;
+
     @BindView(R.id.exam_timer)
     Button timer;
 
@@ -94,8 +98,10 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         examImageLoad();
 
         startMessage.setText("시험을 시작합니다!\n아래에서 문제 번호를 선택해서 시작하세요.\n\n\n\n\n" +
-                "답안을 작성한 다음\n다른 문제 번호를 터치하면 자동으로 답안이 저장됩니다.\n\n\n\n\n" +
+                "답안을 작성한 다음\n답안 저장 버튼을 클릭하거나\n다른 문제 번호를 터치하면 자동으로 답안이 저장됩니다.\n\n\n\n\n" +
                 "문제를 모두 풀었다면\n제출 버튼을 눌러 결과를 확인해보세요!");
+
+        saveAnswerBtn.setText("답안 저장");
 
         for(int i=0; i< listSelector.size(); i++){
             final int _i= i;
@@ -105,6 +111,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                     startMessage.setVisibility(View.GONE);
                     examImage.setVisibility(View.VISIBLE);
                     inputAnswer.setVisibility(View.VISIBLE);
+                    saveAnswerBtn.setVisibility(View.VISIBLE);
 
                     if(currentCursor!= 0){
                         if(inputAnswer.getText()!= null && inputAnswer.getText().toString().equals("")== false){
@@ -328,6 +335,27 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         //change fragment to resultFragment
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examActivity_container, new ExamResultFragment()).commit();
 
+    }
+
+    @OnClick(R.id.exam_saveAnswer)
+    void saveAnswer(){
+        if(inputAnswer.getText()!= null && inputAnswer.getText().toString().equals("")== false){
+            //String Check
+            String answerString= inputAnswer.getText().toString();
+            for(int i=0; i<answerString.length(); i++){
+                if(answerString.charAt(i)>='0' && answerString.charAt(i)<='9'){
+                    // No Error
+                }else{
+                    // included not number character in String
+                    Toast.makeText(getContext(), "답안에는 숫자만 입력할 수 있습니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+            answers[currentCursor-1]= Integer.valueOf(inputAnswer.getText().toString());
+            listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_blue, null));
+        }else{
+            Toast.makeText(getContext(), "아직 답안을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

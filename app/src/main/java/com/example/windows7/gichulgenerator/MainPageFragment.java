@@ -29,6 +29,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
@@ -92,6 +95,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.menuListBtn) ImageView menuListBtn;
     @BindView(R.id.help) ImageView helpBtn;
 
+    // Ad
+    @BindView(R.id.mainPageAd)
+    AdView mAdView;
+
     private final int EXAM_ACTIVITY= 1335;
     private final int SEARCH_ACTIVITY= 1336;
 
@@ -103,12 +110,18 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
         unbinder= ButterKnife.bind(this, rootView);
-        init();
 
+
+        init();
         return rootView;
     }
 
     private void init(){
+        //Set AdView
+        MobileAds.initialize(getActivity(), "ca-app-pub-5333091392909120/6072450302");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         setBackground();
         setMyGoal();
         resizeMenuListElements();
@@ -310,11 +323,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @OnClick(R.id.menuList_allHistoryDelete)
     void deleteAllData(){
         final DialogMaker dialog= new DialogMaker();
-        dialog.setValue("오답노트와 문제 기록을 전부 삭제하시겠습니까?\n(복구 불가능)", "예", "아니오", new DialogMaker.Callback() {
+        dialog.setValue("오답노트/문제기록/시험결과를 전부 삭제하시겠습니까?\n(복구 불가능)", "예", "아니오", new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
                 CheckList.getInstance().deleteAllData();
                 HistoryList.getInstance().deleteAllData();
+                ExamResultList.getInstance().deleteAllData();
                 Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 init();
                 dialog.dismiss();
@@ -422,12 +436,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                             basicFileName+= "2016";
                         }else if(filter_period_y.equals("2015")){
                             basicFileName+= "2015";
-                        }else if(filter_period_y.equals("2014")){
-                            basicFileName+= "2014";
-                        }else if(filter_period_y.equals("2013")){
-                            basicFileName+= "2013";
-                        }else if(filter_period_y.equals("2012")){
-                            basicFileName+= "2012";
                         }
                         basicFileName+= "_";
 
@@ -453,14 +461,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                             basicFileName+= "imath";
                         }else if (filter_subj.equals("수학(문과)")) {
                             basicFileName+= "mmath";
-                        }else if (filter_subj.equals("국어")) {
-                            basicFileName+= "korean";
-                        }else if (filter_subj.equals("영어")) {
-                            basicFileName+= "english";
-                        }else if (filter_subj.equals("사회탐구")) {
-                            basicFileName+= "social";
-                        }else if (filter_subj.equals("과학탐구")) {
-                            basicFileName+= "science";
                         }
 
                         //Decide Number

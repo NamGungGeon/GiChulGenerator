@@ -1,11 +1,14 @@
 package com.example.windows7.gichulgenerator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,7 +46,7 @@ public class ExamResultListActivity extends AppCompatActivity {
         examResultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                passRequiredAllData(ExamResultList.getInstance().getExamResultList().get(i));
             }
         });
 
@@ -65,6 +68,30 @@ public class ExamResultListActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void passRequiredAllData(ExamResult examResult){
+        Bundle bundle= new Bundle();
+
+        ArrayList<Integer> inputAnswerArrayList= new ArrayList<>();
+        for(int i=0; i<30; i++){
+            inputAnswerArrayList.add(i, examResult.getInputAnswers().get(i).intValue());
+        }
+        bundle.putSerializable("inputAnswers", inputAnswerArrayList);
+
+        Intent intent= new Intent(getApplicationContext(), RecheckExamResultActivity.class);
+        intent.putExtra("timer", examResult.getRunningTime());
+        intent.putExtra("title", examResult.getTitle());
+        intent.putExtra("period_y", examResult.getPeriod_y());
+        intent.putExtra("period_m", examResult.getPeriod_m());
+        intent.putExtra("encodedSubject", examResult.getSubject());
+        intent.putExtra("encodedInstitute", examResult.getInstitute());
+        intent.putExtra("basicFileName", examResult.getBasicFileName());
+
+        intent.putExtras(bundle);
+        intent.putExtra("type", "recheck");
+
+        startActivity(intent);
     }
 
 }

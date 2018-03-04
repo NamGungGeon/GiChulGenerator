@@ -98,11 +98,6 @@ public class ExamResultFragment extends Fragment {
             inputAnswers.add(i, _inputAnswers.get(i).longValue());
         }
 
-        ArrayList<Bitmap> examBitmapArrayList= (ArrayList<Bitmap>)(bundle.getSerializable("examBitmaps"));
-        for(int i=0; i<30; i++){
-            examBitmap[i]= examBitmapArrayList.get(i);
-        }
-
         runningTime= getActivity().getIntent().getIntExtra("timer", 0);
         String titleString= getActivity().getIntent().getStringExtra("title");
 
@@ -151,9 +146,14 @@ public class ExamResultFragment extends Fragment {
                 }
             });
         }
-
-        saveToExamResultList();
-        saveToHistoryList();
+        if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
+            //Case: From ExamResultListActivity
+            // Not do any action
+        }else{
+            //Case: From ExamFragment
+            saveToExamResultList();
+            saveToHistoryList();
+        }
     }
 
     private void saveToHistoryList(){
@@ -206,7 +206,37 @@ public class ExamResultFragment extends Fragment {
 
     private void loadNeededAllData(){
 
-        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "정답을 불러오는 중입니다.");
+        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "문제와 정답을 불러오는 중입니다.");
+
+        //Load ExamImage
+        if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
+            //Case: From ExamResultListActivity
+            for(int i=0; i<30; i++){
+                final int _i= i;
+                Log.i("PATH", "exam/" + getActivity().getIntent().getStringExtra("basicFileName") + "/q_" +
+                        getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ (i+1));
+                FirebaseConnection.getInstance().loadImage("exam/" + getActivity().getIntent().getStringExtra("basicFileName") + "/q_" +
+                        getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ (i+1), null, getContext(), new FirebaseConnection.ImageLoadFinished() {
+                    @Override
+                    public void success(Bitmap bitmap) {
+                        examBitmap[_i]= bitmap;
+                    }
+
+                    @Override
+                    public void fail(Exception e) {
+                        Toast.makeText(getContext(), "이미지 로딩 실패\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                });
+            }
+        }else{
+            //Case: From ExamFragment
+            Bundle bundle= getActivity().getIntent().getExtras();
+            ArrayList<Bitmap> examBitmapArrayList= (ArrayList<Bitmap>)(bundle.getSerializable("examBitmaps"));
+            for(int i=0; i<30; i++){
+                examBitmap[i]= examBitmapArrayList.get(i);
+            }
+        }
         //Load Answer List
         String answerPath= "answer/"+  getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
                 + "/"+ getActivity().getIntent().getStringExtra("period_m")+ "/"+ getActivity().getIntent().getStringExtra("encodedSubject");
@@ -224,13 +254,13 @@ public class ExamResultFragment extends Fragment {
                     public void success(DataSnapshot snapshot) {
                         potentials= (ArrayList<Long>)snapshot.getValue();
 
+                        //Load SolutionImage
                         progressDialog.setTitle("해설 이미지를 불러오는 중입니다");
                         progressDialog.setMessage("0%");
                         loadingCheck(progressDialog);
                         String imagePath= "exam/"+ getActivity().getIntent().getStringExtra("basicFileName")+ "/a_"+ getActivity().getIntent().getStringExtra("basicFileName");
                         for(int i=0; i<30; i++){
                             final int _i= i;
-                            Log.i("PATH", imagePath + String.valueOf(i));
                             FirebaseConnection.getInstance().loadImage(imagePath + "_"+ String.valueOf(i+1), null, getContext(), new FirebaseConnection.ImageLoadFinished() {
                                 @Override
                                 public void success(Bitmap bitmap) {
@@ -268,9 +298,9 @@ public class ExamResultFragment extends Fragment {
     private void loadingCheck(final ProgressDialog progressDialog){
         final Handler handler = new Handler(){
             public void handleMessage(Message msg){
-                progressDialog.setMessage(String.valueOf(msg.arg1)+ "%");
+                progressDialog.setMessage(String.valueOf(msg.arg1)+ "/60");
 
-                if(msg.arg1>= 90){
+                if(msg.arg1>= 60){
                     init();
                 }
             }
@@ -281,17 +311,24 @@ public class ExamResultFragment extends Fragment {
             public void run() {
                 while(true){
                     boolean isAllLoaded= true;
-                    int loadPercent= 0;
+                    int loadEndNumber= 0;
                     for(Bitmap bitmap: solutionBitmap){
                         if(bitmap== null){
                             isAllLoaded= false;
                         }else{
-                            loadPercent+= (100/30);
+                            loadEndNumber++;
+                        }
+                    }
+                    for(Bitmap bitmap: examBitmap){
+                        if(bitmap== null){
+                            isAllLoaded= false;
+                        }else{
+                            loadEndNumber++;
                         }
                     }
 
                     Message msg = handler.obtainMessage();
-                    msg.arg1= loadPercent;
+                    msg.arg1= loadEndNumber;
                     handler.sendMessage(msg);
 
                     if(isAllLoaded== true){
@@ -354,7 +391,6 @@ public class ExamResultFragment extends Fragment {
         intent.putExtra("url", "https://m.megastudy.net/mobile/smart/entinfo/lecture/explain_search.asp#_blank");
         startActivity(intent);
     }
-
 
     @Override
     public void onDestroy() {

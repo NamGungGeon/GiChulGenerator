@@ -32,6 +32,7 @@
         <activity android:name=".ExamActivity"></activity>
         <activity android:name=".WebViewActivity"></activity>
         <activity android:name=".ExamResultListActivity"></activity>
+        <activity android:name=".RecheckExamResultActivity"></activity>
         <service
             android:name=".FirebaseMessageService" android:enabled="true">
             <intent-filter>
