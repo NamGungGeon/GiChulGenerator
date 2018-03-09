@@ -7,9 +7,7 @@
         android:id="@+id/solutionLoadingContainer"
         android:layout_width="match_parent"
         android:background="#313131"
-        android:visibility="gone"
         android:layout_height="match_parent">
-
         <ProgressBar
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -34,12 +32,13 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_above="@+id/solutionMenu"
+            android:layout_above="@+id/randomQuestion_bottomMenu1"
             android:layout_height="match_parent">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="30dp">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,6 +64,15 @@
                     android:scaleType="matrix"
                     android:adjustViewBounds="true"
                     android:id="@+id/solutionImage"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="수능은 해설이 제공되지 않습니다."
+                    android:textColor="#000000"
+                    android:textSize="20dp"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:id="@+id/solution_invisibleSolutionExplain"/>
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,55 +82,61 @@
                     android:id="@+id/recheck_examImage"/>
             </LinearLayout>
         </ScrollView>
+
         <LinearLayout
-            android:id="@+id/solutionMenu"
+            android:id="@+id/randomQuestion_bottomMenu1"
+            android:layout_above="@id/randomQuestion_bottomMenu2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/changeImageBtn"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#313131"
+                android:text="문제 다시 확인"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:id="@+id/solutionSearch"
+                android:text="해설강의 검색"
+                android:background="#313131"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/randomQuestion_bottomMenu2"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <Button
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:id="@+id/changeImageBtn"
-                    android:background="@drawable/button_border"
-                    android:text="문제 다시 확인"/>
-                <Button
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/solutionSearch"
-                    android:text="해설강의 검색"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@drawable/button_border"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <Button
-                    android:layout_margin="15dp"
-                    android:layout_weight="1"
-                    android:id="@+id/addToCheckListBtn"
-                    android:background="@drawable/button_border"
-                    android:text= "오답노트에 추가"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:layout_weight="1"
-                    android:id="@+id/continueTryBtn"
-                    android:background="@drawable/button_border"
-                    android:text= "문제 계속 풀기"
-                    android:layout_margin="15dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:background="#313131"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/addToCheckListBtn"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:background="#313131"
+                android:textColor="#FFFFFF"
+                android:text= "오답노트에 추가"
+                android:layout_width="wrap_content"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/continueTryBtn"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:background="#313131"
+                android:textColor="#FFFFFF"
+                android:text= "문제 계속 풀기"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+    </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

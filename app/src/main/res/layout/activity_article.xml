@@ -37,10 +37,20 @@
             android:padding="15dp"
             android:background="#313131"
             android:text="본문"/>
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/articleAd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/article_descript"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/9915083275">
+        </com.google.android.gms.ads.AdView>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/article_descript"
+            android:layout_below="@+id/articleAd"
             android:layout_above="@+id/article_menuBar"
             android:id="@+id/article_articleContainer"
             android:fillViewport="true">
@@ -84,20 +94,6 @@
                     android:id="@+id/article_context"
                     android:layout_marginBottom="20dp"
                     android:text="본문"/>
-                <RelativeLayout
-                    android:layout_marginTop="30dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <com.google.android.gms.ads.AdView
-                        xmlns:ads="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/articleAd"
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        ads:adSize="BANNER"
-                        ads:adUnitId="ca-app-pub-5333091392909120/9915083275">
-                    </com.google.android.gms.ads.AdView>
-                </RelativeLayout>
             </LinearLayout>
         </ScrollView>
         <LinearLayout

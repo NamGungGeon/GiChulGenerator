@@ -5,28 +5,28 @@
     android:layout_height="match_parent"
     android:id="@+id/frag_mainmenu"
     >
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/mainPageAd"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-5333091392909120/6072450302">
-    </com.google.android.gms.ads.AdView>
     <RelativeLayout
-        android:layout_below="@id/mainPageAd"
+        android:layout_alignParentTop="true"
         android:layout_above="@+id/bottomQuickMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/mainMenuContainer">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/mainPageAd"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/6072450302">
+        </com.google.android.gms.ads.AdView>
         <!-- Left Basic Menu List-->
         <FrameLayout
             android:id="@+id/basicMenuList"
             android:layout_width="120dp"
+            android:layout_below="@id/mainPageAd"
             android:layout_height="match_parent">
-
             <ScrollView
                 android:scrollbars="none"
                 android:layout_width="match_parent"
@@ -145,6 +145,7 @@
         <RelativeLayout
             android:layout_toRightOf="@id/basicMenuList"
             android:id="@+id/statusCheckList"
+            android:layout_below="@id/mainPageAd"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ScrollView

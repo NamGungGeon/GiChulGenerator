@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "460654701170-5lfmvc1jfn5hrkdlv78a8mb6qd0mbf15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.windows7.gichulgenerator",
+            "certificate_hash": "4741a6184bc34621d2d1f91c3e0ef45ab83bdaa0"
+          }
+        },
+        {
           "client_id": "460654701170-ebhmg6jnmefiom7f76omr09q2hi96r4n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -52,6 +60,37 @@
               "client_type": 3
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460654701170:android:369ed7bfc370bfbb",
+        "android_client_info": {
+          "package_name": "com.satisfactoryplace.gichul.gichulgenerator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "460654701170-su8dqlgs4pq463mblhqoo095kkuduikf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYlIZbrEZ3yfNJpQcT_lnowYmWvgknHek"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

@@ -5,5 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainContainer"
-    tools:context="com.example.windows7.gichulgenerator.MainActivity">
+    tools:context="com.satisfactoryplace.gichul.gichulgenerator.MainActivity">
 </FrameLayout>

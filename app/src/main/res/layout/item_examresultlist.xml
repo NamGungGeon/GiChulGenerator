@@ -19,5 +19,5 @@
         android:id="@+id/examResultListItem_examInfo"
         android:text="historyInfo"
         android:textSize="18dp"
-        android:textColor="#A0A0A0"/>
+        android:textColor="#C63D0F"/>
 </RelativeLayout>
