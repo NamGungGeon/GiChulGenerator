@@ -3,6 +3,7 @@ package com.satisfactoryplace.gichul.gichulgenerator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -406,10 +407,10 @@ public class ExamResultFragment extends Fragment {
     void searchSolution(){
         Toast.makeText(getContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
 
-        Intent intent= new Intent(getContext(), WebViewActivity.class);
-        intent.putExtra("title", title.getText());
-        intent.putExtra("url", "http://www.ebsi.co.kr/ebs/xip/xipa/retrieveSCVLastExamList.ebs");
-        startActivity(intent);
+        String url = "http://www.ebsi.co.kr/ebs/xip/xipa/retrieveSCVLastExamList.ebs";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     @Override

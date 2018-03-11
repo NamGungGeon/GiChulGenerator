@@ -106,7 +106,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "1.0";
+    private String appVersion= "1.1";
 
     @Nullable
     @Override
@@ -580,8 +580,13 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             }
         }
     }
-    @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
 
+    @OnClick(R.id.menuList_donation)
+    void donation(){
+        Toast.makeText(getContext(), "미구현 기능입니다", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
     void openFreeboard(){
         if(AppData.freeboardStatus== null || AppData.freeboardStatus.equals("close")){
             Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
@@ -693,7 +698,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         }else{
             message= "앱이 최신 버전이 아닙니다.\n업데이트가 필요합니다.\n\n";
             message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
-            message+= "최신 앱 버전: "+ AppData.currentVersion+ "\n";
+            message+= "최신 앱 버전: "+ AppData.currentVersion;
         }
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }

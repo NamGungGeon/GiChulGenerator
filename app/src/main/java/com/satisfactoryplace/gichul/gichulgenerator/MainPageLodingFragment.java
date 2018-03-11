@@ -57,13 +57,13 @@ public class MainPageLodingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_loading, container, false);
 
-
         mainConatiner= rootView.findViewById(R.id.loadingContainer);
         setBackground(mainConatiner);
         login_google();
 
         return rootView;
     }
+
     void setBackground(RelativeLayout mainContainer){
         int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
@@ -86,7 +86,6 @@ public class MainPageLodingFragment extends Fragment {
 
         mainContainer.setBackgroundDrawable(background);
     }
-
 
 
     public void login_google(){
@@ -221,8 +220,6 @@ public class MainPageLodingFragment extends Fragment {
             }
         });
     }
-
-
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Firebase Auth", "firebaseAuthWithGoogle:" + acct.getId());
