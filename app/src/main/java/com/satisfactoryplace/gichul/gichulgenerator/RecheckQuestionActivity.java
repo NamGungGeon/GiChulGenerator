@@ -127,36 +127,12 @@ public class RecheckQuestionActivity extends AppCompatActivity {
         });
     }
 
-    // Check whether institute is sunung
-    // In Case of sunung, copyright problem is exist
-    // Must called whenever solution is visible.
-    private void checkInstitute(){
-        String titleMessage= title.getText().toString();
-        if(titleMessage.contains("대학수학능력평가시험") || titleMessage.contains("수능")){
-            //Case: Institute is sunung
-            hideSolutionImage();
-        }else{
-            //Case: Institute is not sunung
-            //Do not any action
-        }
-    }
-
-    // Instead, Move to EBS text is visible.
-    private void hideSolutionImage(){
-        solutionImage.setVisibility(View.GONE);
-        invisibleReason.setVisibility(View.VISIBLE);
-        invisibleReason.setText("수능의 경우 해설지가 제공되지 않습니다.\n" +
-                "아래에서 해설강의 검색 버튼을 눌러 해설지를 다운로드하세요");
-    }
-
     @OnClick(R.id.recheck_imageChange)
     void changeImageBtn(){
         if(imageStatus== exam){
             examImage.setVisibility(View.GONE);
             solutionImage.setVisibility(View.VISIBLE);
             imageStatus= solution;
-
-            checkInstitute();
 
             imageChangeBtn.setText("문제 확인");
         }else{

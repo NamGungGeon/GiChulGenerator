@@ -38,7 +38,6 @@ public class SearchResultSolutionFragment extends Fragment {
     @BindView(R.id.rsearchResult_solution_question)ImageView question;
     @BindView(R.id.searchResult_solution_addToCheckListBtn)Button addToCheckListBtn;
     @BindView(R.id.searchResult_solution_changeImageBtn) Button changeImageBtn;
-    @BindView(R.id.searchResult_invisibleReason) TextView invisibleReason;
 
     private String inputAnswer;
     private String rightAnswer;
@@ -99,7 +98,6 @@ public class SearchResultSolutionFragment extends Fragment {
 
         checkAnswer();
         saveHistory();
-        checkInstitute();
     }
 
     private void checkAnswer(){
@@ -129,39 +127,13 @@ public class SearchResultSolutionFragment extends Fragment {
             changeImageBtn.setText("해설 다시 확인");
             question.setVisibility(View.VISIBLE);
             solution.setVisibility(View.GONE);
-            invisibleReason.setVisibility(View.GONE);
             imageStatus= EXAM;
         }else if(imageStatus== EXAM){
             changeImageBtn.setText("문제 다시 확인");
             question.setVisibility(View.GONE);
             solution.setVisibility(View.VISIBLE);
             imageStatus= SOLUTION;
-
-            checkInstitute();
         }
-    }
-
-
-    // Check whether institute is sunung
-    // In Case of sunung, copyright problem is exist
-    // Must called whenever solution is visible.
-    private void checkInstitute(){
-        String titleMessage= title.getText().toString();
-        if(titleMessage.contains("대학수학능력평가시험") || titleMessage.contains("수능")){
-            //Case: Institute is sunung
-            hideSolutionImage();
-        }else{
-            //Case: Institute is not sunung
-            //Do not any action
-        }
-    }
-
-    // Instead, Move to EBS text is visible.
-    private void hideSolutionImage(){
-        solution.setVisibility(View.GONE);
-        invisibleReason.setVisibility(View.VISIBLE);
-        invisibleReason.setText("수능의 경우 해설지가 제공되지 않습니다.\n" +
-                "아래에서 해설강의 검색 버튼을 눌러 해설지를 다운로드하세요");
     }
 
 

@@ -41,7 +41,6 @@ public class RandomQuestionSolutionFragment extends Fragment{
     @BindView(R.id.solutionTitle) TextView solutionTitle;
     @BindView(R.id.solutionImage) ImageView solutionImage;
     @BindView(R.id.recheck_examImage) ImageView recheckExamImage;
-    @BindView(R.id.solution_invisibleSolutionExplain) TextView invisibleReason;
 
     @BindView(R.id.changeImageBtn) Button changeImageBtn;
     @BindView(R.id.addToCheckListBtn) Button addToCheckListBtn;
@@ -79,8 +78,6 @@ public class RandomQuestionSolutionFragment extends Fragment{
                     solutionTitle.setTextColor(getResources().getColor(R.color.red));
                 }
 
-
-                saveHistory();
                 init();
             }
 
@@ -141,36 +138,6 @@ public class RandomQuestionSolutionFragment extends Fragment{
         solutionFileName+= tokenizer.nextToken();
     }
 
-    private void saveHistory(){
-        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-        String basicFileName= getActivity().getIntent().getStringExtra("examFileName");
-        basicFileName= basicFileName.substring(2);
-        HistoryList.getInstance().addToList(new Question(getActivity().getIntent().getStringExtra("examInfo"), basicFileName,
-                getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
-    }
-
-    // Check whether institute is sunung
-    // In Case of sunung, copyright problem is exist
-    // Must called whenever solution is visible.
-    private void checkInstitute(){
-        String title= examInfo.getText().toString();
-        if(title.contains("대학수학능력평가시험") || title.contains("수능")){
-            //Case: Institute is sunung
-            hideSolutionImage();
-        }else{
-            //Case: Institute is not sunung
-            //Do not any action
-        }
-    }
-
-    // Instead, Move to EBS text is visible.
-    private void hideSolutionImage(){
-        solutionImage.setVisibility(View.GONE);
-        invisibleReason.setVisibility(View.VISIBLE);
-        invisibleReason.setText("수능의 경우 해설지가 제공되지 않습니다.\n" +
-                "아래에서 해설강의 검색 버튼을 눌러 해설지를 다운로드하세요");
-    }
-
     @OnClick(R.id.continueTryBtn)
     void continueTry(){
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionFragment()).commit();
@@ -208,15 +175,12 @@ public class RandomQuestionSolutionFragment extends Fragment{
             changeImageBtn.setText("해설 다시 확인");
             recheckExamImage.setVisibility(View.VISIBLE);
             solutionImage.setVisibility(View.GONE);
-            invisibleReason.setVisibility(View.GONE);
             imageStatus= EXAM;
         }else if(imageStatus== EXAM){
             changeImageBtn.setText("문제 다시 확인");
             recheckExamImage.setVisibility(View.GONE);
             solutionImage.setVisibility(View.VISIBLE);
             imageStatus= SOLUTION;
-
-            checkInstitute();
         }
     }
 

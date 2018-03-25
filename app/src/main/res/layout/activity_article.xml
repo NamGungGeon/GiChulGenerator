@@ -98,7 +98,7 @@
         </ScrollView>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:id="@+id/article_menuBar"
             android:background="#313131"
@@ -107,7 +107,6 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="20dp"
                 android:textColor="#FFFFFF"
                 android:id="@+id/article_comment"
                 android:background="#313131"
@@ -116,7 +115,6 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="20dp"
                 android:textColor="#FFFFFF"
                 android:background="#313131"
                 android:id="@+id/article_delete"

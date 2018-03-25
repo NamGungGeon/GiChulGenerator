@@ -30,9 +30,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
@@ -78,38 +75,31 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     // Menu List
     private boolean isOpenedMenuList= false;
     @BindView(R.id.menuList) LinearLayout menuList;
-    @BindView(R.id.menuList_notification) Button menu_notification;
-    @BindView(R.id.menuList_allHistoryDelete) Button menu_allDeleteHistory;
-    @BindView(R.id.menuList_qna) Button menu_qna;
-    @BindView(R.id.menuList_freeBoard) Button menu_freeBoard;
-    @BindView(R.id.menuList_donation) Button menu_donation;
-    @BindView(R.id.menuList_devInfo) Button menu_devInfo;
-    @BindView(R.id.menuList_goToStudy) Button menu_goToStudy;
-    @BindView(R.id.menuList_searchExam) Button menu_searchExam;
-    @BindView(R.id.menuList_changeBackground) Button menu_changeBackground;
-    @BindView(R.id.menuList_checkList) Button menu_checkListBtn;
-    @BindView(R.id.menuList_calendar) Button menu_calendar;
-    @BindView(R.id.menuList_historyList) Button menu_historyList;
-    @BindView(R.id.menuList_checkAppVersion) Button menu_checkAppVersion;
-    @BindView(R.id.menuList_examResult) Button menu_examResult;
-    @BindView(R.id.menuList_goExam) Button menu_goExam;
+    @BindView(R.id.menuList_allHistoryDelete) ImageView menu_allDeleteHistory;
+    @BindView(R.id.menuList_qna) ImageView menu_qna;
+    @BindView(R.id.menuList_freeBoard) ImageView menu_freeBoard;
+    @BindView(R.id.menuList_donation) ImageView menu_donation;
+    @BindView(R.id.menuList_devInfo) ImageView menu_devInfo;
+    @BindView(R.id.menuList_goToStudy) ImageView menu_goToStudy;
+    @BindView(R.id.menuList_searchExam) ImageView menu_searchExam;
+    @BindView(R.id.menuList_changeBackground) ImageView menu_changeBackground;
+    @BindView(R.id.menuList_checkList) ImageView menu_checkListBtn;
+    @BindView(R.id.menuList_historyList) ImageView menu_historyList;
+    @BindView(R.id.menuList_checkAppVersion) ImageView menu_checkAppVersion;
+    @BindView(R.id.menuList_examResult) ImageView menu_examResult;
+    @BindView(R.id.menuList_goExam) ImageView menu_goExam;
 
     // Bottom Menu
     @BindView(R.id.menuListBtn) ImageView menuListBtn;
     @BindView(R.id.help) ImageView helpBtn;
 
-    // Ad
-    @BindView(R.id.mainPageAd)
-    AdView mAdView;
-
     private final int EXAM_ACTIVITY= 1335;
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "1.1";
+    private String appVersion= "1.2";
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
         unbinder= ButterKnife.bind(this, rootView);
@@ -119,7 +109,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void init(){
-        setAdView();
         setBackground();
         setMyGoal();
         resizeMenuListElements();
@@ -196,12 +185,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         });
     }
 
-    private void setAdView(){
-        MobileAds.initialize(getActivity(), "ca-app-pub-5333091392909120/6072450302");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-    }
-
     private void setTodayReport(){
         HistoryList historyList= HistoryList.getInstance();
 
@@ -244,7 +227,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private void setBackground(){
         int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
-        Bitmap bitmap= null;
+        Bitmap bitmap;
 
         String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
         if(backgroundPath.equals("")){
@@ -266,7 +249,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void resizeMenuListElements(){
-        resizeMenuListElement(menu_notification);
         resizeMenuListElement(menu_allDeleteHistory);
         resizeMenuListElement(menu_qna);
         resizeMenuListElement(menu_freeBoard);
@@ -276,7 +258,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         resizeMenuListElement(menu_searchExam);
         resizeMenuListElement(menu_changeBackground);
         resizeMenuListElement(menu_checkListBtn);
-        resizeMenuListElement(menu_calendar);
         resizeMenuListElement(menu_historyList);
         resizeMenuListElement(menu_checkAppVersion);
         resizeMenuListElement(menu_goExam);
@@ -284,20 +265,18 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     //Only used in resizedMenuListElements
-    private void resizeMenuListElement(View view){
+    private void resizeMenuListElement(ImageView view){
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.height = getActivity().getWindowManager().getDefaultDisplay().getWidth()/3;
         params.width= params.height;
         view.setLayoutParams(params);
         view.requestLayout();
 
-        Bitmap bitmap= view.getDrawingCache();
-        if(bitmap!= null){
+        Bitmap bitmap= ((BitmapDrawable)(view.getBackground())).getBitmap();
+        if(bitmap!= null && bitmap.isRecycled()== false){
             Bitmap resizedBitmap= Bitmap.createScaledBitmap(bitmap, params.width, params.height, false);
             BitmapDrawable bitmapDrawable= new BitmapDrawable(resizedBitmap);
             view.setBackground(bitmapDrawable);
-
-            bitmap.recycle();
         }
     }
 
@@ -683,11 +662,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 startActivity(new Intent(getContext(), QnaBoardActivity.class));
             }
         }
-    }
-
-    @OnClick(R.id.menuList_notification)
-    void setNotificationStatus(){
-        Toast.makeText(getContext(), "준비중입니다...", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.menuList_checkAppVersion)

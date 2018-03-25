@@ -75,12 +75,10 @@
                 android:background="#313131"
                 android:textColor="#FFFFFF"
                 android:id="@+id/qna_search"
-                android:textSize="20dp"
                 android:text="검색"/>
             <Button
                 android:layout_weight="1"
                 android:layout_width="1dp"
-                android:textSize="20dp"
                 android:layout_height="match_parent"
                 android:textColor="#FFFFFF"
                 android:background="#313131"
@@ -89,7 +87,6 @@
             <Button
                 android:layout_weight="1"
                 android:layout_width="1dp"
-                android:textSize="20dp"
                 android:layout_height="match_parent"
                 android:textColor="#FFFFFF"
                 android:background="#313131"

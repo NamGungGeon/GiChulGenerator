@@ -163,7 +163,7 @@ public class ArticleActivity extends AppCompatActivity {
                 new DialogMaker.Callback() {
                     @Override
                     public void callbackMethod() {
-                        if(article.getUid().equals(FirebaseAuth.getInstance().getUid())){
+                        if(article.getUid().equals(FirebaseAuth.getInstance().getUid()) || Status.nickName.equals("관리자")){
                             FirebaseConnection.getInstance().getReference(articleType+ "/"+ article.getKey()).removeValue();
                             Toast.makeText(ArticleActivity.this, "삭제되었습니다", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();

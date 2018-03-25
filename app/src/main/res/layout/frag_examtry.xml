@@ -379,7 +379,7 @@
             android:layout_height="wrap_content"
             android:background="#313131"
             android:layout_weight="1"
-            android:text="Timer"
+            android:text="타이머"
             android:id="@+id/exam_timer"
             android:textSize="15dp"
             />

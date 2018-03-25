@@ -44,7 +44,6 @@ public class MainPageLodingFragment extends Fragment {
 
     private final int LOGIN_GOOGLE=1235;
 
-
     private GoogleSignInOptions gso=null;
     private GoogleApiClient mGoogleApiClient=null;
     private FirebaseAuth firebaseAuth=null;

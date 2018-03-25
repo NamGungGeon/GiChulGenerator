@@ -38,6 +38,17 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 // This class is designed as Singleton pattern
 public class FirebaseConnection {
+
+    public interface Callback{
+        void success(DataSnapshot snapshot);
+        void fail(String errorMessage);
+    }
+    public interface ImageLoadFinished{
+        void success(Bitmap bitmap);
+        void fail(Exception e);
+    }
+
+
     private FirebaseStorage storage= null;
     private DatabaseReference mDatabase= null;
 
@@ -53,17 +64,10 @@ public class FirebaseConnection {
         if(instance== null){
             instance= new FirebaseConnection();
         }
-
         return instance;
     }
 
-    public interface Callback{
-        void success(DataSnapshot snapshot);
-        void fail(String errorMessage);
-    }
-
     public void loadData(String path, final Callback callback){
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
         StringTokenizer token= new StringTokenizer(path, "/", false);
         while(token.hasMoreTokens()){
@@ -127,10 +131,6 @@ public class FirebaseConnection {
         });
     }
 
-    public interface ImageLoadFinished{
-        void success(Bitmap bitmap);
-        void fail(Exception e);
-    }
     public void loadImage(String fileName, final ImageView imageView, Context context, final ImageLoadFinished loadFinished){
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
