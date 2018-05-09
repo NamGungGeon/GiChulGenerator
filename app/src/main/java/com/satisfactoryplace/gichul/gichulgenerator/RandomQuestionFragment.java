@@ -88,6 +88,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
     //After end to load potentials, called init()
     private void loadPotentials(){
+        Log.i("Path", "potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject);
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
@@ -119,14 +120,6 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             examSubject= "imath";
         }else if (filter_subj.equals("수학(문과)")) {
             examSubject= "mmath";
-        }else if (filter_subj.equals("국어")) {
-            examSubject= "korean";
-        }else if (filter_subj.equals("영어")) {
-            examSubject= "english";
-        }else if (filter_subj.equals("사회탐구")) {
-            examSubject= "social";
-        }else if (filter_subj.equals("과학탐구")) {
-            examSubject= "science";
         }
     }
 
@@ -134,27 +127,17 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         String filter_peri= getActivity().getIntent().getStringExtra("peri");
 
         //Decide period_y
-        if(filter_peri.equals("상관없음")){
-            String[] yList= {"2017", "2016", "2015", "2014", "2013", "2012"};
-            examPeriod_y= yList[new Random().nextInt(yList.length)];
-        }else if(filter_peri.equals("최근 6년 내")){
-            String[] yList= {"2017", "2016", "2015", "2014", "2013", "2012"};
-            examPeriod_y= yList[new Random().nextInt(yList.length)];
-        }else if(filter_peri.equals("최근 3년 내")){
+        if(filter_peri.equals("2015~2017")){
             String[] yList= {"2017", "2016", "2015"};
             examPeriod_y= yList[new Random().nextInt(yList.length)];
+        }else if(filter_peri.equals("2018")){
+            examPeriod_y= "2018";
         }else if(filter_peri.equals("2017")){
             examPeriod_y= "2017";
         }else if(filter_peri.equals("2016")){
             examPeriod_y= "2016";
         }else if(filter_peri.equals("2015")){
             examPeriod_y= "2015";
-        }else if(filter_peri.equals("2014")){
-            examPeriod_y= "2014";
-        }else if(filter_peri.equals("2013")){
-            examPeriod_y= "2013";
-        }else if(filter_peri.equals("2012")){
-            examPeriod_y= "2012";
         }
 
         //Decide period_m
@@ -166,6 +149,13 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         }else if(examInstitute.equals("pyeong")){
             String mList[]= {"6", "9"};
             examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }
+
+        //Case: period_y== 2018
+        if(examPeriod_y.equals("2018")){
+            examInstitute= "gyoyuk";
+            String mList[] = {"3", "4"};
+            examPeriod_m = mList[new Random().nextInt(mList.length)];
         }
     }
 

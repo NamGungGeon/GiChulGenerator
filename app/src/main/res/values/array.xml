@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 랜덤 문제 생성 -->
     <string-array name="instituteArray">
         <item>
             상관없음
@@ -15,17 +16,6 @@
         </item>
     </string-array>
     <string-array name="subjectArray">
-        <item>
-            수학(이과)
-        </item>
-        <item>
-            수학(문과)
-        </item>
-    </string-array>
-    <string-array name="filter_subjectArray">
-        <item>
-            상관없음
-        </item>
         <item>
             수학(이과)
         </item>
@@ -55,7 +45,10 @@
     </string-array>
     <string-array name="periodArray">
         <item>
-            최근 3년 내
+            2018
+        </item>
+        <item>
+            2015~2017
         </item>
         <item>
             2017
@@ -68,7 +61,11 @@
         </item>
     </string-array>
 
+    <!-- 문제 검색에서 사용 -->
     <string-array name="periodArray_y">
+        <item>
+            2018
+        </item>
         <item>
             2017
         </item>
@@ -101,6 +98,19 @@
     <string-array name="emptyArray">
         <item>
             -
+        </item>
+    </string-array>
+
+    <!-- 필터 -->
+    <string-array name="filter_subjectArray">
+        <item>
+            상관없음
+        </item>
+        <item>
+            수학(이과)
+        </item>
+        <item>
+            수학(문과)
         </item>
     </string-array>
 </resources>

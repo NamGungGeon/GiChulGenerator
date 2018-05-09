@@ -29,34 +29,33 @@ public class Article{
         this.isExistImage= isExistImage;
     }
 
+    // only used for loading from firebase
+    // never use directly
     public Article(){}
 
     public HashMap<String, Comment> getComments() {
         return comments;
     }
-
     public void setComments(HashMap<String, Comment> comments) {
         this.comments = comments;
     }
 
+    // not need setter about key, title, text
     public String getKey() {
         return key;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getText() {
+        return text;
     }
 
     public String getUid() {
         return uid;
     }
-
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public String getUserName() {
@@ -69,7 +68,6 @@ public class Article{
     public boolean getIsExistImage() {
         return isExistImage;
     }
-
     public void setExistImage(boolean isExistImage) {
         isExistImage = isExistImage;
     }

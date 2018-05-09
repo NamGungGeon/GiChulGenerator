@@ -82,6 +82,7 @@ public class SearchResultTryFragment extends Fragment {
         setExamIdentifier();
 
         //Load Potential
+        Log.i("Path", "potential/" + examPeriod_y + "/" + examInstitute+ "/"+ examPeriod_m + "/" + examSubject + "/" + examNumber);
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute+ "/"+ examPeriod_m + "/" + examSubject + "/" + examNumber, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {

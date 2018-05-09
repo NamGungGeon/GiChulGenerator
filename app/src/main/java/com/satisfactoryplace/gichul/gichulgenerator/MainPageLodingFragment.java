@@ -86,7 +86,6 @@ public class MainPageLodingFragment extends Fragment {
         mainContainer.setBackgroundDrawable(background);
     }
 
-
     public void login_google(){
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -170,8 +169,8 @@ public class MainPageLodingFragment extends Fragment {
                                                     @Override
                                                     public void success() {
                                                         backgroundBitmap.recycle();
-                                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                                                         progressDialog.dismiss();
+                                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                                                     }
 
                                                     @Override

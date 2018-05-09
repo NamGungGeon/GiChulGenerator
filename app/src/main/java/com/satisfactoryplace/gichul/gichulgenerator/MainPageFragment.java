@@ -65,7 +65,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.historyListBtn) Button historyListBtn;
 
     // Right Status window
-    @BindView(R.id.specialMessage) TextView specialMessage;
     @BindView(R.id.todayInfo) TextView todayInfo;
     @BindView(R.id.scheduler) TextView schedular;
     @BindView(R.id.monthInfo) TextView monthInfo;
@@ -97,7 +96,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "1.2";
+    private String appVersion= "1.3";
 
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -116,8 +115,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         setTodayReport();
         setMonthReport();
         setTotalReport();
-
-        specialMessage.setText("성공은 매일 반복한 작은 노력들의 합이다");
 
         //Set Schedule
         String between= "";
@@ -292,6 +289,186 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         isOpenedMenuList= false;
     }
 
+    void setMyGoal(){
+        int width= 128;
+        int height= 128;
+        Bitmap bitmap;
+
+        String imagePath= getActivity().getSharedPreferences("goal", MODE_PRIVATE).getString("path", "");
+        if(imagePath.equals("")){
+            //Not set background
+            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
+        }else{
+            File imageFile= new File(imagePath);
+            if(imageFile== null || imageFile.exists()== false){
+                //No Exist File
+                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
+            }else{
+                bitmap= BitmapFactory.decodeFile(imagePath);
+            }
+        }
+        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
+        BitmapDrawable image= new BitmapDrawable(bitmap);
+
+        univImage.setBackgroundDrawable(image);
+    }
+
+    private boolean checkNickName(String nickName){
+        if(nickName!= null){
+            //Check Length
+            if(nickName.length()>= 2 && nickName.length()<= 12){
+                if(nickName.contains(" ") || nickName.contains("\n")){
+                    Toast.makeText(getContext(), "공백과 개행은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                //Literal Check
+                boolean isCanUsingNickName= true;
+                for(int i=0; i<nickName.length(); i++){
+                    if(nickName.charAt(i)>= 'a' && nickName.charAt(i)<= 'z'){
+
+                    }else if(nickName.charAt(i)>= 'A' && nickName.charAt(i)<= 'Z'){
+
+                    }else if(nickName.charAt(i)>= '가' && nickName.charAt(i)<= '힣'){
+
+                    }else{
+                        //Incldue literal Not allowed
+                        isCanUsingNickName= false;
+                    }
+                }
+
+                if(isCanUsingNickName== false){
+                    Toast.makeText(getContext(), "닉네임에는 한국어와 영어만 사용 가능합니다\n(한국어 자음/모음 단독사용 불가)", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                if(nickName.equals("관리자")){
+                    Toast.makeText(getContext(), "해당 닉네임은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }else {
+                    return true;
+                }
+            }else{
+                Toast.makeText(getContext(), "닉네임은 2자 이상, 12자 이하로 설정해야 합니다.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }else{
+            Toast.makeText(getContext(), "사용할 닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+    private int checkPermission(){
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            //not need permission
+            return 1;
+        }
+
+        return ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    private void getPermission(){
+        //권한이 부여되어 있는지 확인
+        int permissonCheck= checkPermission();
+
+        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
+            //Permission Granted
+        }else{
+            Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
+
+            //권한설정 dialog에서 거부를 누르면
+            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
+            //단, 사용자가 "Don't ask again"을 체크한 경우
+            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
+            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)){
+                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
+                Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
+            }else{
+                Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE},123);
+            }
+        }
+    }
+
+    private boolean isValidPeriod(String period_y, String period_m){
+        int y= Integer.valueOf(period_y);
+        int m= Integer.valueOf(period_m);
+        if(y> 2018 || y< 2015){
+            return false;
+        }
+        if(m> 11 || m<3){
+            return false;
+        }
+
+        // 이 버전에서는 2018년 4월 시험까지 지원
+        if(y== 2018 && m>4){
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if(isOpenedMenuList== true){
+            closeMenuList();
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 123:
+                //change background image
+                if (null != data) {
+                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
+                    cursor.moveToNext();
+                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
+                    cursor.close();
+
+                    //save
+                    SharedPreferences pref = getActivity().getSharedPreferences("background", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("path", path);
+                    editor.commit();
+
+                    setBackground();
+                }
+                break;
+            case 155:
+                //change univ image
+                if (null != data) {
+                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
+                    cursor.moveToNext();
+                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
+                    cursor.close();
+
+                    //save
+                    SharedPreferences pref = getActivity().getSharedPreferences("goal", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("path", path);
+                    editor.commit();
+
+                    setMyGoal();
+                }
+                break;
+            default:
+                init();
+                break;
+        }
+    }
+
+    /* Listener List */
     @OnClick({R.id.historyListBtn, R.id.menuList_historyList})
     void openHistoryList(){
         startActivity(new Intent(getActivity(), HistoryListActivity.class));
@@ -407,11 +584,19 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 new DialogMaker.Callback() {
                     @Override
                     public void callbackMethod() {
+                        if(isValidPeriod(period_y.getSelectedItem().toString(), period_m.getSelectedItem().toString())== false){
+                            Toast.makeText(getContext(), "2018년 4월 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
                         //start search
                         String basicFileName= "";
 
                         //Decide period_y
                         String filter_period_y= period_y.getSelectedItem().toString();
+                        if(filter_period_y.equals("2018")){
+                            basicFileName+= "2018";
+                        }
                         if(filter_period_y.equals("2017")){
                             basicFileName+= "2017";
                         }else if(filter_period_y.equals("2016")){
@@ -466,7 +651,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     @OnClick({R.id.goToStudy, R.id.menuList_goToStudy})
-    void goToStudy(){
+    void goRandomQuestion(){
         final DialogMaker dialog= new DialogMaker();
         View childView= getLayoutInflater().inflate(R.layout.dialog_setfilter, null);
 
@@ -483,6 +668,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 String instOption= (String)instituteSpinner.getSelectedItem();
                 String periodOption= (String)periodSpinner.getSelectedItem();
 
+                if(periodOption.equals("2018")){
+                    Toast.makeText(getContext(), "2018년 4월 교육청 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
+                    if(instOption.equals("교육청")==false && instOption.equals("상관없음")== false){
+                        return;
+                    }
+                }
                 //move Activity
                 Intent intent= new Intent(getActivity(), RandomQuestionActivity.class);
                 intent.putExtra("subj", subjectOption);
@@ -525,39 +716,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         });
         dialog.setValue(null, null, null, null, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "Open Developer Information");
-    }
-
-    private int checkPermission(){
-        if (android.os.Build.VERSION.SDK_INT < 23) {
-            //not need permission
-            return 1;
-        }
-
-        return ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
-
-    private void getPermission(){
-        //권한이 부여되어 있는지 확인
-        int permissonCheck= checkPermission();
-
-        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
-            //Permission Granted
-        }else{
-            Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
-
-            //권한설정 dialog에서 거부를 누르면
-            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
-            //단, 사용자가 "Don't ask again"을 체크한 경우
-            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
-            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)){
-                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
-            }else{
-                Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE},123);
-            }
-        }
     }
 
     @OnClick(R.id.menuList_donation)
@@ -689,7 +847,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         final Spinner number= childView.findViewById(R.id.searchNumber);
         TextView numberExplain= childView.findViewById(R.id.searchNumber_text);
 
-        //Not Need Number
+        //Not Need question's number
         number.setVisibility(View.GONE);
         numberExplain.setVisibility(View.GONE);
 
@@ -739,13 +897,19 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 new DialogMaker.Callback() {
                     @Override
                     public void callbackMethod() {
-                        Intent intent= new Intent(getActivity().getApplicationContext(), ExamActivity.class);
+                        if(isValidPeriod(period_y.getSelectedItem().toString(), period_m.getSelectedItem().toString())== false){
+                            Toast.makeText(getContext(), "2018년 4월 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
 
+                        Intent intent= new Intent(getActivity().getApplicationContext(), ExamActivity.class);
                         String basicFileName= "";
 
                         //Decide period_y
                         String filter_period_y= period_y.getSelectedItem().toString();
-                        if(filter_period_y.equals("2017")){
+                        if(filter_period_y.equals("2018")){
+                            basicFileName+= "2018";
+                        }else if(filter_period_y.equals("2017")){
                             basicFileName+= "2017";
                         }else if(filter_period_y.equals("2016")){
                             basicFileName+= "2016";
@@ -789,7 +953,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         intent.putExtra("institute", filter_institute);
                         intent.putExtra("subject", filter_subj);
 
-                        // basicFileName is not include "Number"
+                        // In this case, basicFileName is not include "Number"
                         intent.putExtra("basicFileName", basicFileName);
 
                         startActivityForResult(intent, 1335);
@@ -815,131 +979,4 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         }
     }
 
-    void setMyGoal(){
-        int width= 128;
-        int height= 128;
-        Bitmap bitmap;
-
-        String imagePath= getActivity().getSharedPreferences("goal", MODE_PRIVATE).getString("path", "");
-        if(imagePath.equals("")){
-            //Not set background
-            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
-        }else{
-            File imageFile= new File(imagePath);
-            if(imageFile== null || imageFile.exists()== false){
-                //No Exist File
-                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
-            }else{
-                bitmap= BitmapFactory.decodeFile(imagePath);
-            }
-        }
-        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
-        BitmapDrawable image= new BitmapDrawable(bitmap);
-
-        univImage.setBackgroundDrawable(image);
-    }
-
-    private boolean checkNickName(String nickName){
-        if(nickName!= null){
-            //Check Length
-            if(nickName.length()>= 2 && nickName.length()<= 12){
-                if(nickName.contains(" ") || nickName.contains("\n")){
-                    Toast.makeText(getContext(), "공백과 개행은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-
-                //Literal Check
-                boolean isCanUsingNickName= true;
-                for(int i=0; i<nickName.length(); i++){
-                    if(nickName.charAt(i)>= 'a' && nickName.charAt(i)<= 'z'){
-
-                    }else if(nickName.charAt(i)>= 'A' && nickName.charAt(i)<= 'Z'){
-
-                    }else if(nickName.charAt(i)>= '가' && nickName.charAt(i)<= '힣'){
-
-                    }else{
-                        //Incldue literal Not allowed
-                        isCanUsingNickName= false;
-                    }
-                }
-
-                if(isCanUsingNickName== false){
-                    Toast.makeText(getContext(), "닉네임에는 한국어와 영어만 사용 가능합니다\n(한국어 자음/모음 단독사용 불가)", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-
-                if(nickName.equals("관리자")){
-                    Toast.makeText(getContext(), "해당 닉네임은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
-                    return false;
-                }else {
-                    return true;
-                }
-            }else{
-                Toast.makeText(getContext(), "닉네임은 2자 이상, 12자 이하로 설정해야 합니다.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }else{
-            Toast.makeText(getContext(), "사용할 닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        if(isOpenedMenuList== true){
-            closeMenuList();
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case 123:
-                //change background image
-                if (null != data) {
-                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
-                    cursor.moveToNext();
-                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
-                    cursor.close();
-
-                    //save
-                    SharedPreferences pref = getActivity().getSharedPreferences("background", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("path", path);
-                    editor.commit();
-
-                    setBackground();
-                }
-                break;
-            case 155:
-                //change univ image
-                if (null != data) {
-                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
-                    cursor.moveToNext();
-                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
-                    cursor.close();
-
-                    //save
-                    SharedPreferences pref = getActivity().getSharedPreferences("goal", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("path", path);
-                    editor.commit();
-
-                    setMyGoal();
-                }
-                break;
-            default:
-                init();
-                break;
-        }
-    }
 }

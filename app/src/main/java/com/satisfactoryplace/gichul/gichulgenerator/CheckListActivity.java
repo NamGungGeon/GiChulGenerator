@@ -78,21 +78,31 @@ public class CheckListActivity extends AppCompatActivity {
             subjectFilter= "imath";
         }else if(subjectFilter.equals("수학(문과)")){
             subjectFilter= "mmath";
-        }else if(subjectFilter.equals("국어")){
-            subjectFilter= "korean";
-        }else if(subjectFilter.equals("영어")){
-            subjectFilter= "english";
-        }else if(subjectFilter.equals("사회탐구")){
-            subjectFilter= "social";
-        }else if(subjectFilter.equals("과학탐구")){
-            subjectFilter= "science";
         }
+
         return subjectFilter;
     }
 
     private void setListView(String subjectFilter){
-        // checkList - ListView setting
-        final ArrayList<Question> checkListData= CheckList.getInstance().getCheckList();
+        ArrayList<Question> temp= new ArrayList();
+        if(subjectFilter!= null){
+            if(subjectFilter.equals("imath")){
+                for(Question q: CheckList.getInstance().getCheckList()){
+                    if(q.getSubject().equals("imath")){
+                        temp.add(q);
+                    }
+                }
+            }else if(subjectFilter.equals("mmath")){
+                for(Question q: CheckList.getInstance().getCheckList()){
+                    if(q.getSubject().equals("mmath")){
+                        temp.add(q);
+                    }
+                }
+            }
+        }else{
+            temp= CheckList.getInstance().getCheckList();
+        }
+        final ArrayList<Question> checkListData= temp;
 
         Collections.sort(checkListData, new Comparator<Question>() {
             @Override

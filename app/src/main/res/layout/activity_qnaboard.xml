@@ -26,8 +26,8 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:visibility="gone"
+        android:layout_height="match_parent"
         android:id="@+id/qna_container">
         <TextView
             android:id="@+id/qna_title"
@@ -63,7 +63,7 @@
         </ScrollView>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="#313131"
             android:id="@+id/qna_menuBar"

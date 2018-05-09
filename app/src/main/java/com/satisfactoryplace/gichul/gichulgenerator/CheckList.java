@@ -10,8 +10,13 @@ import java.util.ArrayList;
  */
 
 public class CheckList {
-    private ArrayList<Question> checkList= new ArrayList<>();
 
+    public interface Callback{
+        void success();
+        void fail();
+    }
+
+    private ArrayList<Question> checkList= new ArrayList<>();
     private static CheckList inst= null;
     private CheckList() {
     }
@@ -39,12 +44,6 @@ public class CheckList {
     public void deleteAllData(){
         checkList= new ArrayList<>();
         saveCheckListToServer();
-    }
-
-
-    public interface Callback{
-        void success();
-        void fail();
     }
 
     // Load CheckList from firebase
