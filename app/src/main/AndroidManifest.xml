@@ -19,7 +19,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.RandomQuestionActivity"></activity>
-        <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.CalendarActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.HistoryListActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.CheckListActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.RecheckQuestionActivity"></activity>

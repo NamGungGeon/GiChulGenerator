@@ -24,7 +24,7 @@ public class ExamActivity extends AppCompatActivity{
         ExamFragment examFragment= (ExamFragment)getSupportFragmentManager().findFragmentByTag("try");
         if(examFragment!= null && examFragment.isVisible()){
             if(examFragment instanceof OnBackPressedListener){
-                boolean result= ((OnBackPressedListener)examFragment).onBackPressed();
+                boolean result= examFragment.onBackPressed();
                 if(result== false){
                     return;
                 }else{

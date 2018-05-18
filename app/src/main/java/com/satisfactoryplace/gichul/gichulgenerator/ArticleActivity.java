@@ -58,73 +58,17 @@ public class ArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_article);
         ButterKnife.bind(this);
         articleType= getIntent().getStringExtra("articleType");
-        init();
-    }
-
-    private void init(){
         setAdView();
 
+        loadArticle();
+    }
+
+    private void loadArticle(){
         String key= getIntent().getStringExtra("articleKey");
         FirebaseConnection.getInstance().loadData(articleType+ "/" + key + "/", new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
-                loadingContainer.setVisibility(View.GONE);
-                container.setVisibility(View.VISIBLE);
-
-                article= snapshot.getValue(Article.class);
-                if(article== null){
-                    // If Article is deleted...
-                    title.setText("삭제된 게시물입니다.");
-                    userName.setText("???");
-                    context.setText("삭제된 게시글입니다.");
-                    commentBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            finish();
-                        }
-                    });
-                }else{
-                    //Set Title
-                    if(article.getTitle()!= null){
-                        title.setText(article.getTitle());
-                    }else{
-                        title.setText("???");
-                    }
-                    //Set UserName
-                    if(article.getUserName()!= null){
-                        if(article.getUserName().equals("관리자")){
-                            userName.setText("관리자");
-                            userName.setTextColor(getResources().getColor(R.color.red));
-                        }else{
-                            userName.setText(article.getUserName());
-                        }
-                    }else{
-                        userName.setText("???");
-                    }
-                    //Set Text
-                    if(article.getText()!= null){
-                        context.setText(article.getText());
-                    }else{
-                        context.setText("???");
-                    }
-                    if(article.getIsExistImage()){
-                        final ProgressDialog dialog= DialogMaker.showProgressDialog(ArticleActivity.this, "", "이미지 로딩 중입니다.");
-                        FirebaseConnection.getInstance().loadImage(articleType + "/" + article.getKey(), image, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
-                            @Override
-                            public void success(Bitmap bitmap) {
-                                dialog.dismiss();
-                            }
-
-                            @Override
-                            public void fail(Exception e) {
-                                Toast.makeText(ArticleActivity.this, "이미지 로딩 실패\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                            }
-                        });
-                    }else{
-                        // Not Need to load Image
-                    }
-                }
+                init(snapshot);
             }
 
             @Override
@@ -135,6 +79,65 @@ public class ArticleActivity extends AppCompatActivity {
         });
     }
 
+    private void init(DataSnapshot snapshot){
+        loadingContainer.setVisibility(View.GONE);
+        container.setVisibility(View.VISIBLE);
+
+        article= snapshot.getValue(Article.class);
+        if(article== null){
+            // If Article is deleted...
+            title.setText("삭제된 게시물입니다.");
+            userName.setText("???");
+            context.setText("삭제된 게시글입니다.");
+            commentBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+        }else{
+            //Set Title
+            if(article.getTitle()!= null){
+                title.setText(article.getTitle());
+            }else{
+                title.setText("???");
+            }
+            //Set UserName
+            if(article.getUserName()!= null){
+                if(article.getUserName().equals("관리자")){
+                    userName.setText("관리자");
+                    userName.setTextColor(getResources().getColor(R.color.red));
+                }else{
+                    userName.setText(article.getUserName());
+                }
+            }else{
+                userName.setText("???");
+            }
+            //Set Content
+            if(article.getText()!= null){
+                context.setText(article.getText());
+            }else{
+                context.setText("???");
+            }
+            //Set Image
+            if(article.getIsExistImage()){
+                final ProgressDialog dialog= DialogMaker.showProgressDialog(ArticleActivity.this, "", "이미지 로딩 중입니다.");
+                FirebaseConnection.getInstance().loadImage(articleType + "/" + article.getKey(), image, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+                    @Override
+                    public void success(Bitmap bitmap) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void fail(Exception e) {
+                        Toast.makeText(ArticleActivity.this, "이미지 로딩 실패\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        }
+    }
+
     private void setAdView(){
         MobileAds.initialize(this, "ca-app-pub-5333091392909120/9915083275");
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -142,20 +145,12 @@ public class ArticleActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.article_comment)
-    void openCommnetLIst(){
+    void openCommentLIst(){
         Intent intent= new Intent(getApplicationContext(), CommentActivity.class);
         intent.putExtra("articleKey", getIntent().getStringExtra("articleKey"));
         intent.putExtra("articleType", articleType);
         startActivityForResult(intent, 1);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        loadingContainer.setVisibility(View.VISIBLE);
-        container.setVisibility(View.GONE);
-        init();
-    }
-
     @OnClick(R.id.article_delete)
     void delete(){
         final DialogMaker dialog= new DialogMaker();
@@ -179,6 +174,15 @@ public class ArticleActivity extends AppCompatActivity {
 
     @OnClick(R.id.article_correct)
     void correct(){
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        loadingContainer.setVisibility(View.VISIBLE);
+        container.setVisibility(View.GONE);
+
+        loadArticle();
     }
 
     @Override

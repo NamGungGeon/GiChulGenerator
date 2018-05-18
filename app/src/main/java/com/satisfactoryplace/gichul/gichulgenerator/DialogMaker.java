@@ -29,8 +29,7 @@ public class DialogMaker extends DialogFragment{
     private DialogInterface.OnClickListener adapterListener=null;
 
 
-
-    //Before using this class as instance, must call this method.
+    //Before call show() of instance of this class, must call this method.
     public void setValue(String message, String positiveMsg, String negativeMsg, Callback callback_positive, Callback callback_negative){
         this.message=message;
         this.positiveMsg=positiveMsg;

@@ -46,12 +46,12 @@ public class CheckListActivity extends AppCompatActivity {
     }
 
     private void init(){
-        //setListView with filter
-        setListView(convertFilterValue());
+        setAdView();
+        setListView(getFilterValue());
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setListView(convertFilterValue());
+                setListView(getFilterValue());
             }
 
             @Override
@@ -59,7 +59,6 @@ public class CheckListActivity extends AppCompatActivity {
 
             }
         });
-        setAdView();
     }
 
     private void setAdView(){
@@ -68,8 +67,7 @@ public class CheckListActivity extends AppCompatActivity {
         adView.loadAd(adRequest);
     }
 
-
-    private String convertFilterValue(){
+    private String getFilterValue(){
         String subjectFilter= filter.getSelectedItem().toString();
         //Converting...
         if(subjectFilter.equals("상관없음")){
@@ -85,14 +83,17 @@ public class CheckListActivity extends AppCompatActivity {
 
     private void setListView(String subjectFilter){
         ArrayList<Question> temp= new ArrayList();
+        //Adjust Filter Option
         if(subjectFilter!= null){
             if(subjectFilter.equals("imath")){
+                //수학(이과)
                 for(Question q: CheckList.getInstance().getCheckList()){
                     if(q.getSubject().equals("imath")){
                         temp.add(q);
                     }
                 }
             }else if(subjectFilter.equals("mmath")){
+                //수학(문과)
                 for(Question q: CheckList.getInstance().getCheckList()){
                     if(q.getSubject().equals("mmath")){
                         temp.add(q);
@@ -100,10 +101,12 @@ public class CheckListActivity extends AppCompatActivity {
                 }
             }
         }else{
+            //상관없음
             temp= CheckList.getInstance().getCheckList();
         }
         final ArrayList<Question> checkListData= temp;
 
+        //시간순으로 정렬
         Collections.sort(checkListData, new Comparator<Question>() {
             @Override
             public int compare(Question e1, Question e2) {

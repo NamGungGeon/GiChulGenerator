@@ -66,7 +66,6 @@ public class CommentActivity extends AppCompatActivity {
         adView.loadAd(adRequest);
     }
 
-
     private void setCommentList(){
         articleType= getIntent().getStringExtra("articleType");
         String key= getIntent().getStringExtra("articleKey");

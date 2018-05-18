@@ -71,13 +71,11 @@ public class ArticlePublishActivity extends AppCompatActivity{
         openWarningMessage();
         setAdView();
     }
-
     private void setAdView(){
         MobileAds.initialize(this, "ca-app-pub-5333091392909120/6072450302");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
-
     private void openWarningMessage(){
         final DialogMaker dialog= new DialogMaker();
         String message= "게시판에 욕설, 음란한 내용이나 링크, 사진을 공유할 시 사용자의 서비스 이용이 중지됩니다.\n" +
@@ -86,6 +84,29 @@ public class ArticlePublishActivity extends AppCompatActivity{
                 "서로 배려하며 다른 이용자의 불편을 야기할 수 있는 행동은 자제해주세요.";
         dialog.setValue(message, "알겠습니다", "", null, null);
         dialog.show(getSupportFragmentManager(), "Waring Message");
+    }
+    private int checkPermission(){
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            //not need permission
+            return 1;
+        }
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+            return PackageManager.PERMISSION_GRANTED;
+        }else{
+            return PackageManager.PERMISSION_DENIED;
+        }
+    }
+    private void getPermission(){
+        //권한이 부여되어 있는지 확인
+        int permissonCheck= checkPermission();
+
+        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
+            //Permission Granted
+        }else{
+            Toast.makeText(this, "파일 권한이 있어야 이미지 업로드가 가능합니다", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
+        }
     }
 
     @OnClick(R.id.articlePublish_publish)
@@ -132,7 +153,6 @@ public class ArticlePublishActivity extends AppCompatActivity{
             }
         }
     }
-
     @OnClick(R.id.articlePublish_cancel)
     void cancel(){
         final DialogMaker dialogMaker= new DialogMaker();
@@ -145,7 +165,6 @@ public class ArticlePublishActivity extends AppCompatActivity{
         }, null);
         dialogMaker.show(getSupportFragmentManager(), "cancel publish");
     }
-
     @OnClick(R.id.articlePublish_imageUpload)
     void uploadImage(){
         if(checkPermission()==1 || checkPermission()== PackageManager.PERMISSION_GRANTED){
@@ -202,35 +221,9 @@ public class ArticlePublishActivity extends AppCompatActivity{
                 break;
         }
     }
-
     @Override
     public void onBackPressed() {
         cancel();
-    }
-
-    private int checkPermission(){
-        if (android.os.Build.VERSION.SDK_INT < 23) {
-            //not need permission
-            return 1;
-        }
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
-            return PackageManager.PERMISSION_GRANTED;
-        }else{
-            return PackageManager.PERMISSION_DENIED;
-        }
-    }
-
-    private void getPermission(){
-        //권한이 부여되어 있는지 확인
-        int permissonCheck= checkPermission();
-
-        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
-            //Permission Granted
-        }else{
-            Toast.makeText(this, "파일 권한이 있어야 이미지 업로드가 가능합니다", Toast.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
-        }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int grantResults[]){
