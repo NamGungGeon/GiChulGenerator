@@ -18,6 +18,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
 
 import butterknife.BindView;
@@ -38,6 +41,8 @@ public class SearchResultSolutionFragment extends Fragment {
     @BindView(R.id.rsearchResult_solution_question)ImageView question;
     @BindView(R.id.searchResult_solution_addToCheckListBtn)Button addToCheckListBtn;
     @BindView(R.id.searchResult_solution_changeImageBtn) Button changeImageBtn;
+
+    @BindView(R.id.searchResultSolution_ad)AdView adView;
 
     private String inputAnswer;
     private String rightAnswer;
@@ -69,6 +74,7 @@ public class SearchResultSolutionFragment extends Fragment {
             }
         });
 
+        setAdView();
         return rootView;
     }
 
@@ -100,6 +106,11 @@ public class SearchResultSolutionFragment extends Fragment {
         saveHistory();
     }
 
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
     private void checkAnswer(){
         if(inputAnswer.equals(rightAnswer)){
             //정답

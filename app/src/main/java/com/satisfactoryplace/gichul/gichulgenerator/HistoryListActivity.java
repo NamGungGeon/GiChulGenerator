@@ -62,7 +62,6 @@ public class HistoryListActivity extends AppCompatActivity {
     }
 
     private void setAdView(){
-        MobileAds.initialize(this, "ca-app-pub-5333091392909120/8285897711");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }

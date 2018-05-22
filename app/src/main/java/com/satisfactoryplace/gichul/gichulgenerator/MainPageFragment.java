@@ -1,39 +1,54 @@
 package com.satisfactoryplace.gichul.gichulgenerator;
 
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.vending.billing.IInAppBillingService;
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.SkuDetails;
+import com.anjlab.android.iab.v3.TransactionDetails;
+import com.example.android.trivialdrivesample.util.IabHelper;
+import com.example.android.trivialdrivesample.util.IabResult;
+import com.example.android.trivialdrivesample.util.Purchase;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
-import java.io.File;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,79 +61,100 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static android.content.Context.MODE_PRIVATE;
-
-
 /**
  * Created by WINDOWS7 on 2018-01-20.
  */
 
 public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
-    @BindView(R.id.mainMenuContainer) RelativeLayout mainContainer;
+    @BindView(R.id.main_statusPager) ViewPager statusPager;
+    @BindView(R.id.status_back) ImageView status_back;
+    @BindView(R.id.status_next) ImageView status_next;
 
-    //Left Quick Menu
-    @BindView(R.id.goToStudy) Button goToStudyBtn;
-    @BindView(R.id.searchExam) Button searchExamBtn;
-    @BindView(R.id.calender) Button calendarBtn;
-    @BindView(R.id.checkListBtn) Button checkListBtn;
-    @BindView(R.id.historyListBtn) Button historyListBtn;
-
-    // Right Status window
-    @BindView(R.id.todayInfo) TextView todayInfo;
-    @BindView(R.id.scheduler) TextView schedular;
-    @BindView(R.id.monthInfo) TextView monthInfo;
-    @BindView(R.id.subjectInfo) TextView subjectInfo;
-    @BindView(R.id.mainmenu_univImage) ImageView univImage;
-
-    // Menu List
-    private boolean isOpenedMenuList= false;
-    @BindView(R.id.menuList) LinearLayout menuList;
-    @BindView(R.id.menuList_allHistoryDelete) ImageView menu_allDeleteHistory;
-    @BindView(R.id.menuList_qna) ImageView menu_qna;
-    @BindView(R.id.menuList_freeBoard) ImageView menu_freeBoard;
-    @BindView(R.id.menuList_donation) ImageView menu_donation;
-    @BindView(R.id.menuList_devInfo) ImageView menu_devInfo;
-    @BindView(R.id.menuList_goToStudy) ImageView menu_goToStudy;
-    @BindView(R.id.menuList_searchExam) ImageView menu_searchExam;
-    @BindView(R.id.menuList_changeBackground) ImageView menu_changeBackground;
-    @BindView(R.id.menuList_checkList) ImageView menu_checkListBtn;
-    @BindView(R.id.menuList_historyList) ImageView menu_historyList;
-    @BindView(R.id.menuList_checkAppVersion) ImageView menu_checkAppVersion;
-    @BindView(R.id.menuList_examResult) ImageView menu_examResult;
-    @BindView(R.id.menuList_goExam) ImageView menu_goExam;
-
-    // Bottom Menu
-    @BindView(R.id.menuListBtn) ImageView menuListBtn;
-    @BindView(R.id.help) ImageView helpBtn;
+    @BindView(R.id.scheduler) TextView d_day;
+    @BindView(R.id.mainmenu_ad)AdView adView;
 
     private final int EXAM_ACTIVITY= 1335;
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "1.3";
+    private String appVersion= "2.0";
+
+    IInAppBillingService mService;
+    ServiceConnection mServiceConn;
+    IabHelper mHelper;
 
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
         unbinder= ButterKnife.bind(this, rootView);
-
         init();
         return rootView;
     }
 
     private void init(){
-        setBackground();
-        setMyGoal();
-        resizeMenuListElements();
+        set_Dday();
+        setStatusPager();
+        setAdView();
+        setBillProcess();
+    }
+    private void setAdView(){
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
 
-        setTodayReport();
-        setMonthReport();
-        setTotalReport();
+    private void setStatusPager(){
+        statusPager.setAdapter(new FragmentStatePagerAdapter(getActivity().getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                switch(position){
+                    case 0:
+                        return new TodayReportFragment();
+                    case 1:
+                        return new MonthReportFragment();
+                    case 2:
+                        return new TotalReportFragment();
+                    default:
+                        return null;
+                }
+            }
+            @Override
+            public int getCount() {
+                return 3;
+            }
+        });
 
+        statusPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+            @Override
+            public void onPageSelected(int position) {
+                switch(position){
+                    case 0:
+                        status_back.setVisibility(View.INVISIBLE);
+                        status_next.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        status_back.setVisibility(View.VISIBLE);
+                        status_next.setVisibility(View.VISIBLE);
+                        break;
+                    case 2:
+                        status_back.setVisibility(View.VISIBLE);
+                        status_next.setVisibility(View.INVISIBLE);
+                        break;
+                }
+            }
+
+        });
+        statusPager.setCurrentItem(0);
+        status_back.setVisibility(View.INVISIBLE);
+        status_next.setVisibility(View.VISIBLE);
+    }
+    private void set_Dday(){
         //Set Schedule
         String between= "";
-        String year= "";
         SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
         try {
             String sunung= getActivity().getIntent().getStringExtra("schedule");
@@ -131,186 +167,81 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
             Calendar sunungCalendar= Calendar.getInstance();
             sunungCalendar.setTimeInMillis(sunungDate.getTime());
-            year+= sunungCalendar.get(Calendar.YEAR)+ 1;
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
 
-        schedular.setText(year+ "학년도 수능까지 \n\n"+ between+"일 남았습니다");
+        d_day.setText("수능까지 "+ between+ "일 남았습니다");
+    }
+    private void setBillProcess(){
 
-        // Prevent to call closeMenuList() from listener of mainContainer
-        mainContainer.setOnClickListener(new View.OnClickListener() {
+        mServiceConn= new ServiceConnection() {
             @Override
-            public void onClick(View view) {
-                if(isOpenedMenuList== true){
-                    closeMenuList();
+            public void onServiceDisconnected(ComponentName name) {
+                mService = null;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name,
+                                           IBinder service) {
+                mService = IInAppBillingService.Stub.asInterface(service);
+            }
+        };
+
+        Intent intent= new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        intent.setPackage("com.android.vending");
+        getActivity().bindService(intent, mServiceConn, Context.BIND_AUTO_CREATE);
+        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorXcU15UsFjV0tml82MbjXsz9b0VKfIfDQOaJpJwSu/TOph9pr+pxKvGchF90E5C/3TF6pqsPqlEDA6/iSYBI1ka1wOCE1YPIt1vzFhG6rfY8hNPwz/pT+JQSA42FoW+N/v5Y4UN5FGxA0RFT1I/jSME2IU9fRFFnArdiMoq0HRKUzeo8f9txnoYgKme5ItuAmD6VU94ddpKyUXkJ83mKOvqLiYTs/PR2y99y9NTd/a2R5Gb6lgBpbjTR8vSvK+0zCFYRydSPNnN/krNJ5h+ne0raMXFYnCp5ZOFZ9cR1KzwfcaLYg7c6cthzb+FNqDew8qY6quT6j7RhU5opuJukwIDAQAB";
+        mHelper = new IabHelper(getContext(), base64EncodedPublicKey);
+        mHelper.enableDebugLogging(true);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                AlreadyPurchaseItems();
+                if (!result.isSuccess()) {
+                    Toast.makeText(getContext(), "인앱 결제 시스템 초기화 실패", Toast.LENGTH_SHORT).show();
+                }
+                // AlreadyPurchaseItems(); 메서드는 구매목록을 초기화하는 메서드입니다.
+                // v3으로 넘어오면서 구매기록이 모두 남게 되는데 재구매 가능한 상품( 게임에서는 코인같은아이템은 ) 구매후 삭제해주어야 합니다.
+                // 이 메서드는 상품 구매전 혹은 후에 반드시 호출해야합니다. ( 재구매가 불가능한 1회성 아이템의경우 호출하면 안됩니다 )
+            }
+        });
+    }
+    private void AlreadyPurchaseItems() {
+        try {
+            Bundle ownedItems = mService.getPurchases(3, getActivity().getPackageName(), "inapp", null);
+            int response = ownedItems.getInt("RESPONSE_CODE");
+            if (response == 0) {
+                ArrayList purchaseDataList = ownedItems.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+                String[] tokens = new String[purchaseDataList.size()];
+                for (int i = 0; i < purchaseDataList.size(); ++i) {
+                    String purchaseData = (String) purchaseDataList.get(i);
+                    JSONObject jo = new JSONObject(purchaseData);
+                    tokens[i] = jo.getString("purchaseToken");
+                    // 여기서 tokens를 모두 컨슘 해주기
+                    mService.consumePurchase(3, getActivity().getPackageName(), tokens[i]);
                 }
             }
-        });
-        menuList.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
-        menuListBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isOpenedMenuList==false){
-                    openMenuList();
-                }else{
-                    closeMenuList();
-                }
-            }
-        });
-        calendarBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), CalendarActivity.class));
-            }
-        });
 
-        helpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = "http://satisfactoryplace.tistory.com/47";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
-        });
-    }
-
-    private void setTodayReport(){
-        HistoryList historyList= HistoryList.getInstance();
-
-        String todayMessage= "오늘 요약\n\n";
-        int todayNumber= HistoryList.getInstance().getTodayHistoryNumber();
-        todayMessage+= "오늘 "+ todayNumber+ "문제를 풀었습니다\n";
-        todayMessage+= "오늘 나의 정답률은 "+HistoryList.getInstance().getTodayPotential()+ "% 입니다\n\n";
-
-        todayMessage+= "수학(문과) "+ historyList.getTodaySubjectNumber("mmath")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("mmath")+ "%\n";
-        todayMessage+= "수학(이과) "+ historyList.getTodaySubjectNumber("imath")+ "문제 중 정답률 "+ historyList.getTodaySubjectPotential("imath")+ "%";
-        todayInfo.setText(todayMessage);
-    }
-
-    private void setMonthReport(){
-        HistoryList historyList= HistoryList.getInstance();
-
-        String monthMessage= "이번 달 요약\n\n";
-        int monthNumber= HistoryList.getInstance().getMonthHistoryNumber();
-        monthMessage+= "이번 달에 "+ monthNumber+ "문제를 풀었습니다\n";
-        monthMessage+= "이번 달 나의 정답률은 "+ HistoryList.getInstance().getMonthPotential()+ "% 입니다\n\n";
-
-        monthMessage+= "수학(문과) "+ historyList.getMonthSubjectNumber("mmath")+"문제 중 정답률 "+ historyList.getMonthSubjectPotential("mmath")+ "%\n";
-        monthMessage+= "수학(이과) "+ historyList.getMonthSubjectNumber("imath")+ "문제 중 정답률 "+ historyList.getMonthSubjectPotential("imath")+ "%";
-        monthInfo.setText(monthMessage);
-    }
-
-    private void setTotalReport(){
-        HistoryList historyList= HistoryList.getInstance();
-
-        String totalMessage= "전체 요약\n\n";
-        int totalNumber= HistoryList.getInstance().getTotalNumber();
-        totalMessage+= "전체 "+ totalNumber+ "문제를 풀었습니다\n";
-        totalMessage+= "전체 나의 정답률은 "+ HistoryList.getInstance().getTotalPotential()+ "% 입니다\n\n";
-
-        totalMessage+= "수학(문과) "+ historyList.getTotalSubjectNumber("mmath")+"문제 중 정답률 "+ historyList.getTotalSubjectPotential("mmath")+ "%\n";
-        totalMessage+= "수학(이과) "+ historyList.getTotalSubjectNumber("imath")+ "문제 중 정답률 "+ historyList.getTotalSubjectPotential("imath")+ "%";
-        subjectInfo.setText(totalMessage);
-    }
-
-    private void setBackground(){
-        int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
-        int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
-        Bitmap bitmap;
-
-        String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
-        if(backgroundPath.equals("")){
-            //Not set background
-            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
-        }else{
-            File backgroundFile= new File(backgroundPath);
-            if(backgroundFile== null || backgroundFile.exists()== false){
-                //No Exist File
-                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
-            }else{
-                bitmap= BitmapFactory.decodeFile(backgroundPath);
-            }
-        }
-        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
-        BitmapDrawable background= new BitmapDrawable(bitmap);
-
-        mainContainer.setBackgroundDrawable(background);
-    }
-
-    private void resizeMenuListElements(){
-        resizeMenuListElement(menu_allDeleteHistory);
-        resizeMenuListElement(menu_qna);
-        resizeMenuListElement(menu_freeBoard);
-        resizeMenuListElement(menu_donation);
-        resizeMenuListElement(menu_devInfo);
-        resizeMenuListElement(menu_goToStudy);
-        resizeMenuListElement(menu_searchExam);
-        resizeMenuListElement(menu_changeBackground);
-        resizeMenuListElement(menu_checkListBtn);
-        resizeMenuListElement(menu_historyList);
-        resizeMenuListElement(menu_checkAppVersion);
-        resizeMenuListElement(menu_goExam);
-        resizeMenuListElement(menu_examResult);
-    }
-
-    //Only used in resizedMenuListElements
-    private void resizeMenuListElement(ImageView view){
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.height = getActivity().getWindowManager().getDefaultDisplay().getWidth()/3;
-        params.width= params.height;
-        view.setLayoutParams(params);
-        view.requestLayout();
-
-        Bitmap bitmap= ((BitmapDrawable)(view.getBackground())).getBitmap();
-        if(bitmap!= null && bitmap.isRecycled()== false){
-            Bitmap resizedBitmap= Bitmap.createScaledBitmap(bitmap, params.width, params.height, false);
-            BitmapDrawable bitmapDrawable= new BitmapDrawable(resizedBitmap);
-            view.setBackground(bitmapDrawable);
+            // 토큰을 모두 컨슘했으니 구매 메서드 처리
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void openMenuList(){
-        menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.appear_menulist));
-        menuList.setVisibility(View.VISIBLE);
-        isOpenedMenuList= true;
-    }
-
-    private void closeMenuList(){
-        menuList.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.disappear_menulist));
-        menuList.setVisibility(View.GONE);
-        isOpenedMenuList= false;
-    }
-
-    void setMyGoal(){
-        int width= 128;
-        int height= 128;
-        Bitmap bitmap;
-
-        String imagePath= getActivity().getSharedPreferences("goal", MODE_PRIVATE).getString("path", "");
-        if(imagePath.equals("")){
-            //Not set background
-            bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
-        }else{
-            File imageFile= new File(imagePath);
-            if(imageFile== null || imageFile.exists()== false){
-                //No Exist File
-                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.konkuk);
-            }else{
-                bitmap= BitmapFactory.decodeFile(imagePath);
+    public void buy(String id_item) {
+        try {
+            Bundle buyIntentBundle = mService.getBuyIntent(3, getActivity().getPackageName(),	id_item, "inapp", "donation");
+            PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+            if (pendingIntent != null) {
+                //startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
+                mHelper.launchPurchaseFlow(getActivity(), getActivity().getPackageName(), 1001, null, "test");
+             } else {
+                // 결제가 막혔다면
             }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "결제 시스템을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
-        bitmap= Bitmap.createScaledBitmap(bitmap, width, height, true);
-        BitmapDrawable image= new BitmapDrawable(bitmap);
-
-        univImage.setBackgroundDrawable(image);
     }
 
     private boolean checkNickName(String nickName){
@@ -357,40 +288,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
             return false;
         }
     }
-
-    private int checkPermission(){
-        if (android.os.Build.VERSION.SDK_INT < 23) {
-            //not need permission
-            return 1;
-        }
-
-        return ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
-
-    private void getPermission(){
-        //권한이 부여되어 있는지 확인
-        int permissonCheck= checkPermission();
-
-        if(permissonCheck == PackageManager.PERMISSION_GRANTED){
-            //Permission Granted
-        }else{
-            Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
-
-            //권한설정 dialog에서 거부를 누르면
-            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
-            //단, 사용자가 "Don't ask again"을 체크한 경우
-            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
-            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)){
-                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(getContext(), "이 권한이 없으면 이미지 등록이 불가능합니다.", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
-            }else{
-                Toast.makeText(getContext(), "파일 읽기 권한 있음", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(getActivity(), new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE},123);
-            }
-        }
-    }
-
     private boolean isValidPeriod(String period_y, String period_m){
         int y= Integer.valueOf(period_y);
         int m= Integer.valueOf(period_m);
@@ -409,72 +306,23 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         return true;
     }
 
-    @Override
-    public boolean onBackPressed() {
-        if(isOpenedMenuList== true){
-            closeMenuList();
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case 123:
-                //change background image
-                if (null != data) {
-                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
-                    cursor.moveToNext();
-                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
-                    cursor.close();
-
-                    //save
-                    SharedPreferences pref = getActivity().getSharedPreferences("background", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("path", path);
-                    editor.commit();
-
-                    setBackground();
-                }
-                break;
-            case 155:
-                //change univ image
-                if (null != data) {
-                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), null, null, null, null );
-                    cursor.moveToNext();
-                    String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
-                    cursor.close();
-
-                    //save
-                    SharedPreferences pref = getActivity().getSharedPreferences("goal", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("path", path);
-                    editor.commit();
-
-                    setMyGoal();
-                }
-                break;
-            default:
-                init();
-                break;
-        }
-    }
-
     /* Listener List */
-    @OnClick({R.id.historyListBtn, R.id.menuList_historyList})
+    @OnClick(R.id.status_next)
+    void showNextStatus(){
+        statusPager.setCurrentItem(statusPager.getCurrentItem()+1);
+    }
+
+    @OnClick(R.id.status_back)
+    void showBackStatus(){
+        statusPager.setCurrentItem(statusPager.getCurrentItem()-1);
+    }
+
+    @OnClick(R.id.historyListBtn)
     void openHistoryList(){
         startActivity(new Intent(getActivity(), HistoryListActivity.class));
     }
 
-    @OnClick({R.id.checkListBtn, R.id.menuList_checkList})
+    @OnClick(R.id.checkListBtn)
     void openCheckList(){
         startActivity(new Intent(getActivity(), CheckListActivity.class));
     }
@@ -482,7 +330,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     @OnClick(R.id.menuList_allHistoryDelete)
     void deleteAllData(){
         final DialogMaker dialog= new DialogMaker();
-        dialog.setValue("오답노트/문제기록/시험결과를 전부 삭제하시겠습니까?\n(복구 불가능)", "예", "아니오", new DialogMaker.Callback() {
+        dialog.setValue("사용자의 모든 정보를 삭제하시겠습니까? (복구 불가)", "예", "아니오", new DialogMaker.Callback() {
             @Override
             public void callbackMethod() {
                 CheckList.getInstance().deleteAllData();
@@ -496,7 +344,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
-    @OnClick({R.id.searchExam, R.id.menuList_searchExam})
+    @OnClick(R.id.searchExam)
     void searchExam(){
         final DialogMaker dialog= new DialogMaker();
         View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
@@ -650,7 +498,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
-    @OnClick({R.id.goToStudy, R.id.menuList_goToStudy})
+    @OnClick(R.id.goToStudy)
     void goRandomQuestion(){
         final DialogMaker dialog= new DialogMaker();
         View childView= getLayoutInflater().inflate(R.layout.dialog_setfilter, null);
@@ -674,6 +522,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         return;
                     }
                 }
+
                 //move Activity
                 Intent intent= new Intent(getActivity(), RandomQuestionActivity.class);
                 intent.putExtra("subj", subjectOption);
@@ -688,16 +537,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
         dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
-    }
-
-    @OnClick(R.id.menuList_changeBackground)
-    void changeBackground(){
-        if(checkPermission()== 1 || checkPermission()== PackageManager.PERMISSION_GRANTED){
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(galleryIntent ,123 );
-        }else{
-            getPermission();
-        }
     }
 
     @OnClick(R.id.menuList_devInfo)
@@ -720,10 +559,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @OnClick(R.id.menuList_donation)
     void donation(){
-        Toast.makeText(getContext(), "미구현 기능입니다", Toast.LENGTH_SHORT).show();
+        buy("donation");
     }
 
-    @OnClick({R.id.menuList_freeBoard, R.id.freeboard})
+    @OnClick(R.id.freeboard)
     void openFreeboard(){
         if(AppData.freeboardStatus== null || AppData.freeboardStatus.equals("close")){
             Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
@@ -789,7 +628,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         }
     }
 
-    @OnClick({R.id.menuList_qna, R.id.qna})
+    @OnClick( R.id.qna)
     void openQna(){
         if(AppData.qnaStatus== null || AppData.qnaStatus.equals("close")){
             Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
@@ -835,7 +674,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    @OnClick({R.id.goToExam, R.id.menuList_goExam})
+    @OnClick(R.id.goToExam)
     void goToExam(){
         final DialogMaker dialog= new DialogMaker();
         View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
@@ -851,24 +690,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         number.setVisibility(View.GONE);
         numberExplain.setVisibility(View.GONE);
 
-        subject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                ArrayAdapter<String> adapter;
-
-                if(subject.getSelectedItem().equals("수학(이과)") || institute.getSelectedItem().equals("수학(문과)")){
-                    ArrayList<String> numbers= new ArrayList<>();
-                    for(int k=0; k<30; k++){
-                        numbers.add(String.valueOf(k+1));
-                    }
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
-                    number.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
         institute.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -927,13 +748,10 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         String filter_institute= institute.getSelectedItem().toString();
                         if(filter_institute.equals("대학수학능력평가시험")){
                             basicFileName+= "sunung";
-                            intent.putExtra("encodedInstitute", "sunung");
                         }else if(filter_institute.equals("교육청")){
                             basicFileName+= "gyoyuk";
-                            intent.putExtra("encodedInstitute", "gyoyuk");
                         }else if(filter_institute.equals("교육과정평가원")){
                             basicFileName+= "pyeong";
-                            intent.putExtra("encodedInstitute", "pyeong");
                         }
                         basicFileName+="_";
 
@@ -941,10 +759,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                         String filter_subj= subject.getSelectedItem().toString();
                         if (filter_subj.equals("수학(이과)")) {
                             basicFileName+= "imath";
-                            intent.putExtra("encodedSubject", "imath");
                         }else if (filter_subj.equals("수학(문과)")) {
                             basicFileName+= "mmath";
-                            intent.putExtra("encodedSubject", "mmath");
                         }
 
                         //Go to result page
@@ -963,20 +779,60 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
-    @OnClick({R.id.examResultBtn, R.id.menuList_examResult})
+    @OnClick(R.id.examResultBtn)
     void openExamResult(){
         Intent intent= new Intent(getContext(), ExamResultListActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.mainmenu_univImage)
-    void changeMyGoal(){
-        if(checkPermission()== PackageManager.PERMISSION_GRANTED){
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(galleryIntent ,155 );
-        }else{
-            getPermission();
+    @OnClick(R.id.help)
+    void clickHelpBtn(){
+        String url = "http://satisfactoryplace.tistory.com/47";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        init();
+        if(requestCode == 1001)
+            if (resultCode == getActivity().RESULT_OK) {
+                if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
+                    super.onActivityResult(requestCode, resultCode, data);
+
+                    int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+                    String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+                    String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+
+                    // 여기서 아이템 추가 해주시면 됩니다.
+                    // 만약 서버로 영수증 체크후에 아이템 추가한다면, 서버로 purchaseData , dataSignature 2개 보내시면 됩니다.
+                    Toast.makeText(getContext(), "기부해주셔서 감사합니다.\n더 나은 서비스를 제공하기 위해 노력하겠습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 구매취소 처리
+                }
+            }else{
+                // 구매취소 처리
+            }
+        else{
+            // 구매취소 처리
         }
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        if (mServiceConn != null) {
+            getActivity().unbindService(mServiceConn);
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return true;
     }
 
 }

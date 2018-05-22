@@ -43,8 +43,6 @@ public class RecheckQuestionActivity extends AppCompatActivity {
     private final int solution= 115223;
     private int imageStatus= exam;
 
-    private ProgressDialog progressDialog= null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +57,6 @@ public class RecheckQuestionActivity extends AppCompatActivity {
     }
 
     private void init(){
-        progressDialog= DialogMaker.showProgressDialog(this, "", "문제와 해답을 가져오는 중입니다...");
-
         title.setText(getIntent().getStringExtra("title"));
 
         // Hide real potential
@@ -98,17 +94,10 @@ public class RecheckQuestionActivity extends AppCompatActivity {
                             public void success(Bitmap bitmap) {
                                 loadingContainer.setVisibility(View.GONE);
                                 container.setVisibility(View.VISIBLE);
-                                if(progressDialog!= null){
-                                    progressDialog.dismiss();
-                                }
                             }
 
                             @Override
                             public void fail(Exception e) {
-                                if(progressDialog!= null){
-                                    progressDialog.dismiss();
-                                }
-
                                 Toast.makeText(RecheckQuestionActivity.this, "이미지를 불러올 수 없습니다\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
                                 finish();
                             }
@@ -117,10 +106,6 @@ public class RecheckQuestionActivity extends AppCompatActivity {
 
             @Override
             public void fail(Exception e) {
-                if(progressDialog!= null){
-                    progressDialog.dismiss();
-                }
-
                 Toast.makeText(RecheckQuestionActivity.this, "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
                 finish();
             }

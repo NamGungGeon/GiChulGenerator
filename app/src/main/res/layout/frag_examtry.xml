@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="22dp"
-        android:background="#313131"
+        android:background="#444444"
         android:text="Title"
         android:padding="15dp"
         android:textColor="#FFFFFF"
@@ -371,13 +371,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/exam_adWrapper"
         android:id="@+id/exam_bottomMenuContainer">
         <Button
             android:layout_width="wrap_content"
             android:textColor="#FFFFFF"
             android:layout_height="wrap_content"
-            android:background="#313131"
+            android:background="#444444"
             android:layout_weight="1"
             android:text="타이머"
             android:id="@+id/exam_timer"
@@ -389,8 +389,26 @@
             android:id="@+id/exam_submit"
             android:textSize="15dp"
             android:text="제출"
-            android:background="#313131"
+            android:background="#444444"
             android:textColor="#FFFFFF"
             android:layout_weight="1"/>
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#444444"
+        android:id="@+id/exam_adWrapper">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/exam_ad"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/7880734576">
+        </com.google.android.gms.ads.AdView>
+    </RelativeLayout>
 </RelativeLayout>

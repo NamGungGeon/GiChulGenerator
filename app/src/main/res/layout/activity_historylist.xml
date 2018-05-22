@@ -16,7 +16,7 @@
             android:textColor="#FFFFFF"
             android:textSize="25dp"
             android:padding="15dp"
-            android:background="#313131"
+            android:background="#444444"
             android:text="문제 기록"/>
 
         <LinearLayout
@@ -45,7 +45,7 @@
             android:layout_below="@+id/historyList_filterContainer"
             android:layout_width="match_parent"
             android:fillViewport="true"
-            android:layout_above="@id/historyListAd"
+            android:layout_above="@id/historyListAdWrapper"
             android:layout_height="match_parent">
             <ListView
                 android:id="@+id/historyList"
@@ -56,15 +56,21 @@
             </ListView>
         </ScrollView>
 
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/historyListAd"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-5333091392909120/1464913467">
-        </com.google.android.gms.ads.AdView>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/historyListAdWrapper"
+            android:background="#444444"
+            android:layout_alignParentBottom="true">
+            <com.google.android.gms.ads.AdView
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/historyListAd"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                ads:adSize="BANNER"
+                ads:adUnitId="ca-app-pub-5333091392909120/1464913467">
+            </com.google.android.gms.ads.AdView>
+        </RelativeLayout>
     </RelativeLayout>
 </FrameLayout>

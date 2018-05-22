@@ -20,6 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
 
 import butterknife.BindView;
@@ -41,6 +44,8 @@ public class SearchResultTryFragment extends Fragment {
     @BindView(R.id.searchResult_answer_text) EditText answer_text;
     @BindView(R.id.searchResult_timer) Button timer;
     @BindView(R.id.searchResult_submit) Button submit;
+
+    @BindView(R.id.searchResult_ad)AdView adView;
 
     private Thread timerThread;
     private boolean isRunningTimer= true;
@@ -97,27 +102,14 @@ public class SearchResultTryFragment extends Fragment {
             }
         });
 
+        setAdView();
         return rootView;
     }
 
     private void init(){
         title.setText(titleText);
 
-        // Hide real potential
-        int _potential= Integer.valueOf(examPotential);
-        String potentialText= "정답률: ";
-        if(_potential>= 80){
-            potentialText+= "매우높음";
-        }else if(_potential>=60){
-            potentialText+= "높음";
-        }else if(_potential>= 40){
-            potentialText+= "보통";
-        }else if(_potential>= 20){
-            potentialText+= "낮음";
-        }else{
-            potentialText+= "매우낮음";
-        }
-        potential.setText(potentialText);
+        setPotentialText();
 
         Intent intent= getActivity().getIntent();
         String imagePath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
@@ -138,6 +130,27 @@ public class SearchResultTryFragment extends Fragment {
         });
     }
 
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+    private void setPotentialText(){
+        int _potential= Integer.valueOf(examPotential);
+        String potentialText= "정답률: ";
+        if(_potential>= 80){
+            potentialText+= "매우높음";
+        }else if(_potential>=60){
+            potentialText+= "높음";
+        }else if(_potential>= 40){
+            potentialText+= "보통";
+        }else if(_potential>= 20){
+            potentialText+= "낮음";
+        }else{
+            potentialText+= "매우낮음";
+        }
+        potential.setText(potentialText);
+    }
     private void setExamIdentifier(){
         // exam code change
         if (examSubject.equals("수학(이과)")) {

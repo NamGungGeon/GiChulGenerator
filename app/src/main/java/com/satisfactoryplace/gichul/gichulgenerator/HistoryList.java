@@ -79,234 +79,75 @@ public class HistoryList {
         FirebaseConnection.getInstance().saveData("userdata/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/historyList", historyList);
     }
 
-    public int getTodayHistoryNumber(){
-        int todayNumber= 0;
-
-        Calendar today= Calendar.getInstance();
-        today.setTimeInMillis(System.currentTimeMillis());
-
-        Calendar todayChecker;
-        for(Question question: historyList){
-            String key= String.valueOf(question.getTimeStamp());
-            todayChecker= Calendar.getInstance();
-            todayChecker.setTimeInMillis(Long.valueOf(key));
-            if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                    && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
-                    && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
-                todayNumber++;
-            }
-        }
-        return todayNumber;
-    }
-
-    public int getTodayPotential(){
-        int todayNumber= getTodayHistoryNumber();
-        if(todayNumber== 0){
-            return 0;
-        }else{
-            Calendar today= Calendar.getInstance();
-            today.setTimeInMillis(System.currentTimeMillis());
-
-            Calendar todayChecker;
-            int right= 0;
-
-            for(Question question: historyList){
-                String key= String.valueOf(question.getTimeStamp());
-                todayChecker= Calendar.getInstance();
-                todayChecker.setTimeInMillis(Long.valueOf(key));
-                if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                        && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
-                        && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
-                    if(question.getInputAnswer().equals(question.getRightAnswer())){
-                        right++;
-                    }
-                }
-            }
-            return (int)(((float)right/(float)todayNumber)*100);
-        }
-    }
-
-    public int getTodaySubjectNumber(String subject){
-        int todayNumber= 0;
-
-        Calendar today= Calendar.getInstance();
-        today.setTimeInMillis(System.currentTimeMillis());
-
-        Calendar todayChecker;
-        for(Question question: historyList){
-            String key= String.valueOf(question.getTimeStamp());
-            todayChecker= Calendar.getInstance();
-            todayChecker.setTimeInMillis(Long.valueOf(key));
-            if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                    && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
-                    && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)){
-                if(question.getSubject().equals(subject)){
-                    todayNumber++;
-                }
-            }
-        }
-        return todayNumber;
-    }
-
-    public int getTodaySubjectPotential(String subject){
-        int todayNumber= getTodaySubjectNumber(subject);
-        if(todayNumber== 0){
-            return 0;
-        }else{
-            int right= 0;
-
-            Calendar today= Calendar.getInstance();
-            today.setTimeInMillis(System.currentTimeMillis());
-
-            Calendar todayChecker;
-            for(Question question: historyList){
-                String key= String.valueOf(question.getTimeStamp());
-                todayChecker= Calendar.getInstance();
-                todayChecker.setTimeInMillis(Long.valueOf(key));
-                if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                        && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)
-                        && today.get(Calendar.DAY_OF_MONTH)== todayChecker.get(Calendar.DAY_OF_MONTH)) {
-                    if(question.getSubject().equals(subject)){
-                        if(question.getInputAnswer().equals(question.getRightAnswer())){
-                            right++;
-                        }
-                    }
-                }
-            }
-            return (int)(((float)right/(float)todayNumber)*100);
-        }
-    }
-
-    public int getMonthHistoryNumber(){
-        int monthNumber= 0;
-
-        Calendar today= Calendar.getInstance();
-        today.setTimeInMillis(System.currentTimeMillis());
-
-        Calendar todayChecker;
-        for(Question question: historyList){
-            String key= String.valueOf(question.getTimeStamp());
-            todayChecker= Calendar.getInstance();
-            todayChecker.setTimeInMillis(Long.valueOf(key));
-            if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                    && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)){
-                monthNumber++;
-            }
-        }
-        return monthNumber;
-    }
-
-    public int getMonthPotential(){
-        int monthNumber= getMonthHistoryNumber();
-        if(monthNumber== 0){
-            return 0;
-        }else{
-            int right= 0;
-            for(Question question: historyList){
-                String key= String.valueOf(question.getTimeStamp());
-                if(question.getInputAnswer().equals(question.getRightAnswer())){
-                    right++;
-                }
-            }
-            return (int)(((float)right/(float)monthNumber)*100);
-        }
-    }
-
-    public int getMonthSubjectNumber(String subject){
-        int monthNumber= 0;
-
-        Calendar today= Calendar.getInstance();
-        today.setTimeInMillis(System.currentTimeMillis());
-
-        Calendar todayChecker;
-        for(Question question: historyList){
-            String key= String.valueOf(question.getTimeStamp());
-            todayChecker= Calendar.getInstance();
-            todayChecker.setTimeInMillis(Long.valueOf(key));
-            if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                    && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)){
-                if(question.getSubject().equals(subject)){
-                    monthNumber++;
-                }
-            }
-        }
-        return monthNumber;
-    }
-
-    public int getMonthSubjectPotential(String subject){
-        int monthNumber= getMonthSubjectNumber(subject);
-        if(monthNumber== 0){
-            return 0;
-        }else{
-            int right= 0;
-
-            Calendar today= Calendar.getInstance();
-            today.setTimeInMillis(System.currentTimeMillis());
-
-            Calendar todayChecker;
-            for(Question question: historyList){
-                String key= String.valueOf(question.getTimeStamp());
-                todayChecker= Calendar.getInstance();
-                todayChecker.setTimeInMillis(Long.valueOf(key));
-                if(today.get(Calendar.YEAR)== todayChecker.get(Calendar.YEAR)
-                        && today.get(Calendar.MONTH)== todayChecker.get(Calendar.MONTH)) {
-                    if(question.getSubject().equals(subject)){
-                        if(question.getInputAnswer().equals(question.getRightAnswer())){
-                            right++;
-                        }
-                    }
-                }
-            }
-            return (int)(((float)right/(float)monthNumber)*100);
-        }
-    }
-
-
-
-    public int getTotalNumber(){
-        return historyList.size();
-    }
-    public int getTotalPotential(){
-        int total= getTotalNumber();
-        if(total== 0){
-            return 0;
-        }else{
-            int right= 0;
-            for(Question question: historyList){
-                if(question.getInputAnswer().equals(question.getRightAnswer())){
-                    right++;
-                }
-            }
-            return (int)(((float)right/(float)total)*100);
-        }
-    }
-    public int getTotalSubjectNumber(String subject){
+    public int getHistoryNumber_day(Calendar calendar){
         int number= 0;
         for(Question question: historyList){
-            if(question.getSubject().equals(subject)){
+            Calendar checker= Calendar.getInstance();
+            checker.setTimeInMillis(question.getTimeStamp());
+            if(calendar.get(Calendar.YEAR)== checker.get(Calendar.YEAR)
+                    && calendar.get(Calendar.MONTH)== checker.get(Calendar.MONTH)
+                    && calendar.get(Calendar.DAY_OF_MONTH)== checker.get(Calendar.DAY_OF_MONTH)){
                 number++;
             }
         }
         return number;
     }
-    public int getTotalSubjectPotential(String subject){
-        int totalNumber= getTotalSubjectNumber(subject);
-        int right= 0;
+    public int getHistoryRightNumber_day(Calendar calendar){
+        int rightAnswer= 0;
+
         for(Question question: historyList){
-            if(question.getSubject().equals(subject)){
+            Calendar checker= Calendar.getInstance();
+            checker.setTimeInMillis(question.getTimeStamp());
+            if(calendar.get(Calendar.YEAR)== checker.get(Calendar.YEAR)
+                    && calendar.get(Calendar.MONTH)== checker.get(Calendar.MONTH)
+                    && calendar.get(Calendar.DAY_OF_MONTH)== checker.get(Calendar.DAY_OF_MONTH)){
                 if(question.getInputAnswer().equals(question.getRightAnswer())){
-                    right++;
+                    rightAnswer++;
                 }
             }
         }
-        if(totalNumber== 0){
-            return 0;
-        }else{
-            return (int)(((float)right/(float)totalNumber)*100);
-        }
+        return rightAnswer;
     }
 
 
+    public int getHistoryNumber_month(Calendar calendar){
+        int number= 0;
+        for(Question question: historyList){
+            Calendar checker= Calendar.getInstance();
+            checker.setTimeInMillis(question.getTimeStamp());
+            if(calendar.get(Calendar.YEAR)== checker.get(Calendar.YEAR)
+                    && calendar.get(Calendar.MONTH)== checker.get(Calendar.MONTH)){
+                number++;
+            }
+        }
+        return number;
+    }
+    public int getHistoryRightNumber_month(Calendar calendar){
+        int rightAnswer= 0;
 
+        for(Question question: historyList){
+            Calendar checker= Calendar.getInstance();
+            checker.setTimeInMillis(question.getTimeStamp());
+            if(calendar.get(Calendar.YEAR)== checker.get(Calendar.YEAR)
+                    && calendar.get(Calendar.MONTH)== checker.get(Calendar.MONTH)){
+                if(question.getInputAnswer().equals(question.getRightAnswer())){
+                    rightAnswer++;
+                }
+            }
+        }
+        return rightAnswer;
+    }
 
+    public int getHistoryNumber_total(){
+        return historyList.size();
+    }
+    public int getHistoryRightNumber_total(){
+        int right= 0;
+        for(Question question: historyList){
+            if(question.getInputAnswer().equals(question.getRightAnswer())){
+                right++;
+            }
+        }
+        return right;
+    }
 }

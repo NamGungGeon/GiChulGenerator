@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-tasks-11.4.2.aar\039629aff9881d4afdc4c6c8b3d82776\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="643a2fd3bd06c44be5d20efc0ba4ca02036d2c8a">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\29\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-gass-11.4.2.aar\f4b63eb475ed4e5d182e0bba123f0bc3\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="de3eb4bc4882f8d87039e7d742a6095ce4730cff">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\31\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-auth-11.4.2.aar\49c9f918630b5c61b4bb5d709e9d5016\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="782d63e5456a49596ef322036691e25c60de3b83">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\25\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-fragment-27.1.1.aar\9965c639ef236e5a3fcf32de606bdaa2\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="3304d33470ff64cf83bce9189ff3648a42eb2aa7">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\44\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\com.anjlab.android.iab.v3\library\1.0.44\add169444f38ac23ffae27326c75e33fedef73ba\library-1.0.44.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="add169444f38ac23ffae27326c75e33fedef73ba">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-auth-api-phone-11.4.2.aar\b4d3bc93e7d9870b4e5e2682df3fb4db\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="e4efed89c18cda5bbc2309efe84bb4b67e1ef239">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\26\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.0.aar\7b9881fbfa60244b426003d8e9038236\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="5c66801c7ac6def4ffef7859925b12ce7940438e">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\graphview-4.2.2.aar\8e93e9a700032609161a2479ecd1b525\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="1c91f7b07ba5cae222447c53bca22c40c3df6c85">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\12\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-messaging-11.4.2.aar\04d697857ac4470c263c27497eda576d\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="6555c483abcdcc71ef5f1d47bb1ff3fee35ef1b2">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\14\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-v13-27.1.0.aar\0fd9e43e966a6b9a40ed0fd4b7c3d0c5\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="bf7ecf1e52a6cf9aac9367c5d5ff72d6d1c78c98">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\10\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.1.1.aar\684e236ab935f2e2418171b2125ecba7\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="874f1143c11f5d38533efe512bf913e3e847e7df">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\45\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-ui-auth-3.1.0.aar\1bc95aaba314ad381a866d0a89c91f56\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="56f252cb04c2373cfd06a2baa1266cadd1c891f7">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\4\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-27.1.0.aar\1df37d195af84a5d297325fa3b8ffc21\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="705378853cb9f264315d7a0a8edb6743d72efe9b">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\39\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\cardview-v7-27.1.0.aar\82305f2d2fca801d1b936bad36565d0a\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="88a6a291986ced98700a44cdc3933559cc63e993">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\android.arch.core\common\1.1.0\8007981f7d7540d89cd18471b8e5dcd2b4f99167\common-1.1.0.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="8007981f7d7540d89cd18471b8e5dcd2b4f99167">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\73\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-analytics-impl-11.4.2.aar\52816ee6e22b150b3d0dfcab2a811b15\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="20d6aa9a18ea9833cd2bee95dff7cd303cdb80e4">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\21\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\recyclerview-v7-27.1.0.aar\eb48f0968e10454b4a72b3f50fc6a536\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="858c1e21a2570a2416153aecab70d27a11965e79">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\8\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\mediarouter-v7-27.1.0.aar\80a5db253670be36d3d54a2d45b4fa34\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="69a19b71dc26dc557c7fc274290484b1828bc035">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\2\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.0.aar\f49c59312d6dbdd78c4f61a5ceaeea40\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="1fd3ceac7f415975323d52c6c6057db409a907f6">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\69\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.1.1.aar\dfa5eedcc627966e35850511e37273d8\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="ec657bb192b20229696216bf233779b16bf75a54">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\46\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-storage-common-11.4.2.aar\e7172f5ce5d067b2621dbf22c2f20f94\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="3e1185bdde08224bf1275f6b4f9771df5e738e1b">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\32\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\com.android.support.constraint\constraint-layout-solver\1.1.0-beta1\4205dd8c33ada1468ab377afff0be95304ef72a\constraint-layout-solver-1.1.0-beta1.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="04205dd8c33ada1468ab377afff0be95304ef72a">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\75\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\transition-27.1.0.aar\ac9f74c5bdab34e989c85f162407ea9f\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="a4f81a342ac6bace97ad1420eb47fc11ab749a03">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\41\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-ui-storage-0.6.0.aar\1620afdd4f8b8e4d0a1b2e4a0c4fbf82\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="3c433e48557e476290f45fb6cb568d1a103c9978">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\3\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.1.1.aar\7ee7b185958286c776c4c0dbbba286cf\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="88c68e5ef7c5ace393d014c9ec5fe736b1ca55cf">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\43\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\android.arch.lifecycle\common\1.1.0\edf3f7bfb84a7521d0599efa3b0113a0ee90f85\common-1.1.0.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="0edf3f7bfb84a7521d0599efa3b0113a0ee90f85">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\71\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-base-11.4.2.aar\9af333b34e6397c341e456107f584c6d\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="2d45b277afdf55bcfdc005c03c0c2f1733aaa1b0">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\28\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\palette-v7-27.1.0.aar\2d2b7b29bdf4e0654aa4284b2013727e\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="09104aa4456db360f0cc880c6b23878fc07f383f">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\42\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-common-11.4.2.aar\f97232ef97e724eadaff3489c1829029\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="5f519b8c692038a47ee404b6ea6b847f6402000c">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\24\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife-annotations\8.8.1\bc373fb6bc7bca3035041b924f158fd2b946ee8d\butterknife-annotations-8.8.1.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="bc373fb6bc7bca3035041b924f158fd2b946ee8d">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\38\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\design-27.1.0.aar\cbd237ec8d5525da38f55e486c32f590\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="f7e3ff2cb093a99c8dc1ff3d50c176019fa5d7c1">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-basement-11.4.2.aar\1ffa62cd37c59605b2689e021a477a75\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="8040d53ecd4bd895360eafdc25e1c1cc9479e6aa">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\33\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-database-11.4.2.aar\e93e29795dcdeb71ffb7c34eed8fd4c1\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="73c80b05a390e8319d1ef7a236739cd610c8f774">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\13\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-ads-lite-11.4.2.aar\ee051970f90f777702d72c518999ef45\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="00d8b1db49c6b3ccb71dcc6468faf0d7c5f1824c">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\30\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\com.android.support\support-annotations\27.1.1\39ded76b5e1ce1c5b2688e1d25cdc20ecee32007\support-annotations-27.1.1.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="39ded76b5e1ce1c5b2688e1d25cdc20ecee32007">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\48\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\multidex-1.0.1.aar\feb1e45900aab622d0e322442e91510e\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="78ea232052df889856dcb7b7b542707c89bb3bfb">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\1\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-database-connection-11.4.2.aar\d7e5f38385dd458f25fbff1afe1791b7\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="c2cadea4d8a1a5b5c4e5f0dc99a99a43774f5e6e">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\19\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-27.1.0.aar\16814951a77dee923dd860ac260c5308\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="755c70a5a4e439030f67311dbafaa67b111377a6">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\40\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\PhotoView-1.2.4.aar\a79244377a9f8c78dc627fa14cd0b509\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="890be6e1e56a883c9b407a11e067a61886dec123">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\11\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-auth-11.4.2.aar\f79bde624ca6db9592b8c1bec5a964b9\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="52339832d252da4328c5ffcacbc205268346362a">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\20\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.0.aar\4b692cf17deb69de468e273b1d1f455c\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="8a9fd7c97f1d13f97f3b52f9d2e54cd857d5acf9">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\68\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.7.0\9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4\glide-3.7.0.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\51\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\butterknife-8.8.1.aar\1d3e81b8a2feb041858e74ef8e80431d\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="6a2bcb61342d09fe9acf55c9daf63961c8866cc0">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\35\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.0-beta1.aar\a26d1be0249332dfe265350b4abc74f5\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="5753660caa486676aacf05857930d76589a09af9">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\36\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-auth-base-11.4.2.aar\ea5a8b918350d46fee109af9a6ca010c\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="bd6a3b6e3c7c584a47479070fb9292a6c7468657">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\27\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-storage-11.4.2.aar\4793f1acedf544947bd89e8c8403bc60\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="97fb40924e83775c91374180494801cb022aa008">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\23\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\customtabs-26.1.0.aar\2388dc682f085a6730065835fb1b0e41\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="e6fff1d276738bb82cfc131c49d2e72a47dfd0aa">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\37\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-iid-11.4.2.aar\95e9231a812cecbbb28d930021a574d3\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="6e6b94b72d7912a627fb1629c310b2bca9261f06">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\22\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\play-services-ads-11.4.2.aar\8ea55497262ac8a211e39b73414c76ee\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="7a4eaaebbf8013af99511a48371f8cef06025960">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\16\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\b5c66165b115f83379c901f9ceab5c5c\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="e2bbe48deed35056023eed2cdc0cc92e5c7d3617">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\70\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\firebase-analytics-11.4.2.aar\4f1f9920eb96856b1ac920fca9069d25\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="bed98ea7af8c5c4202820875e856dd3eb296e22d">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\18\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\support-compat-27.1.1.aar\1ae29ab2b283a8d678ebded1c93ef909\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="23dcb4803d3103bde3f3f5db978a726338fe49ae">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\47\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\rndrj\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\2857463549e2f67f980cb8e2e0b44e2d\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="21"
+        optimize="true"
+        revision="27.0.2"
+        sha1="71d380aeac037e63bab7bda2ba211777e16a2f42">
+        <dex dex="C:\Android Studio Project\GichulGenerator\app\build\intermediates\transforms\preDex\release\72\classes.dex" />
+    </item>
+
+</items>

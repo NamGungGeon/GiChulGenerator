@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/solutionLoadingContainer"
         android:layout_width="match_parent"
-        android:background="#313131"
+        android:background="#444444"
         android:layout_height="match_parent">
         <ProgressBar
             android:layout_width="60dp"
@@ -46,7 +46,7 @@
                     android:layout_marginBottom="15dp"
                     android:textColor="#FFFFFF"
                     android:textSize="20dp"
-                    android:background="#313131"
+                    android:background="#444444"
                     android:padding="15dp"
                     android:id="@+id/solution_examInfo"/>
                 <TextView
@@ -85,9 +85,8 @@
                 style="@android:style/Widget.DeviceDefault.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#313131"
+                android:background="#444444"
                 android:text="문제 다시 확인"
-                android:textSize="20dp"
                 android:layout_weight="1"
                 android:textColor="#FFFFFF" />
             <Button
@@ -96,38 +95,54 @@
                 style="@android:style/Widget.DeviceDefault.Button.Borderless"
                 android:id="@+id/solutionSearch"
                 android:text="해설강의 검색"
-                android:background="#313131"
-                android:textSize="20dp"
+                android:background="#444444"
                 android:layout_weight="1"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/randomQuestion_bottomMenu2"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/randomQuestion_solution_adWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#313131"
+            android:background="#444444"
             android:orientation="horizontal">
             <Button
                 android:id="@+id/addToCheckListBtn"
                 style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                android:background="#313131"
+                android:background="#444444"
                 android:textColor="#FFFFFF"
                 android:text= "오답노트에 추가"
                 android:layout_width="wrap_content"
-                android:textSize="20dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <Button
                 android:id="@+id/continueTryBtn"
                 style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                android:background="#313131"
+                android:background="#444444"
                 android:textColor="#FFFFFF"
                 android:text= "문제 계속 풀기"
-                android:textSize="20dp"
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-    </LinearLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#444444"
+            android:id="@+id/randomQuestion_solution_adWrapper">
+            <com.google.android.gms.ads.AdView
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/randomQuestion_solution_ad"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                ads:adSize="BANNER"
+                ads:adUnitId="ca-app-pub-5333091392909120/7880734576">
+            </com.google.android.gms.ads.AdView>
+        </RelativeLayout>
     </RelativeLayout>
 </FrameLayout>

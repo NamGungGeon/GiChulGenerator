@@ -62,7 +62,6 @@ public class CheckListActivity extends AppCompatActivity {
     }
 
     private void setAdView(){
-        MobileAds.initialize(this, "ca-app-pub-5333091392909120/8285897711");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
@@ -77,7 +76,6 @@ public class CheckListActivity extends AppCompatActivity {
         }else if(subjectFilter.equals("수학(문과)")){
             subjectFilter= "mmath";
         }
-
         return subjectFilter;
     }
 

@@ -6,7 +6,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#313131"
+        android:background="#444444"
         android:textSize="25dp"
         android:padding="15dp"
         android:textColor="#FFFFFF"

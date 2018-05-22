@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="#313131"
+        android:background="#444444"
         android:id="@+id/article_loadingContainer"
         android:layout_height="match_parent">
         <ProgressBar
@@ -35,7 +35,7 @@
             android:textColor="#FFFFFF"
             android:textSize="25dp"
             android:padding="15dp"
-            android:background="#313131"
+            android:background="#444444"
             android:text="본문"/>
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:id="@+id/article_menuBar"
-            android:background="#313131"
+            android:background="#444444"
             android:orientation="horizontal">
             <Button
                 android:layout_width="1dp"
@@ -109,14 +109,14 @@
                 android:layout_weight="1"
                 android:textColor="#FFFFFF"
                 android:id="@+id/article_comment"
-                android:background="#313131"
+                android:background="#444444"
                 android:text="댓글"/>
             <Button
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:textColor="#FFFFFF"
-                android:background="#313131"
+                android:background="#444444"
                 android:id="@+id/article_delete"
                 android:text="삭제"/>
             <Button
@@ -125,7 +125,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:textSize="20dp"
-                android:background="#313131"
+                android:background="#444444"
                 android:textColor="#FFFFFF"
                 android:id="@+id/article_correct"
                 android:text="수정"/>

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="historyTitle"
-        android:textSize="20dp"
+        android:textSize="17dp"
         android:textColor="#000000"
         android:id="@+id/examResultListItem_examTitle"/>
     <TextView
@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/examResultListItem_examInfo"
         android:text="historyInfo"
-        android:textSize="18dp"
+        android:textSize="15dp"
         android:textColor="#C63D0F"/>
 </RelativeLayout>

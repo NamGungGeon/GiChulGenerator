@@ -17,6 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.StringTokenizer;
@@ -45,6 +48,8 @@ public class RandomQuestionSolutionFragment extends Fragment{
     @BindView(R.id.changeImageBtn) Button changeImageBtn;
     @BindView(R.id.addToCheckListBtn) Button addToCheckListBtn;
     @BindView(R.id.continueTryBtn) Button continueTryBtn;
+
+    @BindView(R.id.randomQuestion_solution_ad)AdView adView;
 
     private final int SOLUTION= 1234;
     private final int EXAM= 1235;
@@ -92,6 +97,7 @@ public class RandomQuestionSolutionFragment extends Fragment{
                         + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject")
                         + "/"+ getActivity().getIntent().getStringExtra("examNumber"), callback);
 
+        setAdView();
         return rootView;
     }
 
@@ -108,6 +114,7 @@ public class RandomQuestionSolutionFragment extends Fragment{
             public void success(Bitmap bitmap) {
                 loadingContainer.setVisibility(View.INVISIBLE);
                 solutionContainer.setVisibility(View.VISIBLE);
+                saveToHistoryList();
             }
 
             @Override
@@ -117,6 +124,12 @@ public class RandomQuestionSolutionFragment extends Fragment{
             }
         });
         FirebaseConnection.getInstance().loadImage("exam/"+ basicPath+ "/"+ getActivity().getIntent().getStringExtra("examFileName"), recheckExamImage, getContext());
+    }
+
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private void setSolutionFileName(){
@@ -138,9 +151,17 @@ public class RandomQuestionSolutionFragment extends Fragment{
         solutionFileName+= tokenizer.nextToken();
     }
 
+
     @OnClick(R.id.continueTryBtn)
     void continueTry(){
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionFragment()).commit();
+    }
+
+    void saveToHistoryList(){
+        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
+        HistoryList.getInstance()
+                .addToList(new Question(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
+                        getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
     }
 
     @OnClick(R.id.addToCheckListBtn)

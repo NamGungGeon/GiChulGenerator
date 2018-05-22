@@ -62,7 +62,6 @@ public class QnaBoardActivity extends AppCompatActivity {
     }
 
     private void setAdView(){
-        MobileAds.initialize(this, "ca-app-pub-5333091392909120/2751334157");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }

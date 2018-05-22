@@ -15,8 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -34,13 +38,16 @@ import com.google.firebase.database.DataSnapshot;
 import java.io.File;
 import java.util.HashMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by WINDOWS7 on 2018-01-20.
  */
 
-public class MainPageLodingFragment extends Fragment {
+public class MainPageLodingFragment extends Fragment implements OnBackPressedListener{
 
     private final int LOGIN_GOOGLE=1235;
 
@@ -48,42 +55,16 @@ public class MainPageLodingFragment extends Fragment {
     private GoogleApiClient mGoogleApiClient=null;
     private FirebaseAuth firebaseAuth=null;
 
-    private RelativeLayout mainConatiner;
-    private Bitmap backgroundBitmap = null;
+    @BindView(R.id.loadingText) TextView loadingText;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_loading, container, false);
+        ButterKnife.bind(this, rootView);
 
-        mainConatiner= rootView.findViewById(R.id.loadingContainer);
-        setBackground(mainConatiner);
         login_google();
-
         return rootView;
-    }
-
-    void setBackground(RelativeLayout mainContainer){
-        int width= getActivity().getWindowManager().getDefaultDisplay().getWidth();
-        int height= getActivity().getWindowManager().getDefaultDisplay().getHeight();
-
-        String backgroundPath= getActivity().getSharedPreferences("background", MODE_PRIVATE).getString("path", "");
-        if(backgroundPath.equals("")){
-            //Not set background
-            backgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
-        }else{
-            File backgroundFile= new File(backgroundPath);
-            if(backgroundFile== null || backgroundFile.exists()== false){
-                //No Exist File
-                backgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
-            }else{
-                backgroundBitmap = BitmapFactory.decodeFile(backgroundPath);
-            }
-        }
-        backgroundBitmap = Bitmap.createScaledBitmap(backgroundBitmap, width, height, true);
-        BitmapDrawable background= new BitmapDrawable(backgroundBitmap);
-
-        mainContainer.setBackgroundDrawable(background);
     }
 
     public void login_google(){
@@ -132,44 +113,41 @@ public class MainPageLodingFragment extends Fragment {
     }
 
     private void loadDataFromServer(){
-        Toast.makeText(getContext(), firebaseAuth.getCurrentUser().getDisplayName()+ "님 로그인되었습니다.", Toast.LENGTH_SHORT).show();
-
-        //Open Loading dialog
-        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "오답노트 가져오는 중...");
         //Start to connection firebase and Load data
         //Load CheckList
+        loadingText.setText("오답노트 가져오는 중...");
         CheckList.getInstance().loadCheckListFromServer(new CheckList.Callback() {
             @Override
             public void success() {
-                progressDialog.setMessage("문제 기록 가져오는 중...");
+                loadingText.setText("문제 기록 가져오는 중...");
                 //Load HistoryList
                 HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
                     @Override
                     public void success() {
                         //Load Schedule
-                        progressDialog.setMessage("시험 일정 가져오는 중...");
+                        loadingText.setText("일정 가져오는 중...");
                         FirebaseConnection.getInstance().loadData("appdata/schedule/sunung", new FirebaseConnection.Callback() {
                             @Override
                             public void success(DataSnapshot snapshot) {
                                 getActivity().getIntent().putExtra("schedule", (String)snapshot.getValue());
-                                progressDialog.setMessage("사용자 정보 가져오는 중...");
+                                loadingText.setText("사용자 정보 가져오는 중...");
                                 //Load UserStatus
                                 FirebaseConnection.getInstance().loadData("userdata/" + FirebaseAuth.getInstance().getUid() + "/status", new FirebaseConnection.Callback() {
                                     @Override
                                     public void success(DataSnapshot snapshot) {
                                         Status.setValues((HashMap<String, String>)snapshot.getValue());
-                                        progressDialog.setMessage("앱 정보 가져오는 중...");
+                                        loadingText.setText("앱 정보 가져오는 중...");
                                         //Load AppData
                                         FirebaseConnection.getInstance().loadData("appdata/", new FirebaseConnection.Callback() {
                                             @Override
                                             public void success(DataSnapshot snapshot) {
                                                 AppData.setValue((HashMap<String, String>)snapshot.getValue());
-                                                progressDialog.setMessage("시험 기록 가져오는 중...");
+                                                loadingText.setText("시험 결과 가져오는 중...");
                                                 ExamResultList.getInstance().loadExamResultListFromFirebase(new ExamResultList.Callback() {
                                                     @Override
                                                     public void success() {
-                                                        backgroundBitmap.recycle();
-                                                        progressDialog.dismiss();
+                                                        loadingText.setText("문제 기록 가져오는 중...");
+                                                        openFullSizeAd();
                                                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                                                     }
 
@@ -219,6 +197,18 @@ public class MainPageLodingFragment extends Fragment {
         });
     }
 
+    private void openFullSizeAd(){
+        final InterstitialAd mInterstitialAd= new InterstitialAd(getContext());
+        mInterstitialAd.setAdUnitId("ca-app-pub-5333091392909120/9585231317");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                mInterstitialAd.show();
+            }
+        });
+    }
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Firebase Auth", "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -272,11 +262,7 @@ public class MainPageLodingFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        if(backgroundBitmap!= null){
-            backgroundBitmap.recycle();
-        }
-
-        super.onDestroyView();
+    public boolean onBackPressed() {
+        return true;
     }
 }

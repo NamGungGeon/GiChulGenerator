@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="22dp"
-        android:background="#313131"
+        android:background="#444444"
         android:text="Title"
         android:padding="15dp"
         android:textColor="#FFFFFF"
@@ -332,7 +332,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/examResult_adWrapper"
         android:id="@+id/examResult_bottomMenuContainer">
         <LinearLayout
             android:layout_width="match_parent"
@@ -342,7 +342,7 @@
                 android:text="해설강의 검색"
                 android:layout_width="wrap_content"
                 android:textColor="#FFFFFF"
-                android:background="#313131"
+                android:background="#444444"
                 android:textSize="18dp"
                 android:id="@+id/examResult_searchSolution"
                 android:layout_height="wrap_content" />
@@ -351,11 +351,28 @@
                 android:text="닫기"
                 android:layout_width="wrap_content"
                 android:textColor="#FFFFFF"
-                android:background="#313131"
+                android:background="#444444"
                 android:textSize="18dp"
                 android:id="@+id/examResult_close"
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#444444"
+        android:id="@+id/examResult_adWrapper">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/examResult_ad"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/7880734576">
+        </com.google.android.gms.ads.AdView>
+    </RelativeLayout>
 </RelativeLayout>

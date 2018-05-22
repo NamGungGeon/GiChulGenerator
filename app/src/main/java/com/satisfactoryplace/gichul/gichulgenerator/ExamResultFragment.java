@@ -19,6 +19,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -52,6 +55,9 @@ public class ExamResultFragment extends Fragment {
     @BindView(R.id.examResult_report)TextView report;
     @BindView(R.id.examResult_invisibleReason) TextView invisibleReason;
 
+    @BindView(R.id.examResult_ad)
+    AdView adView;
+
     private Unbinder unbinder;
     private ArrayList<Long> inputAnswers= new ArrayList<>();
 
@@ -80,123 +86,17 @@ public class ExamResultFragment extends Fragment {
 
         unbinder= ButterKnife.bind(this, rootView);
         loadNeededAllData();
+        setAdView();
         return rootView;
     }
 
-    private void init(){
-        Bundle bundle= getActivity().getIntent().getExtras();
-        ArrayList<Integer> _inputAnswers= bundle.getIntegerArrayList("inputAnswers");
-        for(int i=0; i<30; i++){
-            inputAnswers.add(i, _inputAnswers.get(i).longValue());
-        }
-
-        runningTime= getActivity().getIntent().getIntExtra("timer", 0);
-        String titleString= getActivity().getIntent().getStringExtra("title");
-
-        title.setText(titleString);
-
-        int min= runningTime/60;
-        int sec= runningTime%60;
-        report.setText("30문제 중 "+ String.valueOf(getRightAnswerNumber())+ "문제를 맞췄습니다!\n\n"+ "소요시간: "+ min+"분 "+ sec+ "초\n\n" +
-                "맞힌 문제는 녹색, 틀린 문제는 적색으로 표시됩니다.");
-
-        setListSelectorBackground();
-
-        for(int i=0; i<30; i++){
-            final int _i= i;
-            examList.get(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    report.setVisibility(View.GONE);
-                    imageScroll.setVisibility(View.VISIBLE);
-
-                    examImage.setImageBitmap(examBitmap[_i]);
-                    solutionImage.setImageBitmap(solutionBitmap[_i]);
-
-                    float magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)examBitmap[_i].getWidth();
-                    examImage.getLayoutParams().height= (int)((float)examBitmap[_i].getHeight()* magnifyScale);
-                    examImage.getLayoutParams().width= (int)((float)examBitmap[_i].getWidth()* magnifyScale);
-                    examImage.requestLayout();
-
-                    magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)solutionBitmap[_i].getWidth();
-                    solutionImage.getLayoutParams().height= (int)((float)solutionBitmap[_i].getHeight()* magnifyScale);
-                    solutionImage.getLayoutParams().width= (int)((float)solutionBitmap[_i].getWidth()* magnifyScale);
-                    solutionImage.requestLayout();
-
-                    String checkMessage= "";
-                    if(inputAnswers.get(_i).intValue()== rightAnswers.get(_i+1).intValue()){
-                        checkMessage+= "정답입니다!\n입력하신 답안은 "+ inputAnswers.get(_i).toString()+ "입니다.\n\n";
-                        answerCheck.setTextColor(getResources().getColor(R.color.green));
-                    }else{
-                        checkMessage+= "오답입니다!\n입력하신 답안은 "+ inputAnswers.get(_i).toString()+ "이지만, 정답은 "+ rightAnswers.get(_i+1).toString()+ "입니다.\n\n";
-                        answerCheck.setTextColor(getResources().getColor(R.color.red));
-                    }
-
-                    checkMessage+= "이 문제의 정답률은 "+ convertPotential(potentials.get(_i+1).intValue())+ " 입니다";
-                    answerCheck.setText(checkMessage);
-
-                    currentCursor= _i+1;
-                }
-            });
-        }
-        if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
-            //Case: From ExamResultListActivity
-            // Not do any action
-        }else{
-            //Case: From ExamFragment
-            saveToExamResultList();
-            saveToHistoryList();
-        }
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
-    private void saveToHistoryList(){
-        for(int i=0; i<30; i++){
-            HistoryList.getInstance().addToList(new Question(title.getText().toString()+ " "+ (i+1)+ "번 문제", getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ (i+1), potentials.get((i+1)).toString(),
-                    inputAnswers.get(i).toString(), rightAnswers.get(i+1).toString(), String.valueOf(0), ""));
-        }
-    }
-
-    private void saveToExamResultList(){
-        ExamResultList.getInstance().addToList(new ExamResult(title.getText().toString(), getActivity().getIntent().getStringExtra("basicFileName"), inputAnswers,
-                rightAnswers, runningTime));
-    }
-
-    private String convertPotential(int potential){
-        String result;
-        if(potential>=80){
-            result= "매우높음";
-        }else if(potential>=60){
-            result= "높음";
-        }else if(potential>= 40){
-            result= "보통";
-        }else if(potential>= 20){
-            result= "낮음";
-        }else{
-            result= "매우낮음";
-        }
-        return result;
-    }
-
-    private void setListSelectorBackground(){
-        for(int i=0; i<30; i++){
-            if(inputAnswers.get(i).intValue()== rightAnswers.get(i+1).intValue()){
-                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_green));
-            }else{
-                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_red));
-            }
-        }
-    }
-
-    private int getRightAnswerNumber(){
-        int rightNumber= 0;
-        for(int i=0; i<30; i++){
-            if(inputAnswers.get(i).intValue()== rightAnswers.get(i+1).intValue()){
-                rightNumber++;
-            }
-        }
-        return rightNumber;
-    }
-
+    //After loading all data, will call init()
     private void loadNeededAllData(){
 
         final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "문제와 정답을 불러오는 중입니다.");
@@ -287,11 +187,133 @@ public class ExamResultFragment extends Fragment {
             }
         });
     }
+    private void init(){
+        //Get InputAnswers
+        Bundle bundle= getActivity().getIntent().getExtras();
+        ArrayList<Integer> _inputAnswers= bundle.getIntegerArrayList("inputAnswers");
+        for(int i=0; i<30; i++){
+            inputAnswers.add(i, _inputAnswers.get(i).longValue());
+        }
+
+        runningTime= getActivity().getIntent().getIntExtra("timer", 0);
+
+        setResultReport();
+        setListSelectorBackground();
+        setAllSelectorListener();
+
+        if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
+            //Case: From ExamResultListActivity
+            // Not do any action
+        }else{
+            //Case: From ExamFragment
+            saveToExamResultList();
+            saveToHistoryList();
+        }
+    }
+
+    private void saveToHistoryList(){
+        for(int i=0; i<30; i++){
+            HistoryList.getInstance().addToList(new Question(title.getText().toString()+ " "+ (i+1)+ "번 문제", getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ (i+1), potentials.get((i+1)).toString(),
+                    inputAnswers.get(i).toString(), rightAnswers.get(i+1).toString(), String.valueOf(0), ""));
+        }
+    }
+    private void saveToExamResultList(){
+        ExamResultList.getInstance().addToList(new ExamResult(title.getText().toString(), getActivity().getIntent().getStringExtra("basicFileName"), inputAnswers,
+                rightAnswers, runningTime));
+    }
+
+    private void setAllSelectorListener(){
+        //Set OnClickListener to Each ListSelector
+        //When each listSelector is clicked, show result and question, answer image about that number.
+        for(int i=0; i<30; i++){
+            final int _i= i;
+            examList.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    report.setVisibility(View.GONE);
+                    imageScroll.setVisibility(View.VISIBLE);
+
+                    examImage.setImageBitmap(examBitmap[_i]);
+                    solutionImage.setImageBitmap(solutionBitmap[_i]);
+
+                    float magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)examBitmap[_i].getWidth();
+                    examImage.getLayoutParams().height= (int)((float)examBitmap[_i].getHeight()* magnifyScale);
+                    examImage.getLayoutParams().width= (int)((float)examBitmap[_i].getWidth()* magnifyScale);
+                    examImage.requestLayout();
+
+                    magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)solutionBitmap[_i].getWidth();
+                    solutionImage.getLayoutParams().height= (int)((float)solutionBitmap[_i].getHeight()* magnifyScale);
+                    solutionImage.getLayoutParams().width= (int)((float)solutionBitmap[_i].getWidth()* magnifyScale);
+                    solutionImage.requestLayout();
+
+                    String checkMessage= "";
+                    if(inputAnswers.get(_i).intValue()== rightAnswers.get(_i+1).intValue()){
+                        checkMessage+= "정답입니다!\n입력하신 답안은 "+ inputAnswers.get(_i).toString()+ "입니다.\n\n";
+                        answerCheck.setTextColor(getResources().getColor(R.color.green));
+                    }else{
+                        checkMessage+= "오답입니다!\n입력하신 답안은 "+ inputAnswers.get(_i).toString()+ "이지만, 정답은 "+ rightAnswers.get(_i+1).toString()+ "입니다.\n\n";
+                        answerCheck.setTextColor(getResources().getColor(R.color.red));
+                    }
+
+                    checkMessage+= "이 문제의 정답률은 "+ getPotentialText(potentials.get(_i+1).intValue())+ " 입니다";
+                    answerCheck.setText(checkMessage);
+
+                    currentCursor= _i+1;
+                }
+            });
+        }
+    }
+
+    private String getPotentialText(int potential){
+        String result;
+        if(potential>=80){
+            result= "매우높음";
+        }else if(potential>=60){
+            result= "높음";
+        }else if(potential>= 40){
+            result= "보통";
+        }else if(potential>= 20){
+            result= "낮음";
+        }else{
+            result= "매우낮음";
+        }
+        return result;
+    }
+    private void setResultReport(){
+        String titleString= getActivity().getIntent().getStringExtra("title");
+        title.setText(titleString);
+
+        int min= runningTime/60;
+        int sec= runningTime%60;
+        report.setText("30문제 중 "+ String.valueOf(getRightAnswerNumber())+ "문제를 맞췄습니다!\n\n"+ "소요시간: "+ min+"분 "+ sec+ "초\n\n" +
+                "맞힌 문제는 녹색, 틀린 문제는 적색으로 표시됩니다.");
+    }
+
+    private void setListSelectorBackground(){
+        for(int i=0; i<30; i++){
+            if(inputAnswers.get(i).intValue()== rightAnswers.get(i+1).intValue()){
+                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_green));
+            }else{
+                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_red));
+            }
+        }
+    }
+
+    private int getRightAnswerNumber(){
+        int rightNumber= 0;
+        for(int i=0; i<30; i++){
+            if(inputAnswers.get(i).intValue()== rightAnswers.get(i+1).intValue()){
+                rightNumber++;
+            }
+        }
+        return rightNumber;
+    }
+
 
     private void loadingCheck(final ProgressDialog progressDialog){
         final Handler handler = new Handler(){
             public void handleMessage(Message msg){
-                progressDialog.setMessage("이미지 로딩 중... ("+ String.valueOf(msg.arg1)+ "/60)");
+                progressDialog.setMessage("이미지 로딩 중... (60개 중 "+ String.valueOf(msg.arg1)+ "개 완료)");
 
                 if(msg.arg1>= 60){
                     init();

@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by WINDOWS7 on 2018-01-28.
@@ -77,6 +78,10 @@ public class ListViewAdapter_CheckList extends BaseAdapter {
             examInfo.setTextColor(context.getResources().getColor(R.color.red));
             result+= "오답";
         }
+
+        Calendar calendar= Calendar.getInstance();
+        calendar.setTimeInMillis(data.get(position).getTimeStamp());
+        result+= "\n"+ calendar.get(Calendar.YEAR)+ "년 "+ (calendar.get(Calendar.MONTH)+1)+ "월 "+ calendar.get(Calendar.DAY_OF_MONTH)+ "일에 푼 문제입니다.";
         examInfo.setText(result);
 
 

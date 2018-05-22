@@ -18,6 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +49,13 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
     @BindView(R.id.exam_saveAnswer)Button saveAnswerBtn;
     @BindView(R.id.exam_timer)Button timer;
 
+    @BindView(R.id.exam_ad)
+    AdView adView;
+
     private final Bitmap examBitmap[]= new Bitmap[30];
 
-    //encoded information
-    private String encodedInstitute;
-    private String encodedSubject;
-    private String generatedFileName; //Not Include Qusetion Number
+    //Not Include Question Number
+    private String generatedFileName;
 
     //not encoded information
     private String period_y;
@@ -79,11 +84,19 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                 "문제를 모두 풀었다면\n제출 버튼을 눌러 결과를 확인해보세요!");
         saveAnswerBtn.setText("답안 저장");
 
-        getAllExtraDatas();
+        getAllExtraData();
         setTitle();
         loadExamImage();
         setExamInfo();
+        setAdView();
     }
+
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
     private void startTimer(){
         final Handler handler = new Handler(Looper.getMainLooper()){
             public void handleMessage(Message msg){
@@ -114,16 +127,15 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
     private void stopTimer(){
         isRunningTimer= false;
     }
-    private void getAllExtraDatas(){
+
+    private void getAllExtraData(){
         period_y= getActivity().getIntent().getStringExtra("period_y");
         period_m= getActivity().getIntent().getStringExtra("period_m");
         institute= getActivity().getIntent().getStringExtra("institute");
         subject= getActivity().getIntent().getStringExtra("subject");
         generatedFileName= getActivity().getIntent().getStringExtra("basicFileName");
-
-        encodedInstitute= getActivity().getIntent().getStringExtra("encodedInstitute");
-        encodedSubject= getActivity().getIntent().getStringExtra("encodedSubject");
     }
+
     private void setTitle(){
         String titleString= "";
         titleString+= period_y+ "년 "+ institute+ "\n"+ subject+ "과목 "+ period_m+ "월 시험";
@@ -212,46 +224,43 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                     saveAnswerBtn.setVisibility(View.VISIBLE);
 
                     if(currentCursor!= 0){
-                        if(inputAnswer.getText()!= null && inputAnswer.getText().toString().equals("")== false){
-                            //String Check
-                            String answerString= inputAnswer.getText().toString();
-                            for(int i=0; i<answerString.length(); i++){
-                                if(answerString.charAt(i)>='0' && answerString.charAt(i)<='9'){
-                                    // No Error
-                                }else{
-                                    // included not number character in String
-                                    Toast.makeText(getContext(), "답안에는 숫자만 입력할 수 있습니다", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                            }
-                            answers[currentCursor-1]= Integer.valueOf(inputAnswer.getText().toString());
-                            listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_blue, null));
+                        if(saveAnswer()== false){
+                            // Case: Fail to Save
+                            return;
                         }
                     }else{
                         // timer is started when user click exam firstly.
                         startTimer();
                     }
 
-                    if(answers[_i]== -1){
-                        inputAnswer.setText("");
-                    }else{
-                        inputAnswer.setText(String.valueOf(answers[_i]));
-                    }
-                    currentCursor= _i+1;
-
-                    examImage.setBackgroundDrawable(new BitmapDrawable(examBitmap[_i]));
-
-                    float magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)examBitmap[_i].getWidth();
-                    examImage.getLayoutParams().height= (int)((float)examBitmap[_i].getHeight()* magnifyScale);
-                    examImage.getLayoutParams().width= (int)((float)examBitmap[_i].getWidth()* magnifyScale);
-                    examImage.requestLayout();
-
-                    PhotoViewAttacher attacher= new PhotoViewAttacher(examImage);
-                    attacher.update();
+                    setExamAnswer(_i);
+                    setExamImage(_i);
                 }
             });
         }
     }
+
+    private void setExamAnswer(int _i){
+        if(answers[_i]== -1){
+            inputAnswer.setText("");
+        }else{
+            inputAnswer.setText(String.valueOf(answers[_i]));
+        }
+        currentCursor= _i+1;
+
+    }
+    private void setExamImage(int _i){
+        examImage.setBackgroundDrawable(new BitmapDrawable(examBitmap[_i]));
+
+        float magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)examBitmap[_i].getWidth();
+        examImage.getLayoutParams().height= (int)((float)examBitmap[_i].getHeight()* magnifyScale);
+        examImage.getLayoutParams().width= (int)((float)examBitmap[_i].getWidth()* magnifyScale);
+        examImage.requestLayout();
+
+        PhotoViewAttacher attacher= new PhotoViewAttacher(examImage);
+        attacher.update();
+    }
+
     private void submit(){
         //Convert inputAnswers to ArrayList type
         ArrayList<Integer> inputAnswerArray= new ArrayList<>();
@@ -279,6 +288,28 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         //change fragment to resultFragment
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examActivity_container, new ExamResultFragment()).commit();
 
+    }
+    private boolean saveAnswer(){
+        if(inputAnswer.getText()!= null && inputAnswer.getText().toString().equals("")== false){
+            //String Check
+            String answerString= inputAnswer.getText().toString();
+            for(int i=0; i<answerString.length(); i++){
+                if(answerString.charAt(i)>='0' && answerString.charAt(i)<='9'){
+                    // No Error
+                    }else{
+                    // included not number character in String
+                    Toast.makeText(getContext(), "답안에는 숫자만 입력할 수 있습니다", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            answers[currentCursor-1]= Integer.valueOf(inputAnswer.getText().toString());
+            listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_blue, null));
+            Toast.makeText(getContext(), currentCursor+ "번 문제의 입력한 답안이 "+ inputAnswer.getText().toString()+ "(으)로 저장되었습니다", Toast.LENGTH_LONG).show();
+            return true;
+        }else{
+            Toast.makeText(getContext(), "아직 답안을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 
     @OnClick(R.id.exam_submit)
@@ -309,25 +340,10 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         }
     }
     @OnClick(R.id.exam_saveAnswer)
-    void saveAnswer(){
-        if(inputAnswer.getText()!= null && inputAnswer.getText().toString().equals("")== false){
-            //String Check
-            String answerString= inputAnswer.getText().toString();
-            for(int i=0; i<answerString.length(); i++){
-                if(answerString.charAt(i)>='0' && answerString.charAt(i)<='9'){
-                    // No Error
-                }else{
-                    // included not number character in String
-                    Toast.makeText(getContext(), "답안에는 숫자만 입력할 수 있습니다", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-            answers[currentCursor-1]= Integer.valueOf(inputAnswer.getText().toString());
-            listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_blue, null));
-        }else{
-            Toast.makeText(getContext(), "아직 답안을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
-        }
+    void clickSaveBtn(){
+        saveAnswer();
     }
+
     @Override
     public boolean onBackPressed() {
         final DialogMaker dialog= new DialogMaker();

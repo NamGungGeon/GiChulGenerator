@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -19,6 +18,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -30,10 +32,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import uk.co.senab.photoview.PhotoViewAttacher;
-
-/**
- * Created by WINDOWS7 on 2018-01-20.
- */
 
 public class RandomQuestionFragment extends Fragment implements OnBackPressedListener{
     //문제 파일 이름 규칙
@@ -55,8 +53,8 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
     @BindView(R.id.answer_text) EditText answer_text;
     @BindView(R.id.answer_radio) RadioGroup answer_radio;
     @BindView(R.id.timer) TextView timer;
-    @BindView(R.id.regenerateBtn) Button regenerateExamBtn;
-    @BindView(R.id.submit) Button submitButton;
+
+    @BindView(R.id.randomQuestion_ad) AdView adView;
 
     //0 is sec
     //1 is min
@@ -64,7 +62,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
     private Thread timerThread;
     private boolean isRunningTimer= true;
 
-    private int examType;
+    private int questionType;
     private final int choiceType= 1511;
     private final int inputType= 1512;
 
@@ -77,16 +75,17 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_randomquestion, container, false);
 
-        setSubjectIdentifier();
-        setInstituteIdentifier();
-        setPeriodIdentifier();
+        convertSubject_toCode();
+        convertInstitute_toCode();
+        convertPeriod_y_toCode();
 
         unbinder= ButterKnife.bind(this, rootView);
         loadPotentials();
+        setAdView();
         return rootView;
     }
 
-    //After end to load potentials, called init()
+    //After end to load potentials, will call init().
     private void loadPotentials(){
         Log.i("Path", "potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject);
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute + "/" + examPeriod_m + "/" + examSubject, new FirebaseConnection.Callback() {
@@ -113,77 +112,75 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         });
     }
 
-    private void setSubjectIdentifier(){
-        String filter_subj= getActivity().getIntent().getStringExtra("subj");
-        // Decide Subject
-        if (filter_subj.equals("수학(이과)")) {
-            examSubject= "imath";
-        }else if (filter_subj.equals("수학(문과)")) {
-            examSubject= "mmath";
-        }
-    }
 
-    private void setPeriodIdentifier(){
-        String filter_peri= getActivity().getIntent().getStringExtra("peri");
-
-        //Decide period_y
-        if(filter_peri.equals("2015~2017")){
-            String[] yList= {"2017", "2016", "2015"};
-            examPeriod_y= yList[new Random().nextInt(yList.length)];
-        }else if(filter_peri.equals("2018")){
-            examPeriod_y= "2018";
-        }else if(filter_peri.equals("2017")){
-            examPeriod_y= "2017";
-        }else if(filter_peri.equals("2016")){
-            examPeriod_y= "2016";
-        }else if(filter_peri.equals("2015")){
-            examPeriod_y= "2015";
-        }
-
-        //Decide period_m
-        if(examInstitute.equals("sunung")){
-            examPeriod_m= "11";
-        }else if(examInstitute.equals("gyoyuk")){
-            String mList[]= {"3", "4", "7", "10"};
-            examPeriod_m= mList[new Random().nextInt(mList.length)];
-        }else if(examInstitute.equals("pyeong")){
-            String mList[]= {"6", "9"};
-            examPeriod_m= mList[new Random().nextInt(mList.length)];
-        }
-
-        //Case: period_y== 2018
-        if(examPeriod_y.equals("2018")){
-            examInstitute= "gyoyuk";
-            String mList[] = {"3", "4"};
-            examPeriod_m = mList[new Random().nextInt(mList.length)];
-        }
-    }
-
-    private void setInstituteIdentifier(){
-        String filter_inst= getActivity().getIntent().getStringExtra("inst");
-        //Decide institute
-        if(filter_inst.equals("상관없음")){
-            String instList[]= {"sunung", "pyeong", "gyoyuk"};
-            examInstitute= instList[new Random().nextInt(instList.length)];
-        }else if(filter_inst.equals("교육청")){
-            examInstitute= "gyoyuk";
-        }else if(filter_inst.equals("평가원")){
-            examInstitute= "pyeong";
-        }else if(filter_inst.equals("수능")){
-            examInstitute= "sunung";
-        }
-
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private void init(){
-        setQuestion();
+        setQuestionImage();
+
+        //There is no question that is appropriate for given options in database
+        if(examFileName== null){
+            return;
+        }
+
+        saveConvertedInfo();
+        convertInstitute_toKorean();
+        convertSubjectCode_toKorean();
+        setPotentialText();
+        setTitle();
+        setAnswerType();
+    }
+
+    private void setQuestionImage(){
+        examFileName= generateQuestionFileName();
         if(examFileName== null){
             //No Exist Exam as filter
             return;
         }
-        title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
+        Log.i("PathCheck", "exam/" + examPeriod_y + "_" + examPeriod_m + "_" + examInstitute + "_" + examSubject + "/" + examFileName);
 
-        // Hide real potential
+        FirebaseConnection.getInstance().loadImage("exam/" + examPeriod_y + "_" + examPeriod_m + "_" + examInstitute + "_" + examSubject + "/" + examFileName
+                , questionImage, getContext(), new FirebaseConnection.ImageLoadFinished() {
+                    @Override
+                    public void success(Bitmap bitmap) {
+                        loadingContainer.setVisibility(View.GONE);
+                        examTryContainer.setVisibility(View.VISIBLE);
+                        startTimer();
+                    }
+
+                    @Override
+                    public void fail(Exception e) {
+                        Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                });
+        PhotoViewAttacher attacher= new PhotoViewAttacher(questionImage);
+    }
+    private void setAnswerType(){
+        if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
+            if(Integer.valueOf(examNumber)>=22){
+                //주관식
+                answer_text.setVisibility(View.VISIBLE);
+                questionType = inputType;
+            }else{
+                //객관식
+                answer_radio.setVisibility(View.VISIBLE);
+                questionType = choiceType;
+            }
+        }else{
+            //객관식
+            answer_radio.setVisibility(View.VISIBLE);
+            questionType = choiceType;
+        }
+    }
+    private void setTitle(){
+        title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
+    }
+    private void setPotentialText(){
         int _potential= Integer.valueOf(examPotential);
         String potentialText= "정답률: ";
         if(_potential>= 80){
@@ -198,24 +195,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             potentialText+= "매우낮음";
         }
         potential.setText(potentialText);
-
-        if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
-            if(Integer.valueOf(examNumber)>=22){
-                //주관식
-                answer_text.setVisibility(View.VISIBLE);
-                examType= inputType;
-            }else{
-                //객관식
-                answer_radio.setVisibility(View.VISIBLE);
-                examType= choiceType;
-            }
-        }else{
-            //객관식
-            answer_radio.setVisibility(View.VISIBLE);
-            examType= choiceType;
-        }
     }
-
     private void startTimer(){
         final Handler handler= new Handler(){
             @Override
@@ -262,69 +242,18 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         isRunningTimer= true;
         timerThread.start();
     }
-
-    private void setQuestion(){
-        examFileName= generateExamFileName();
-        if(examFileName== null){
-            //No Exist Exam as filter
-            return;
-        }
-        Log.i("PathCheck", "exam/" + examPeriod_y + "_" + examPeriod_m + "_" + examInstitute + "_" + examSubject + "/" + examFileName);
-
-        FirebaseConnection.getInstance().loadImage("exam/" + examPeriod_y + "_" + examPeriod_m + "_" + examInstitute + "_" + examSubject + "/" + examFileName
-                , questionImage, getContext(), new FirebaseConnection.ImageLoadFinished() {
-                    @Override
-                    public void success(Bitmap bitmap) {
-                        loadingContainer.setVisibility(View.GONE);
-                        examTryContainer.setVisibility(View.VISIBLE);
-
-                        startTimer();
-                    }
-
-                    @Override
-                    public void fail(Exception e) {
-                        Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
-                    }
-                });
-        PhotoViewAttacher attacher= new PhotoViewAttacher(questionImage);
-
-        // below value must be saved before converting.
+    private void stopTimer(){
+        isRunningTimer= false;
+    }
+    private void saveConvertedInfo(){
         getActivity().getIntent().putExtra("potential", examPotential);
         getActivity().getIntent().putExtra("period_y", examPeriod_y);
         getActivity().getIntent().putExtra("period_m", examPeriod_m);
         getActivity().getIntent().putExtra("institute", examInstitute);
         getActivity().getIntent().putExtra("subject", examSubject);
         getActivity().getIntent().putExtra("number", examNumber);
-
-        if(examSubject.equals("imath")){
-            examSubject= "수학(이과)";
-        }else if(examSubject.equals("mmath")){
-            examSubject= "수학(문과)";
-        }else if(examSubject.equals("korean")){
-            examSubject= "국어";
-        }else if(examSubject.equals("english")){
-            examSubject= "영어";
-        }else if(examSubject.equals("social")){
-            examSubject= "사회탐구";
-        }else if(examSubject.equals("science")){
-            examSubject= "과학탐구";
-        }
-
-        if(examInstitute.equals("sunung")){
-            examInstitute= "대학수학능력평가시험";
-        }else if(examInstitute.equals("pyeong")){
-            examInstitute= "교육과정평가원";
-        }else if(examInstitute.equals("gyoyuk")){
-            examInstitute= "교육청";
-        }
     }
-
-    // Return value of this method is examFileName that used to load from firebase
-    // Return value is only using for first parameter of FirebaseConnection.getInstance().loadImage()
-    private String generateExamFileName(){
-        String fileName= "";
-
+    private ArrayList<String> getNumberList_asPotential(){
         String filter_prob= getActivity().getIntent().getStringExtra("prob");
         ArrayList<String> numberList= new ArrayList<>();
         //Decide potential
@@ -338,29 +267,120 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             }
         }else if(filter_prob.equals("높음")){
             for(String number: potentialList.keySet()){
-                if(Integer.valueOf(potentialList.get(number))>=60 || Integer.valueOf(potentialList.get(number))<=80){
+                if(Integer.valueOf(potentialList.get(number))>=60 && Integer.valueOf(potentialList.get(number))<80){
                     numberList.add(number);
                 }
             }
         }else if(filter_prob.equals("보통")){
             for(String number: potentialList.keySet()){
-                if(Integer.valueOf(potentialList.get(number))>=40 || Integer.valueOf(potentialList.get(number))<=60){
+                if(Integer.valueOf(potentialList.get(number))>=40 && Integer.valueOf(potentialList.get(number))<60){
                     numberList.add(number);
                 }
             }
         }else if(filter_prob.equals("낮음")){
             for(String number: potentialList.keySet()){
-                if(Integer.valueOf(potentialList.get(number))>=20 || Integer.valueOf(potentialList.get(number))<=40){
+                if(Integer.valueOf(potentialList.get(number))>=20 && Integer.valueOf(potentialList.get(number))<40){
                     numberList.add(number);
                 }
             }
         }else if(filter_prob.equals("매우낮음")){
             for(String number: potentialList.keySet()){
-                if(Integer.valueOf(potentialList.get(number))<=20){
+                if(Integer.valueOf(potentialList.get(number))<20){
                     numberList.add(number);
                 }
             }
         }
+
+        return numberList;
+    }
+
+    private void convertSubject_toCode(){
+        String filter_subj= getActivity().getIntent().getStringExtra("subj");
+        // Decide Subject
+        if (filter_subj.equals("수학(이과)")) {
+            examSubject= "imath";
+        }else if (filter_subj.equals("수학(문과)")) {
+            examSubject= "mmath";
+        }
+    }
+    private void convertPeriod_y_toCode(){
+        String filter_peri= getActivity().getIntent().getStringExtra("peri");
+
+        //Decide period_y
+        if(filter_peri.equals("2015~2017")){
+            String[] yList= {"2017", "2016", "2015"};
+            examPeriod_y= yList[new Random().nextInt(yList.length)];
+        }else if(filter_peri.equals("2018")){
+            examPeriod_y= "2018";
+        }else if(filter_peri.equals("2017")){
+            examPeriod_y= "2017";
+        }else if(filter_peri.equals("2016")){
+            examPeriod_y= "2016";
+        }else if(filter_peri.equals("2015")){
+            examPeriod_y= "2015";
+        }
+
+        //Decide period_m
+        if(examInstitute.equals("sunung")){
+            examPeriod_m= "11";
+        }else if(examInstitute.equals("gyoyuk")){
+            String mList[]= {"3", "4", "7", "10"};
+            examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }else if(examInstitute.equals("pyeong")){
+            String mList[]= {"6", "9"};
+            examPeriod_m= mList[new Random().nextInt(mList.length)];
+        }
+
+        //Case: period_y== 2018
+        if(examPeriod_y.equals("2018")){
+            examInstitute= "gyoyuk";
+            String mList[] = {"3", "4"};
+            examPeriod_m = mList[new Random().nextInt(mList.length)];
+        }
+    }
+    private void convertInstitute_toCode(){
+        String filter_inst= getActivity().getIntent().getStringExtra("inst");
+        //Decide institute
+        if(filter_inst.equals("상관없음")){
+            String instList[]= {"sunung", "pyeong", "gyoyuk"};
+            examInstitute= instList[new Random().nextInt(instList.length)];
+        }else if(filter_inst.equals("교육청")){
+            examInstitute= "gyoyuk";
+        }else if(filter_inst.equals("평가원")){
+            examInstitute= "pyeong";
+        }else if(filter_inst.equals("수능")){
+            examInstitute= "sunung";
+        }
+
+    }
+    private void convertSubjectCode_toKorean(){
+        if(examSubject.equals("imath")){
+            examSubject= "수학(이과)";
+        }else if(examSubject.equals("mmath")){
+            examSubject= "수학(문과)";
+        }else if(examSubject.equals("korean")){
+            examSubject= "국어";
+        }else if(examSubject.equals("english")){
+            examSubject= "영어";
+        }else if(examSubject.equals("social")){
+            examSubject= "사회탐구";
+        }else if(examSubject.equals("science")){
+            examSubject= "과학탐구";
+        }
+    }
+    private void convertInstitute_toKorean(){
+        if(examInstitute.equals("sunung")){
+            examInstitute= "대학수학능력평가시험";
+        }else if(examInstitute.equals("pyeong")){
+            examInstitute= "교육과정평가원";
+        }else if(examInstitute.equals("gyoyuk")){
+            examInstitute= "교육청";
+        }
+    }
+    private String generateQuestionFileName(){
+        String fileName= "";
+
+        ArrayList<String> numberList= getNumberList_asPotential();
 
         //Case: No Exist Exam as filter
         if(numberList.size()== 0){
@@ -369,7 +389,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             return null;
         }
 
-        //Decide number
+        //Decide question number of set options
         examNumber= numberList.get(new Random().nextInt(numberList.size()));
         examPotential= potentialList.get(examNumber);
 
@@ -381,7 +401,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         String result= null;
 
         //객관식
-        if(examType== choiceType){
+        if(questionType == choiceType){
             int answer=0;
             int checkedAnswer= answer_radio.getCheckedRadioButtonId();
             switch(checkedAnswer){
@@ -402,7 +422,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
                     break;
             }
             result= String.valueOf(answer);
-        }else if(examType== inputType){
+        }else if(questionType == inputType){
             //주관식
             if(answer_text.getText()!= null){
                 result= answer_text.getText().toString();
@@ -410,13 +430,24 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         }
         return result;
     }
+    private void submitSolution(){
+        String answer= getUserAnswer();
+
+        getActivity().getIntent().putExtra("examFileName", examFileName);
+        getActivity().getIntent().putExtra("examNumber", examNumber);
+        getActivity().getIntent().putExtra("examInfo", title.getText());
+        getActivity().getIntent().putExtra("inputAnswer", answer);
+        getActivity().getIntent().putExtra("sec", timeSaver[0]);
+        getActivity().getIntent().putExtra("min", timeSaver[1]);
+
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionSolutionFragment()).commit();
+    }
 
     @OnClick(R.id.regenerateBtn)
-    void regenerateExam(){
+    void regenerateQuestion(){
         stopTimer();
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionFragment()).commit();
     }
-
     @OnClick(R.id.submit)
     void recheckAnswer(){
         if(getUserAnswer()== null || getUserAnswer().equals("")){
@@ -436,30 +467,11 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             dialog.show(getActivity().getSupportFragmentManager(), "AnswerSubmit");
         }
     }
-
-    private void submitSolution(){
-        String answer= getUserAnswer();
-
-        getActivity().getIntent().putExtra("examFileName", examFileName);
-        getActivity().getIntent().putExtra("examNumber", examNumber);
-        getActivity().getIntent().putExtra("examInfo", title.getText());
-        getActivity().getIntent().putExtra("inputAnswer", answer);
-        getActivity().getIntent().putExtra("sec", timeSaver[0]);
-        getActivity().getIntent().putExtra("min", timeSaver[1]);
-
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionSolutionFragment()).commit();
-    }
-
     @Override
     public boolean onBackPressed() {
         stopTimer();
         return true;
     }
-
-    private void stopTimer(){
-        isRunningTimer= false;
-    }
-
     @Override
     public void onDestroy() {
         if(questionImage.getDrawable()!= null && ((BitmapDrawable)questionImage.getDrawable()).getBitmap().isRecycled()== false){

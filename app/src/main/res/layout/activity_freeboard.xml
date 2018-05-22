@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/freeboard_loadingContainer"
         android:layout_width="match_parent"
-        android:background="#313131"
+        android:background="#444444"
         android:layout_height="match_parent">
         <ProgressBar
             android:layout_width="60dp"
@@ -65,14 +65,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="#313131"
+            android:background="#444444"
             android:id="@+id/freeboard_menuBar"
             android:orientation="horizontal">
             <Button
                 android:layout_weight="1"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="#313131"
+                android:background="#444444"
                 android:textColor="#FFFFFF"
                 android:id="@+id/freeboard_search"
                 android:text="검색"/>
@@ -81,7 +81,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:textColor="#FFFFFF"
-                android:background="#313131"
+                android:background="#444444"
                 android:id="@+id/freeboard_publishArticle"
                 android:text="글쓰기"/>
             <Button
@@ -89,7 +89,7 @@
                 android:layout_width="1dp"
                 android:textColor="#FFFFFF"
                 android:layout_height="match_parent"
-                android:background="#313131"
+                android:background="#444444"
                 android:id="@+id/freeboard_refresh"
                 android:text="새로고침"/>
         </LinearLayout>

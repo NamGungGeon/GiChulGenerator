@@ -72,7 +72,6 @@ public class ArticlePublishActivity extends AppCompatActivity{
         setAdView();
     }
     private void setAdView(){
-        MobileAds.initialize(this, "ca-app-pub-5333091392909120/6072450302");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
