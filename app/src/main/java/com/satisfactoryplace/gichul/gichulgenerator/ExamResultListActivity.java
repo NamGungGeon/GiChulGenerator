@@ -13,6 +13,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,9 +52,17 @@ public class ExamResultListActivity extends AppCompatActivity {
     }
 
     private void setListView(){
-        final ListViewAdapter_ExamResultList listViewAdapter= new ListViewAdapter_ExamResultList(getApplicationContext(), R.layout.item_examresultlist,
-                ExamResultList.getInstance().getExamResultList());
+        ArrayList<ExamResult> resultListData= ExamResultList.getInstance().getExamResultList();
+        //시간순으로 정렬
+        Collections.sort(resultListData, new Comparator<ExamResult>() {
+            @Override
+            public int compare(ExamResult e1, ExamResult e2) {
+                return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
+            }
+        });
 
+        final ListViewAdapter_ExamResultList listViewAdapter= new ListViewAdapter_ExamResultList(getApplicationContext(), R.layout.item_examresultlist,
+                resultListData);
         examResultList.setAdapter(listViewAdapter);
         examResultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

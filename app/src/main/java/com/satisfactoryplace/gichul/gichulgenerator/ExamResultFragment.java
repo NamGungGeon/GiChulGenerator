@@ -32,6 +32,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by WINDOWS7 on 2018-02-28.
@@ -86,11 +87,11 @@ public class ExamResultFragment extends Fragment {
 
         unbinder= ButterKnife.bind(this, rootView);
         loadNeededAllData();
-        setAdView();
+        initAdView();
         return rootView;
     }
 
-    private void setAdView(){
+    private void initAdView(){
         MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
@@ -98,7 +99,6 @@ public class ExamResultFragment extends Fragment {
 
     //After loading all data, will call init()
     private void loadNeededAllData(){
-
         final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "문제와 정답을 불러오는 중입니다.");
 
         //Load ExamImage
@@ -245,6 +245,9 @@ public class ExamResultFragment extends Fragment {
                     solutionImage.getLayoutParams().height= (int)((float)solutionBitmap[_i].getHeight()* magnifyScale);
                     solutionImage.getLayoutParams().width= (int)((float)solutionBitmap[_i].getWidth()* magnifyScale);
                     solutionImage.requestLayout();
+
+                    PhotoViewAttacher attacher1= new PhotoViewAttacher(examImage);
+                    PhotoViewAttacher attacher2= new PhotoViewAttacher(solutionImage);
 
                     String checkMessage= "";
                     if(inputAnswers.get(_i).intValue()== rightAnswers.get(_i+1).intValue()){

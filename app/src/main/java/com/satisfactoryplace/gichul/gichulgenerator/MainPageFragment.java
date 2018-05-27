@@ -1,53 +1,31 @@
 package com.satisfactoryplace.gichul.gichulgenerator;
 
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.vending.billing.IInAppBillingService;
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.example.android.trivialdrivesample.util.IabHelper;
-import com.example.android.trivialdrivesample.util.IabResult;
-import com.example.android.trivialdrivesample.util.Purchase;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,28 +39,23 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-/**
- * Created by WINDOWS7 on 2018-01-20.
- */
 
-public class MainPageFragment extends Fragment implements OnBackPressedListener{
+public class MainPageFragment extends Fragment implements OnBackPressedListener, BillingProcessor.IBillingHandler{
 
     @BindView(R.id.main_statusPager) ViewPager statusPager;
     @BindView(R.id.status_back) ImageView status_back;
     @BindView(R.id.status_next) ImageView status_next;
 
     @BindView(R.id.scheduler) TextView d_day;
-    @BindView(R.id.mainmenu_ad)AdView adView;
+    @BindView(R.id.mainmenu_ad) AdView adView;
 
     private final int EXAM_ACTIVITY= 1335;
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "2.0";
+    private String appVersion= "2.1";
 
-    IInAppBillingService mService;
-    ServiceConnection mServiceConn;
-    IabHelper mHelper;
+    BillingProcessor bp;
 
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -93,17 +66,17 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
     }
 
     private void init(){
-        set_Dday();
-        setStatusPager();
-        setAdView();
-        setBillProcess();
+        initDday();
+        initStatusPager();
+        initAdView();
+        initBillProcess();
+        checkAppVersion();
     }
-    private void setAdView(){
+    private void initAdView(){
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
-
-    private void setStatusPager(){
+    private void initStatusPager(){
         statusPager.setAdapter(new FragmentStatePagerAdapter(getActivity().getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -152,7 +125,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         status_back.setVisibility(View.INVISIBLE);
         status_next.setVisibility(View.VISIBLE);
     }
-    private void set_Dday(){
+    private void initDday(){
         //Set Schedule
         String between= "";
         SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
@@ -174,74 +147,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
         d_day.setText("수능까지 "+ between+ "일 남았습니다");
     }
-    private void setBillProcess(){
-
-        mServiceConn= new ServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mService = null;
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name,
-                                           IBinder service) {
-                mService = IInAppBillingService.Stub.asInterface(service);
-            }
-        };
-
-        Intent intent= new Intent("com.android.vending.billing.InAppBillingService.BIND");
-        intent.setPackage("com.android.vending");
-        getActivity().bindService(intent, mServiceConn, Context.BIND_AUTO_CREATE);
-        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorXcU15UsFjV0tml82MbjXsz9b0VKfIfDQOaJpJwSu/TOph9pr+pxKvGchF90E5C/3TF6pqsPqlEDA6/iSYBI1ka1wOCE1YPIt1vzFhG6rfY8hNPwz/pT+JQSA42FoW+N/v5Y4UN5FGxA0RFT1I/jSME2IU9fRFFnArdiMoq0HRKUzeo8f9txnoYgKme5ItuAmD6VU94ddpKyUXkJ83mKOvqLiYTs/PR2y99y9NTd/a2R5Gb6lgBpbjTR8vSvK+0zCFYRydSPNnN/krNJ5h+ne0raMXFYnCp5ZOFZ9cR1KzwfcaLYg7c6cthzb+FNqDew8qY6quT6j7RhU5opuJukwIDAQAB";
-        mHelper = new IabHelper(getContext(), base64EncodedPublicKey);
-        mHelper.enableDebugLogging(true);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                AlreadyPurchaseItems();
-                if (!result.isSuccess()) {
-                    Toast.makeText(getContext(), "인앱 결제 시스템 초기화 실패", Toast.LENGTH_SHORT).show();
-                }
-                // AlreadyPurchaseItems(); 메서드는 구매목록을 초기화하는 메서드입니다.
-                // v3으로 넘어오면서 구매기록이 모두 남게 되는데 재구매 가능한 상품( 게임에서는 코인같은아이템은 ) 구매후 삭제해주어야 합니다.
-                // 이 메서드는 상품 구매전 혹은 후에 반드시 호출해야합니다. ( 재구매가 불가능한 1회성 아이템의경우 호출하면 안됩니다 )
-            }
-        });
-    }
-    private void AlreadyPurchaseItems() {
-        try {
-            Bundle ownedItems = mService.getPurchases(3, getActivity().getPackageName(), "inapp", null);
-            int response = ownedItems.getInt("RESPONSE_CODE");
-            if (response == 0) {
-                ArrayList purchaseDataList = ownedItems.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
-                String[] tokens = new String[purchaseDataList.size()];
-                for (int i = 0; i < purchaseDataList.size(); ++i) {
-                    String purchaseData = (String) purchaseDataList.get(i);
-                    JSONObject jo = new JSONObject(purchaseData);
-                    tokens[i] = jo.getString("purchaseToken");
-                    // 여기서 tokens를 모두 컨슘 해주기
-                    mService.consumePurchase(3, getActivity().getPackageName(), tokens[i]);
-                }
-            }
-
-            // 토큰을 모두 컨슘했으니 구매 메서드 처리
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void buy(String id_item) {
-        try {
-            Bundle buyIntentBundle = mService.getBuyIntent(3, getActivity().getPackageName(),	id_item, "inapp", "donation");
-            PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-            if (pendingIntent != null) {
-                //startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
-                mHelper.launchPurchaseFlow(getActivity(), getActivity().getPackageName(), 1001, null, "test");
-             } else {
-                // 결제가 막혔다면
-            }
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "결제 시스템을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show();
-        }
+    private void initBillProcess(){
+        String key= "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorXcU15UsFjV0tml82MbjXsz9b0VKfIfDQOaJpJwSu/TOph9pr+pxKvGchF90E5C/3TF6pqsPqlEDA6/iSYBI1ka1wOCE1YPIt1vzFhG6rfY8hNPwz/pT+JQSA42FoW+N/v5Y4UN5FGxA0RFT1I/jSME2IU9fRFFnArdiMoq0HRKUzeo8f9txnoYgKme5ItuAmD6VU94ddpKyUXkJ83mKOvqLiYTs/PR2y99y9NTd/a2R5Gb6lgBpbjTR8vSvK+0zCFYRydSPNnN/krNJ5h+ne0raMXFYnCp5ZOFZ9cR1KzwfcaLYg7c6cthzb+FNqDew8qY6quT6j7RhU5opuJukwIDAQAB";
+        bp= new BillingProcessor(getContext(), key, this);
     }
 
     private boolean checkNickName(String nickName){
@@ -304,6 +212,27 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         }
 
         return true;
+    }
+    private void checkAppVersion(){
+        if(appVersion.equals(AppData.currentVersion)== false){
+            String message= "";
+            message= "앱이 최신 버전이 아닙니다.\n업데이트가 필요합니다.\n\n";
+            message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
+            message+= "최신 앱 버전: "+ AppData.currentVersion;
+
+            final DialogMaker dialog= new DialogMaker();
+            dialog.setValue(message, "업데이트", "닫기", new DialogMaker.Callback() {
+                @Override
+                public void callbackMethod() {
+                    String url= "https://play.google.com/store/apps/details?id=com.satisfactoryplace.gichul.gichulgenerator";
+                    Intent intent= new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(url));
+                    startActivity(intent);
+                }
+            }, null);
+            dialog.show(getActivity().getSupportFragmentManager(), "GoUpdate");
+        }
+
     }
 
     /* Listener List */
@@ -559,7 +488,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
 
     @OnClick(R.id.menuList_donation)
     void donation(){
-        buy("donation");
+        bp.initialize();
+        bp.purchase(getActivity(), "donation");
     }
 
     @OnClick(R.id.freeboard)
@@ -659,19 +589,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
                 startActivity(new Intent(getContext(), QnaBoardActivity.class));
             }
         }
-    }
-
-    @OnClick(R.id.menuList_checkAppVersion)
-    void checkAppVersion(){
-        String message;
-        if(appVersion.equals(AppData.currentVersion)){
-            message= "앱이 최신 버전입니다.";
-        }else{
-            message= "앱이 최신 버전이 아닙니다.\n업데이트가 필요합니다.\n\n";
-            message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
-            message+= "최신 앱 버전: "+ AppData.currentVersion;
-        }
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.goToExam)
@@ -793,46 +710,44 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener{
         startActivity(i);
     }
 
+    /* Override from Fragment */
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        if (bp != null) {
+            bp.release();
+        }
         unbinder.unbind();
+        super.onDestroyView();
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         init();
-        if(requestCode == 1001)
-            if (resultCode == getActivity().RESULT_OK) {
-                if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
-                    super.onActivityResult(requestCode, resultCode, data);
-
-                    int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-                    String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
-                    String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-
-                    // 여기서 아이템 추가 해주시면 됩니다.
-                    // 만약 서버로 영수증 체크후에 아이템 추가한다면, 서버로 purchaseData , dataSignature 2개 보내시면 됩니다.
-                    Toast.makeText(getContext(), "기부해주셔서 감사합니다.\n더 나은 서비스를 제공하기 위해 노력하겠습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    // 구매취소 처리
-                }
-            }else{
-                // 구매취소 처리
-            }
-        else{
-            // 구매취소 처리
-        }
     }
-    @Override public void onDestroy() {
-        super.onDestroy();
-        if (mServiceConn != null) {
-            getActivity().unbindService(mServiceConn);
-        }
-    }
-
     @Override
     public boolean onBackPressed() {
         return true;
     }
 
+
+    /* Implemented method from IBillingHandler */
+    @Override
+    public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
+        Toast.makeText(getContext(), "기부해주셔서 감사합니다.\n더 나은 서비스를 제공하기 위해 노력하겠습니다.", Toast.LENGTH_SHORT).show();
+        bp.consumePurchase(productId);
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+
+    }
+
+    @Override
+    public void onBillingError(int errorCode, @Nullable Throwable error) {
+        Toast.makeText(getContext(), "결제 시스템에 에러가 발생하였습니다.\n에러코드: "+ errorCode, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBillingInitialized() {
+
+    }
 }

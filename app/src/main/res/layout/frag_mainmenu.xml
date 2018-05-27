@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#313131"
     >
+    <!-- Title -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,24 +18,13 @@
         android:layout_alignParentTop="true"
         android:id="@+id/mainmenu_title"/>
 
-    <!-- Schedular -->
-    <TextView
-        android:id="@+id/scheduler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop= "15dp"
-        android:text="Scheduler"
-        android:textColor="#FFFFFF"
-        android:layout_below="@+id/mainmenu_title"
-        android:textSize="21dp"/>
-
-    <!-- Status Checker -->
+    <!-- Status and Scheduler -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:id="@+id/mainmenu_pagerWrapper">
+        android:layout_height="match_parent"
+        android:id="@+id/mainmenu_pagerWrapper"
+        android:layout_below="@id/mainmenu_title"
+        android:layout_above="@+id/bottomMenuWrapper">
         <ImageView
             android:id="@+id/status_back"
             android:layout_width="30dp"
@@ -46,6 +36,7 @@
             android:id="@+id/main_statusPager"
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:layout_centerInParent="true"
             android:layout_margin="30dp">
         </android.support.v4.view.ViewPager>
         <ImageView
@@ -55,6 +46,18 @@
             android:layout_centerVertical="true"
             android:background="@drawable/next"
             android:layout_alignParentRight="true"/>
+
+        <!-- Schedular -->
+        <TextView
+            android:id="@+id/scheduler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="수능 D-day"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/main_statusPager"
+            android:textSize="21dp"/>
     </RelativeLayout>
 
     <!-- Bottom Menu List-->
@@ -63,6 +66,7 @@
         android:layout_above="@+id/mainmenu_adWrapper"
         android:scrollbars="none"
         android:background="#444444"
+        android:id="@+id/bottomMenuWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -131,12 +135,6 @@
                     android:layout_margin="5dp"
                     android:background="@drawable/delete_icon"
                     android:id="@+id/menuList_allHistoryDelete"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:id="@+id/menuList_checkAppVersion"
-                    android:background="@drawable/check_icon"/>
                 <Button
                     android:layout_width="80dp"
                     android:layout_height="80dp"
