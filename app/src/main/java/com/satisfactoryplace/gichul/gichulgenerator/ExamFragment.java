@@ -30,11 +30,8 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
-
-/**
- * Created by WINDOWS7 on 2018-02-28.
- */
 
 public class ExamFragment extends Fragment implements OnBackPressedListener{
     @BindViews({R.id.exam_1,R.id.exam_2,R.id.exam_3,R.id.exam_4,R.id.exam_5,R.id.exam_6,R.id.exam_7,R.id.exam_8,R.id.exam_9,R.id.exam_10,
@@ -91,12 +88,6 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         setAdView();
     }
 
-    private void setAdView(){
-        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
     private void startTimer(){
         final Handler handler = new Handler(Looper.getMainLooper()){
             public void handleMessage(Message msg){
@@ -135,11 +126,15 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         subject= getActivity().getIntent().getStringExtra("subject");
         generatedFileName= getActivity().getIntent().getStringExtra("basicFileName");
     }
-
     private void setTitle(){
         String titleString= "";
         titleString+= period_y+ "년 "+ institute+ "\n"+ subject+ "과목 "+ period_m+ "월 시험";
         title.setText(titleString);
+    }
+    private void setAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
     private void loadExamImage(){
         for(int i=0; i<examBitmap.length; i++){
@@ -166,7 +161,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         }
         final Handler handler = new Handler(){
             public void handleMessage(Message msg){
-                progressDialog.setMessage(String.valueOf(msg.arg1)+ "%");
+                progressDialog.setMessage("이미지 60개 중 "+ String.valueOf(msg.arg1)+ "개 다운로드 완료");
             }
         };
         Thread bitmapLoadObserver= new Thread(){
@@ -177,7 +172,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                     int progress= 0;
                     for(Bitmap bitmap: examBitmap){
                         if(bitmap!= null){
-                            progress+= (100/30);
+                            progress+= 1;
                         }
                     }
                     Message msg = handler.obtainMessage();
@@ -220,6 +215,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                 public void onClick(View v) {
                     startMessage.setVisibility(View.GONE);
                     examImage.setVisibility(View.VISIBLE);
+                    PhotoViewAttacher attacher= new PhotoViewAttacher(examImage);
                     inputAnswer.setVisibility(View.VISIBLE);
                     saveAnswerBtn.setVisibility(View.VISIBLE);
 
@@ -239,7 +235,6 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
             });
         }
     }
-
     private void setExamAnswer(int _i){
         if(answers[_i]== -1){
             inputAnswer.setText("");
@@ -290,7 +285,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
 
     }
     private boolean saveAnswer(){
-        if(inputAnswer.getText()!= null && inputAnswer.getText().toString().equals("")== false){
+        if(inputAnswer.getText().toString().equals("")== false){
             //String Check
             String answerString= inputAnswer.getText().toString();
             for(int i=0; i<answerString.length(); i++){
@@ -305,11 +300,10 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
             answers[currentCursor-1]= Integer.valueOf(inputAnswer.getText().toString());
             listSelector.get(currentCursor-1).setBackground(getResources().getDrawable(R.drawable.button_border_background_blue, null));
             Toast.makeText(getContext(), currentCursor+ "번 문제의 입력한 답안이 "+ inputAnswer.getText().toString()+ "(으)로 저장되었습니다", Toast.LENGTH_LONG).show();
-            return true;
         }else{
-            Toast.makeText(getContext(), "아직 답안을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
+            answers[currentCursor-1]= -1;
         }
-        return false;
+        return true;
     }
 
     @OnClick(R.id.exam_submit)
@@ -322,22 +316,26 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
             }
         }
 
+        String message;
         if(allCheckedAnswer== false){
-            Toast.makeText(getContext(), "아직 입력하지 않은 답안이 있습니다", Toast.LENGTH_SHORT).show();
-            return;
+            message= "아직 입력하지 않은 답안이 있습니다.\n" +
+                    "그래도 답안을 제출하시겠습니까?";
         }else{
-            final DialogMaker dialogMaker=  new DialogMaker();
-            dialogMaker.setValue("답안을 제출하시겠습니까?\n(다시한번 검토해보세요.)", "예", "아니오",
-                    new DialogMaker.Callback() {
-                        @Override
-                        public void callbackMethod() {
-                            dialogMaker.dismiss();
-                            submit();
-
-                        }
-                    }, null);
-            dialogMaker.show(getActivity().getSupportFragmentManager(), "Exam Submit");
+            message= "답안을 제출하시겠습니까?\n" +
+                    "(다시 한 번 검토해보세요)";
         }
+
+        final DialogMaker dialogMaker=  new DialogMaker();
+        dialogMaker.setValue(message, "예", "아니오",
+                new DialogMaker.Callback() {
+                    @Override
+                    public void callbackMethod() {
+                        dialogMaker.dismiss();
+                        submit();
+
+                    }
+                }, null);
+        dialogMaker.show(getActivity().getSupportFragmentManager(), "Exam Submit");
     }
     @OnClick(R.id.exam_saveAnswer)
     void clickSaveBtn(){

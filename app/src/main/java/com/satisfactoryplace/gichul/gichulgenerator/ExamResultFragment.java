@@ -99,8 +99,6 @@ public class ExamResultFragment extends Fragment {
 
     //After loading all data, will call init()
     private void loadNeededAllData(){
-        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "문제와 정답을 불러오는 중입니다.");
-
         //Load ExamImage
         if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
             //Case: From ExamResultListActivity
@@ -131,13 +129,15 @@ public class ExamResultFragment extends Fragment {
             }
         }
         //Load Answer List
-        String answerPath= "answer/"+  getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
+        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "정답을 불러오는 중입니다.");
+
+        final String answerPath= "answer/"+  getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
                 + "/"+ getActivity().getIntent().getStringExtra("period_m")+ "/"+ getActivity().getIntent().getStringExtra("encodedSubject");
         FirebaseConnection.getInstance().loadData(answerPath, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 rightAnswers= (ArrayList<Long>)snapshot.getValue();
-
+                Log.i("PATH", answerPath);
                 progressDialog.setMessage("정답률을 불러오는 중입니다");
                 //Load Potential List
                 String potentialPath= "potential/"+ getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
@@ -196,6 +196,13 @@ public class ExamResultFragment extends Fragment {
         }
 
         runningTime= getActivity().getIntent().getIntExtra("timer", 0);
+
+        if(inputAnswers== null){
+            Toast.makeText(getContext(), "input is null", Toast.LENGTH_SHORT).show();
+        }
+        if(rightAnswers== null){
+            Toast.makeText(getContext(), "right is null", Toast.LENGTH_SHORT).show();
+        }
 
         setResultReport();
         setListSelectorBackground();
@@ -311,7 +318,6 @@ public class ExamResultFragment extends Fragment {
         }
         return rightNumber;
     }
-
 
     private void loadingCheck(final ProgressDialog progressDialog){
         final Handler handler = new Handler(){

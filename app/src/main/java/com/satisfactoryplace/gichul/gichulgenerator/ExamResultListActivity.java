@@ -28,6 +28,7 @@ public class ExamResultListActivity extends AppCompatActivity {
     ListView examResultList;
     @BindView(R.id.examResultListAd)
     AdView adView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

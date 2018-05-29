@@ -39,7 +39,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-
 public class MainPageFragment extends Fragment implements OnBackPressedListener, BillingProcessor.IBillingHandler{
 
     @BindView(R.id.main_statusPager) ViewPager statusPager;
@@ -53,7 +52,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "2.1";
+    private String appVersion= "2.3";
 
     BillingProcessor bp;
 
@@ -665,10 +664,13 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                         String filter_institute= institute.getSelectedItem().toString();
                         if(filter_institute.equals("대학수학능력평가시험")){
                             basicFileName+= "sunung";
+                            intent.putExtra("encodedInstitute", "sunung");
                         }else if(filter_institute.equals("교육청")){
                             basicFileName+= "gyoyuk";
+                            intent.putExtra("encodedInstitute", "gyoyuk");
                         }else if(filter_institute.equals("교육과정평가원")){
                             basicFileName+= "pyeong";
+                            intent.putExtra("encodedInstitute", "pyeong");
                         }
                         basicFileName+="_";
 
@@ -676,9 +678,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                         String filter_subj= subject.getSelectedItem().toString();
                         if (filter_subj.equals("수학(이과)")) {
                             basicFileName+= "imath";
+                            intent.putExtra("encodedSubject", "imath");
                         }else if (filter_subj.equals("수학(문과)")) {
                             basicFileName+= "mmath";
+                            intent.putExtra("encodedSubject", "mmath");
                         }
+
 
                         //Go to result page
                         intent.putExtra("period_y", filter_period_y);
