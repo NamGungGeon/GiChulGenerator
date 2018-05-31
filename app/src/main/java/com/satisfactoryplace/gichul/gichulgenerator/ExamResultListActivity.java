@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,16 +42,14 @@ public class ExamResultListActivity extends AppCompatActivity {
     }
 
     private void init(){
-        setAdView();
-        setListView();
+        initAdView();
+        initListView();
     }
-
-    private void setAdView(){
+    private void initAdView(){
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
-
-    private void setListView(){
+    private void initListView(){
         ArrayList<ExamResult> resultListData= ExamResultList.getInstance().getExamResultList();
         //시간순으로 정렬
         Collections.sort(resultListData, new Comparator<ExamResult>() {
@@ -68,7 +65,7 @@ public class ExamResultListActivity extends AppCompatActivity {
         examResultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                passRequiredAllData(ExamResultList.getInstance().getExamResultList().get(i));
+                passRequiredData(ExamResultList.getInstance().getExamResultList().get(i));
             }
         });
 
@@ -92,7 +89,7 @@ public class ExamResultListActivity extends AppCompatActivity {
         });
     }
 
-    private void passRequiredAllData(ExamResult examResult){
+    private void passRequiredData(ExamResult examResult){
         Bundle bundle= new Bundle();
 
         ArrayList<Integer> inputAnswerArrayList= new ArrayList<>();
@@ -115,5 +112,4 @@ public class ExamResultListActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
-
 }

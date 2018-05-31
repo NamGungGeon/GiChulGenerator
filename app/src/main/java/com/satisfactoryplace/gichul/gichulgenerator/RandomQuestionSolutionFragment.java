@@ -40,8 +40,8 @@ public class RandomQuestionSolutionFragment extends Fragment{
 
     @BindView(R.id.solutionLoadingContainer) RelativeLayout loadingContainer;
     @BindView(R.id.solutionContainer) RelativeLayout solutionContainer;
-    @BindView(R.id.solution_examInfo) TextView examInfo;
-    @BindView(R.id.solutionTitle) TextView solutionTitle;
+    @BindView(R.id.solution_examInfo) TextView title;
+    @BindView(R.id.solutionTitle) TextView resultText;
     @BindView(R.id.solutionImage) ImageView solutionImage;
     @BindView(R.id.recheck_examImage) ImageView recheckExamImage;
 
@@ -64,25 +64,19 @@ public class RandomQuestionSolutionFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_randomquestionsolution, container, false);
-
         unbinder= ButterKnife.bind(this, rootView);
 
-        // descript action after loading data
+        loadRightAnswer();
+        initAdView();
+        return rootView;
+    }
+
+    private void loadRightAnswer(){
         FirebaseConnection.Callback callback= new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 inputAnswer= getActivity().getIntent().getStringExtra("inputAnswer");
                 rightAnswer= String.valueOf(snapshot.getValue());
-                if(inputAnswer.equals(rightAnswer)){
-                    //정답
-                    solutionTitle.setText("정답입니다! \n입력하신 답안은 "+ inputAnswer+" 입니다.");
-                    solutionTitle.setTextColor(getResources().getColor(R.color.green));
-                }else{
-                    //오답
-                    solutionTitle.setText("오답입니다! \n입력하신 답안은 "+ inputAnswer+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
-                    solutionTitle.setTextColor(getResources().getColor(R.color.red));
-                }
-
                 init();
             }
 
@@ -92,23 +86,27 @@ public class RandomQuestionSolutionFragment extends Fragment{
                 getActivity().finish();
             }
         };
-        FirebaseConnection.getInstance().loadData(
-                "answer/"+getActivity().getIntent().getStringExtra("period_y")+"/"+getActivity().getIntent().getStringExtra("institute")
-                        + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject")
-                        + "/"+ getActivity().getIntent().getStringExtra("examNumber"), callback);
 
-        setAdView();
-        return rootView;
+        String path= "answer/"+getActivity().getIntent().getStringExtra("period_y")+"/"+getActivity().getIntent().getStringExtra("institute")
+                + "/"+getActivity().getIntent().getStringExtra("period_m")+"/"+getActivity().getIntent().getStringExtra("subject")
+                + "/"+ getActivity().getIntent().getStringExtra("examNumber");
+        FirebaseConnection.getInstance().loadData(path, callback);
+
     }
 
+    //Will be Called init() after finishing load rightAnswer
     private void init(){
-        setSolutionFileName();
+        initResultText();
+        initSolutionFileName();
+        initImages();
 
-        examInfo.setText(getActivity().getIntent().getStringExtra("examInfo"));
+        title.setText(getActivity().getIntent().getStringExtra("title"));
+     }
 
+    //initialize examImage, solutionImage.
+    private void initImages(){
         String basicPath= getActivity().getIntent().getStringExtra("period_y")+ "_"+ getActivity().getIntent().getStringExtra("period_m")+ "_"+
                 getActivity().getIntent().getStringExtra("institute")+ "_"+ getActivity().getIntent().getStringExtra("subject");
-
         FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + solutionFileName, solutionImage, getContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success(Bitmap bitmap) {
@@ -125,14 +123,29 @@ public class RandomQuestionSolutionFragment extends Fragment{
         });
         FirebaseConnection.getInstance().loadImage("exam/"+ basicPath+ "/"+ getActivity().getIntent().getStringExtra("examFileName"), recheckExamImage, getContext());
     }
-
-    private void setAdView(){
+    private void initAdView(){
         MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
+    private void initResultText(){
+        if(rightAnswer== null || inputAnswer== null){
+            //Error
+            return;
+        }
 
-    private void setSolutionFileName(){
+        if(inputAnswer.equals(rightAnswer)){
+            //정답
+            resultText.setText("정답입니다! \n입력하신 답안은 "+ inputAnswer+" 입니다.");
+            resultText.setTextColor(getResources().getColor(R.color.green));
+        }else{
+            //오답
+            resultText.setText("오답입니다! \n입력하신 답안은 "+ inputAnswer+" 이지만, 정답은 "+ rightAnswer+ " 입니다.");
+            resultText.setTextColor(getResources().getColor(R.color.red));
+        }
+    }
+
+    private void initSolutionFileName(){
         String examFileName= getActivity().getIntent().getStringExtra("examFileName");
         StringTokenizer tokenizer= new StringTokenizer(examFileName, "_", false);
 
@@ -151,19 +164,17 @@ public class RandomQuestionSolutionFragment extends Fragment{
         solutionFileName+= tokenizer.nextToken();
     }
 
+    void saveToHistoryList(){
+        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
+        HistoryList.getInstance()
+                .addToList(new Question(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
+                        getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
+    }
 
     @OnClick(R.id.continueTryBtn)
     void continueTry(){
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionFragment()).commit();
     }
-
-    void saveToHistoryList(){
-        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-        HistoryList.getInstance()
-                .addToList(new Question(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
-                        getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
-    }
-
     @OnClick(R.id.addToCheckListBtn)
     void saveCheckList(){
         final DialogMaker dialog= new DialogMaker();
@@ -174,7 +185,7 @@ public class RandomQuestionSolutionFragment extends Fragment{
                 EditText memoBox= childView.findViewById(R.id.memoBox);
                 int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
                 CheckList.getInstance()
-                        .addToList(new Question(getActivity().getIntent().getStringExtra("examInfo"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
+                        .addToList(new Question(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("examFileName").substring(2),
                                 getActivity().getIntent().getStringExtra("potential"),inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
                 dialog.dismiss();
                 Toast.makeText(getContext(), "오답노트에 저장되었습니다", Toast.LENGTH_SHORT).show();
@@ -189,7 +200,6 @@ public class RandomQuestionSolutionFragment extends Fragment{
         dialog.setValue("문제를 오답노트에 추가합니다.", "저장", "취소", pos_callback, nag_callback, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
     }
-
     @OnClick(R.id.changeImageBtn)
     void changeImage(){
         if(imageStatus== SOLUTION){
@@ -204,7 +214,6 @@ public class RandomQuestionSolutionFragment extends Fragment{
             imageStatus= SOLUTION;
         }
     }
-
     @OnClick(R.id.solutionSearch)
     void solutionSearch(){
         Toast.makeText(getContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();

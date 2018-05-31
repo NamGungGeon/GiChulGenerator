@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:textSize="22dp"
         android:background="#444444"
-        android:text="Title"
+        android:text=" "
         android:padding="15dp"
         android:textColor="#FFFFFF"
         android:id="@+id/examResult_title"/>
@@ -18,7 +18,7 @@
         android:layout_below="@+id/examResult_title"
         android:layout_above="@+id/examResult_listSelector"
         android:id="@+id/examResult_report"
-        android:text="Report"
+        android:text=" "
         android:gravity="center"
         android:textColor="#000000"
         android:textSize="18dp"
@@ -372,7 +372,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-5333091392909120/7880734576">
+            ads:adUnitId="ca-app-pub-5333091392909120/8999734652">
         </com.google.android.gms.ads.AdView>
     </RelativeLayout>
 </RelativeLayout>

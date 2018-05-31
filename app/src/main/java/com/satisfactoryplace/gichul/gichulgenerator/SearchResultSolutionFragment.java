@@ -57,15 +57,22 @@ public class SearchResultSolutionFragment extends Fragment {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.frag_searchresult_solution, container, false);
         unbinder= ButterKnife.bind(this, rootView);
 
-        final Intent intent= getActivity().getIntent();
+        loadAnswer();
+
+        return rootView;
+    }
+
+    //Will be called after all load is finished
+    //load order: answer-> questionImage-> examImage
+    private void loadAnswer(){
+        Intent intent= getActivity().getIntent();
         String answerPath= "answer/" + intent.getStringExtra("period_y") + "/" +intent.getStringExtra("institute")+ "/"+ intent.getStringExtra("period_m") + "/" +intent.getStringExtra("subject") + "/" + intent.getStringExtra("number");
         FirebaseConnection.getInstance().loadData(answerPath, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 rightAnswer= snapshot.getValue().toString();
-                inputAnswer= intent.getStringExtra("inputAnswer");
-
-                init();
+                inputAnswer= getActivity().getIntent().getStringExtra("inputAnswer");
+                loadSolutionImage();
             }
 
             @Override
@@ -73,25 +80,16 @@ public class SearchResultSolutionFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "데이터베이스 통신 실패: "+ errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-
-        setAdView();
-        return rootView;
     }
-
-    private void init(){
+    private void loadSolutionImage(){
         Intent intent= getActivity().getIntent();
-
-        title.setText(intent.getStringExtra("title"));
-
         String solutionPath= intent.getStringExtra("basicFileName")+"/"+ "a_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
-        String questionPath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
-
         Log.i("Solution Image Path", solutionPath);
+
         FirebaseConnection.getInstance().loadImage("exam/" + solutionPath, solution, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success(Bitmap bitmap) {
-                loadingContainer.setVisibility(View.GONE);
-                solutionContainer.setVisibility(View.VISIBLE);
+                loadQuestionImage();
             }
 
             @Override
@@ -100,17 +98,39 @@ public class SearchResultSolutionFragment extends Fragment {
                 getActivity().finish();
             }
         });
-        FirebaseConnection.getInstance().loadImage("exam/"+ questionPath, question, getActivity().getApplicationContext());
+    }
+    private void loadQuestionImage(){
+        Intent intent= getActivity().getIntent();
+        String questionPath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
+        FirebaseConnection.getInstance().loadImage("exam/" + questionPath, question, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+            @Override
+            public void success(Bitmap bitmap) {
+                loadingContainer.setVisibility(View.GONE);
+                solutionContainer.setVisibility(View.VISIBLE);
+                init();
+            }
 
+            @Override
+            public void fail(Exception e) {
+                Toast.makeText(getContext(), "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
+    }
+
+    private void init(){
+        title.setText(getActivity().getIntent().getStringExtra("title"));
+
+        initAdView();
         checkAnswer();
         saveHistory();
     }
-
-    private void setAdView(){
+    private void initAdView(){
         MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
+
     private void checkAnswer(){
         if(inputAnswer.equals(rightAnswer)){
             //정답
@@ -122,7 +142,6 @@ public class SearchResultSolutionFragment extends Fragment {
             answerChecker.setTextColor(getResources().getColor(R.color.red));
         }
     }
-
     private void saveHistory(){
         int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
         String basicFileName= getActivity().getIntent().getStringExtra("basicFileName");
@@ -146,8 +165,6 @@ public class SearchResultSolutionFragment extends Fragment {
             imageStatus= SOLUTION;
         }
     }
-
-
     @OnClick(R.id.searchResult_solution_addToCheckListBtn)
     void saveCheckList(){
         final DialogMaker dialog= new DialogMaker();
@@ -167,7 +184,6 @@ public class SearchResultSolutionFragment extends Fragment {
         }, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
     }
-
     @OnClick(R.id.searchResult_searchSolution)
     void searchSolution(){
         Toast.makeText(getContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
@@ -177,6 +193,7 @@ public class SearchResultSolutionFragment extends Fragment {
         i.setData(Uri.parse(url));
         startActivity(i);
     }
+
     @Override
     public void onDestroy() {
         if(question.getDrawable()!= null){

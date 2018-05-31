@@ -30,7 +30,6 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ExamFragment extends Fragment implements OnBackPressedListener{
@@ -82,10 +81,11 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         saveAnswerBtn.setText("답안 저장");
 
         getAllExtraData();
-        setTitle();
+        initTitle();
         loadExamImage();
-        setExamInfo();
-        setAdView();
+        initAnswerList();
+        initListSelector();
+        initAdView();
     }
 
     private void startTimer(){
@@ -126,12 +126,12 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         subject= getActivity().getIntent().getStringExtra("subject");
         generatedFileName= getActivity().getIntent().getStringExtra("basicFileName");
     }
-    private void setTitle(){
+    private void initTitle(){
         String titleString= "";
         titleString+= period_y+ "년 "+ institute+ "\n"+ subject+ "과목 "+ period_m+ "월 시험";
         title.setText(titleString);
     }
-    private void setAdView(){
+    private void initAdView(){
         MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
@@ -159,9 +159,13 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
                         }
                     });
         }
+
+        loadingCheck(progressDialog);
+    }
+    private void loadingCheck(final ProgressDialog progressDialog){
         final Handler handler = new Handler(){
             public void handleMessage(Message msg){
-                progressDialog.setMessage("이미지 60개 중 "+ String.valueOf(msg.arg1)+ "개 다운로드 완료");
+                progressDialog.setMessage("이미지 30개 중 "+ String.valueOf(msg.arg1)+ "개 다운로드 완료");
             }
         };
         Thread bitmapLoadObserver= new Thread(){
@@ -204,10 +208,12 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
         };
         bitmapLoadObserver.start();
     }
-    private void setExamInfo(){
+    private void initAnswerList(){
         for(int i=0; i<30; i++){
             answers[i]= -1;
         }
+    }
+    private void initListSelector(){
         for(int i=0; i< listSelector.size(); i++){
             final int _i= i;
             listSelector.get(i).setOnClickListener(new View.OnClickListener() {
@@ -263,26 +269,19 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
             inputAnswerArray.add(answers[i]);
         }
 
-        //Convert bitmap[] to ArrayList
-        ArrayList<Bitmap> bitmapArrayList= new ArrayList<>();
-        for(int i=0; i< examBitmap.length; i++){
-            bitmapArrayList.add(examBitmap[i]);
-        }
-
         // Submit
         Bundle bundle= new Bundle();
         bundle.putIntegerArrayList("inputAnswers", inputAnswerArray);
-        bundle.putSerializable("examBitmaps", bitmapArrayList);
         getActivity().getIntent().putExtras(bundle);
 
         getActivity().getIntent().putExtra("title", title.getText().toString());
         getActivity().getIntent().putExtra("timer", sec);
 
         stopTimer();
+        recycleAllBitmaps();
 
         //change fragment to resultFragment
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examActivity_container, new ExamResultFragment()).commit();
-
     }
     private boolean saveAnswer(){
         if(inputAnswer.getText().toString().equals("")== false){
@@ -304,6 +303,13 @@ public class ExamFragment extends Fragment implements OnBackPressedListener{
             answers[currentCursor-1]= -1;
         }
         return true;
+    }
+    private void recycleAllBitmaps(){
+        for(int i=0; i< examBitmap.length; i++){
+            if(examBitmap[i]!= null && examBitmap[i].isRecycled()== false){
+                examBitmap[i].recycle();
+            }
+        }
     }
 
     @OnClick(R.id.exam_submit)

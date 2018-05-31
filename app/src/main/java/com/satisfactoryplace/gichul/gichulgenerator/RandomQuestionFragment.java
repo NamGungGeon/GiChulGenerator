@@ -81,7 +81,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
         unbinder= ButterKnife.bind(this, rootView);
         loadPotentials();
-        setAdView();
+        initAdView();
         return rootView;
     }
 
@@ -111,31 +111,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             }
         });
     }
-
-
-    private void setAdView(){
-        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    private void init(){
-        setQuestionImage();
-
-        //There is no question that is appropriate for given options in database
-        if(examFileName== null){
-            return;
-        }
-
-        saveConvertedInfo();
-        convertInstitute_toKorean();
-        convertSubjectCode_toKorean();
-        setPotentialText();
-        setTitle();
-        setAnswerType();
-    }
-
-    private void setQuestionImage(){
+    private void loadQuestionImage(){
         examFileName= generateQuestionFileName();
         if(examFileName== null){
             //No Exist Exam as filter
@@ -160,7 +136,13 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
                 });
         PhotoViewAttacher attacher= new PhotoViewAttacher(questionImage);
     }
-    private void setAnswerType(){
+
+    private void initAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+    private void initAnswerType(){
         if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
             if(Integer.valueOf(examNumber)>=22){
                 //주관식
@@ -177,10 +159,10 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             questionType = choiceType;
         }
     }
-    private void setTitle(){
+    private void initTitle(){
         title.setText(examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 " +examPeriod_m+ "월 시험 "+examNumber+ "번 문제");
     }
-    private void setPotentialText(){
+    private void initPotentialText(){
         int _potential= Integer.valueOf(examPotential);
         String potentialText= "정답률: ";
         if(_potential>= 80){
@@ -196,6 +178,22 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         }
         potential.setText(potentialText);
     }
+    private void init(){
+        loadQuestionImage();
+
+        //Case: There is no question that is appropriate for given options in database
+        if(examFileName== null){
+            return;
+        }
+
+        saveConvertedInfo();
+        convertInstitute_toKorean();
+        convertSubject_toKorean();
+        initPotentialText();
+        initTitle();
+        initAnswerType();
+    }
+
     private void startTimer(){
         final Handler handler= new Handler(){
             @Override
@@ -353,19 +351,11 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         }
 
     }
-    private void convertSubjectCode_toKorean(){
+    private void convertSubject_toKorean(){
         if(examSubject.equals("imath")){
             examSubject= "수학(이과)";
         }else if(examSubject.equals("mmath")){
             examSubject= "수학(문과)";
-        }else if(examSubject.equals("korean")){
-            examSubject= "국어";
-        }else if(examSubject.equals("english")){
-            examSubject= "영어";
-        }else if(examSubject.equals("social")){
-            examSubject= "사회탐구";
-        }else if(examSubject.equals("science")){
-            examSubject= "과학탐구";
         }
     }
     private void convertInstitute_toKorean(){
@@ -378,13 +368,15 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         }
     }
     private String generateQuestionFileName(){
-        String fileName= "";
 
         ArrayList<String> numberList= getNumberList_asPotential();
 
         //Case: No Exist Exam as filter
         if(numberList.size()== 0){
-            Toast.makeText(getContext(), "해당되는 조건의 문제가 없습니다", Toast.LENGTH_LONG).show();
+            convertInstitute_toKorean();
+            convertSubject_toKorean();
+            Toast.makeText(getContext(), examPeriod_y+"년 "+ examPeriod_m+ "월 "+ examInstitute+ " 시험 기준으로\n" +
+                    "해당되는 조건의 문제가 없습니다", Toast.LENGTH_LONG).show();
             getActivity().finish();
             return null;
         }
@@ -393,7 +385,8 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         examNumber= numberList.get(new Random().nextInt(numberList.size()));
         examPotential= potentialList.get(examNumber);
 
-        fileName+= "q_" +examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"_"+examNumber;
+
+        String fileName= "q_" +examPeriod_y+"_"+examPeriod_m+"_"+examInstitute+"_"+examSubject+"_"+examNumber;
         return fileName;
     }
 
@@ -430,16 +423,18 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         }
         return result;
     }
-    private void submitSolution(){
-        String answer= getUserAnswer();
-
+    private void submit(){
+        // Pass needed data to intent
         getActivity().getIntent().putExtra("examFileName", examFileName);
         getActivity().getIntent().putExtra("examNumber", examNumber);
-        getActivity().getIntent().putExtra("examInfo", title.getText());
-        getActivity().getIntent().putExtra("inputAnswer", answer);
+        getActivity().getIntent().putExtra("title", title.getText());
         getActivity().getIntent().putExtra("sec", timeSaver[0]);
         getActivity().getIntent().putExtra("min", timeSaver[1]);
 
+        String answer= getUserAnswer();
+        getActivity().getIntent().putExtra("inputAnswer", answer);
+
+        // Go ResultPage
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionSolutionFragment()).commit();
     }
 
@@ -459,7 +454,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
                 @Override
                 public void callbackMethod() {
                     stopTimer();
-                    submitSolution();
+                    submit();
                     dialog.dismiss();
                 }
             };
@@ -467,6 +462,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             dialog.show(getActivity().getSupportFragmentManager(), "AnswerSubmit");
         }
     }
+
     @Override
     public boolean onBackPressed() {
         stopTimer();

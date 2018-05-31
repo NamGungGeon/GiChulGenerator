@@ -86,20 +86,12 @@ public class ExamResultFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.frag_examresult, container, false);
 
         unbinder= ButterKnife.bind(this, rootView);
-        loadNeededAllData();
         initAdView();
+        loadNeededAllData();
         return rootView;
     }
 
-    private void initAdView(){
-        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    //After loading all data, will call init()
-    private void loadNeededAllData(){
-        //Load ExamImage
+    private void loadExamImages(){
         if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
             //Case: From ExamResultListActivity
             for(int i=0; i<30; i++){
@@ -122,71 +114,116 @@ public class ExamResultFragment extends Fragment {
             }
         }else{
             //Case: From ExamFragment
-            Bundle bundle= getActivity().getIntent().getExtras();
-            ArrayList<Bitmap> examBitmapArrayList= (ArrayList<Bitmap>)(bundle.getSerializable("examBitmaps"));
-            for(int i=0; i<30; i++){
-                examBitmap[i]= examBitmapArrayList.get(i);
-            }
-        }
-        //Load Answer List
-        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "정답을 불러오는 중입니다.");
-
-        final String answerPath= "answer/"+  getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
-                + "/"+ getActivity().getIntent().getStringExtra("period_m")+ "/"+ getActivity().getIntent().getStringExtra("encodedSubject");
-        FirebaseConnection.getInstance().loadData(answerPath, new FirebaseConnection.Callback() {
-            @Override
-            public void success(DataSnapshot snapshot) {
-                rightAnswers= (ArrayList<Long>)snapshot.getValue();
-                Log.i("PATH", answerPath);
-                progressDialog.setMessage("정답률을 불러오는 중입니다");
-                //Load Potential List
-                String potentialPath= "potential/"+ getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
-                        + "/"+ getActivity().getIntent().getStringExtra("period_m")+ "/"+ getActivity().getIntent().getStringExtra("encodedSubject");
-                FirebaseConnection.getInstance().loadData(potentialPath, new FirebaseConnection.Callback() {
+            String imagePath= "exam/"+ getActivity().getIntent().getStringExtra("basicFileName")+ "/q_"+ getActivity().getIntent().getStringExtra("basicFileName");
+            Log.i("examImagePath", imagePath);
+            for(int i=0; i<30; i++) {
+                final int _i = i;
+                FirebaseConnection.getInstance().loadImage(imagePath + "_" + String.valueOf(i + 1), null, getContext(), new FirebaseConnection.ImageLoadFinished() {
                     @Override
-                    public void success(DataSnapshot snapshot) {
-                        potentials= (ArrayList<Long>)snapshot.getValue();
-
-                        //Load SolutionImage
-                        progressDialog.setTitle("해설 이미지를 불러오는 중입니다");
-                        progressDialog.setMessage("0%");
-                        loadingCheck(progressDialog);
-                        String imagePath= "exam/"+ getActivity().getIntent().getStringExtra("basicFileName")+ "/a_"+ getActivity().getIntent().getStringExtra("basicFileName");
-                        for(int i=0; i<30; i++){
-                            final int _i= i;
-                            FirebaseConnection.getInstance().loadImage(imagePath + "_"+ String.valueOf(i+1), null, getContext(), new FirebaseConnection.ImageLoadFinished() {
-                                @Override
-                                public void success(Bitmap bitmap) {
-                                    solutionBitmap[_i]= bitmap;
-                                }
-
-                                @Override
-                                public void fail(Exception e) {
-                                    Toast.makeText(getContext(), "이미지를 불러올 수 없습니다\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                    getActivity().finish();
-                                }
-                            });
-                        }
+                    public void success(Bitmap bitmap) {
+                        examBitmap[_i] = bitmap;
                     }
 
                     @Override
-                    public void fail(String errorMessage) {
-                        Toast.makeText(getContext(), "데이터를 불러올 수 없습니다\n"+ errorMessage, Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
+                    public void fail(Exception e) {
+                        Toast.makeText(getContext(), "이미지를 불러올 수 없습니다\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         getActivity().finish();
                     }
                 });
             }
+        }
+    }
+    private void loadSolutionImages(){
+        String imagePath= "exam/"+ getActivity().getIntent().getStringExtra("basicFileName")+ "/a_"+ getActivity().getIntent().getStringExtra("basicFileName");
+        for(int i=0; i<30; i++) {
+            final int _i = i;
+            FirebaseConnection.getInstance().loadImage(imagePath + "_" + String.valueOf(i + 1), null, getContext(), new FirebaseConnection.ImageLoadFinished() {
+                @Override
+                public void success(Bitmap bitmap) {
+                    solutionBitmap[_i] = bitmap;
+                }
+
+                @Override
+                public void fail(Exception e) {
+                    Toast.makeText(getContext(), "이미지를 불러올 수 없습니다\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                }
+            });
+        }
+    }
+    private void loadPotentials (final FirebaseConnection.Callback callback){
+        String potentialPath= "potential/"+ getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
+                + "/"+ getActivity().getIntent().getStringExtra("period_m")+ "/"+ getActivity().getIntent().getStringExtra("encodedSubject");
+        FirebaseConnection.getInstance().loadData(potentialPath, new FirebaseConnection.Callback() {
+            @Override
+            public void success(DataSnapshot snapshot) {
+                potentials= (ArrayList<Long>)snapshot.getValue();
+                if(callback!= null){
+                    callback.success(snapshot);
+                }
+            }
 
             @Override
             public void fail(String errorMessage) {
-                Toast.makeText(getContext(), "데이터를 불러올 수 없습니다\n"+ errorMessage, Toast.LENGTH_SHORT).show();
-                progressDialog.dismiss();
+                if(callback!= null){
+                    callback.fail(errorMessage);
+                }
+                Toast.makeText(getContext(), "데이터를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
         });
     }
+    private void loadRightAnswers(final FirebaseConnection.Callback callback){
+        final String answerPath= "answer/"+  getActivity().getIntent().getStringExtra("period_y")+ "/"+ getActivity().getIntent().getStringExtra("encodedInstitute")
+                + "/"+ getActivity().getIntent().getStringExtra("period_m")+ "/"+ getActivity().getIntent().getStringExtra("encodedSubject");
+        Log.i("answerPath", answerPath);
+        FirebaseConnection.getInstance().loadData(answerPath, new FirebaseConnection.Callback() {
+            @Override
+            public void success(DataSnapshot snapshot) {
+                rightAnswers= (ArrayList<Long>)snapshot.getValue();
+                if(callback!= null){
+                    callback.success(snapshot);
+                }
+            }
+
+            @Override
+            public void fail(String errorMessage) {
+                if(callback!= null){
+                    callback.fail(errorMessage);
+                }
+                Toast.makeText(getContext(), "데이터를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
+    }
+    //After loading all data, will call init()
+    private void loadNeededAllData(){
+        final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "정답을 불러오는 중입니다.");
+        loadRightAnswers(new FirebaseConnection.Callback(){
+            @Override
+            public void success(DataSnapshot snapshot) {
+                progressDialog.setMessage("정답률을 불러오는 중입니다.");
+                loadPotentials(new FirebaseConnection.Callback() {
+                    @Override
+                    public void success(DataSnapshot snapshot) {
+                        progressDialog.setMessage("해설 이미지를 불러오는 중입니다.");
+                        loadingCheck(progressDialog);
+                        loadExamImages();
+                        loadSolutionImages();
+                    }
+                    @Override
+                    public void fail(String errorMessage) {
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+            @Override
+            public void fail(String errorMessage) {
+                progressDialog.dismiss();
+            }
+        });
+    }
+
     private void init(){
         //Get InputAnswers
         Bundle bundle= getActivity().getIntent().getExtras();
@@ -197,16 +234,9 @@ public class ExamResultFragment extends Fragment {
 
         runningTime= getActivity().getIntent().getIntExtra("timer", 0);
 
-        if(inputAnswers== null){
-            Toast.makeText(getContext(), "input is null", Toast.LENGTH_SHORT).show();
-        }
-        if(rightAnswers== null){
-            Toast.makeText(getContext(), "right is null", Toast.LENGTH_SHORT).show();
-        }
-
-        setResultReport();
-        setListSelectorBackground();
-        setAllSelectorListener();
+        initResultReport();
+        initSelectorBackground();
+        initSelectorListener();
 
         if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
             //Case: From ExamResultListActivity
@@ -218,18 +248,7 @@ public class ExamResultFragment extends Fragment {
         }
     }
 
-    private void saveToHistoryList(){
-        for(int i=0; i<30; i++){
-            HistoryList.getInstance().addToList(new Question(title.getText().toString()+ " "+ (i+1)+ "번 문제", getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ (i+1), potentials.get((i+1)).toString(),
-                    inputAnswers.get(i).toString(), rightAnswers.get(i+1).toString(), String.valueOf(0), ""));
-        }
-    }
-    private void saveToExamResultList(){
-        ExamResultList.getInstance().addToList(new ExamResult(title.getText().toString(), getActivity().getIntent().getStringExtra("basicFileName"), inputAnswers,
-                rightAnswers, runningTime));
-    }
-
-    private void setAllSelectorListener(){
+    private void initSelectorListener(){
         //Set OnClickListener to Each ListSelector
         //When each listSelector is clicked, show result and question, answer image about that number.
         for(int i=0; i<30; i++){
@@ -273,6 +292,40 @@ public class ExamResultFragment extends Fragment {
             });
         }
     }
+    private void initSelectorBackground(){
+        for(int i=0; i<30; i++){
+            if(inputAnswers.get(i).intValue()== rightAnswers.get(i+1).intValue()){
+                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_green));
+            }else{
+                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_red));
+            }
+        }
+    }
+    private void initResultReport(){
+        String titleString= getActivity().getIntent().getStringExtra("title");
+        title.setText(titleString);
+
+        int min= runningTime/60;
+        int sec= runningTime%60;
+        report.setText("30문제 중 "+ String.valueOf(getRightAnswerNumber())+ "문제를 맞췄습니다!\n\n"+ "소요시간: "+ min+"분 "+ sec+ "초\n\n" +
+                "맞힌 문제는 녹색, 틀린 문제는 적색으로 표시됩니다.");
+    }
+    private void initAdView(){
+        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
+    private void saveToHistoryList(){
+        for(int i=0; i<30; i++){
+            HistoryList.getInstance().addToList(new Question(title.getText().toString()+ " "+ (i+1)+ "번 문제", getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ (i+1), potentials.get((i+1)).toString(),
+                    inputAnswers.get(i).toString(), rightAnswers.get(i+1).toString(), String.valueOf(0), ""));
+        }
+    }
+    private void saveToExamResultList(){
+        ExamResultList.getInstance().addToList(new ExamResult(title.getText().toString(), getActivity().getIntent().getStringExtra("basicFileName"), inputAnswers,
+                rightAnswers, runningTime));
+    }
 
     private String getPotentialText(int potential){
         String result;
@@ -289,26 +342,6 @@ public class ExamResultFragment extends Fragment {
         }
         return result;
     }
-    private void setResultReport(){
-        String titleString= getActivity().getIntent().getStringExtra("title");
-        title.setText(titleString);
-
-        int min= runningTime/60;
-        int sec= runningTime%60;
-        report.setText("30문제 중 "+ String.valueOf(getRightAnswerNumber())+ "문제를 맞췄습니다!\n\n"+ "소요시간: "+ min+"분 "+ sec+ "초\n\n" +
-                "맞힌 문제는 녹색, 틀린 문제는 적색으로 표시됩니다.");
-    }
-
-    private void setListSelectorBackground(){
-        for(int i=0; i<30; i++){
-            if(inputAnswers.get(i).intValue()== rightAnswers.get(i+1).intValue()){
-                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_green));
-            }else{
-                examList.get(i).setBackground(getResources().getDrawable(R.drawable.button_border_background_red));
-            }
-        }
-    }
-
     private int getRightAnswerNumber(){
         int rightNumber= 0;
         for(int i=0; i<30; i++){
@@ -372,19 +405,6 @@ public class ExamResultFragment extends Fragment {
         loadingObserver.start();
     }
 
-    private void allBitmapRecycle(){
-        for(int i=0; i<30; i++){
-            if(examBitmap[i]!= null && examBitmap[i].isRecycled()== false){
-                examBitmap[i].recycle();
-            }
-        }
-        for(int i=0; i<30; i++){
-            if(solutionBitmap[i]!= null && solutionBitmap[i].isRecycled()== false){
-                solutionBitmap[i].recycle();
-            }
-        }
-    }
-
     @OnClick(R.id.examResult_addToCheckList)
     void addToCheckList(){
         final DialogMaker dialogMaker= new DialogMaker();
@@ -421,5 +441,17 @@ public class ExamResultFragment extends Fragment {
         allBitmapRecycle();
         unbinder.unbind();
         super.onDestroy();
+    }
+    private void allBitmapRecycle(){
+        for(int i=0; i<30; i++){
+            if(examBitmap[i]!= null && examBitmap[i].isRecycled()== false){
+                examBitmap[i].recycle();
+            }
+        }
+        for(int i=0; i<30; i++){
+            if(solutionBitmap[i]!= null && solutionBitmap[i].isRecycled()== false){
+                solutionBitmap[i].recycle();
+            }
+        }
     }
 }

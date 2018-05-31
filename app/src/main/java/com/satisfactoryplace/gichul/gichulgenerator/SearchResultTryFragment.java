@@ -30,10 +30,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-/**
- * Created by WINDOWS7 on 2018-02-09.
- */
-
 public class SearchResultTryFragment extends Fragment {
     @BindView(R.id.searchResult_loadingContainer) RelativeLayout loadingContainer;
     @BindView(R.id.searchResult_container) RelativeLayout mainContainer;
@@ -49,7 +45,7 @@ public class SearchResultTryFragment extends Fragment {
 
     private Thread timerThread;
     private boolean isRunningTimer= true;
-    private int examType;
+    private int answerType;
     private final int choiceType= 1511;
     private final int inputType= 1512;
 
@@ -72,27 +68,27 @@ public class SearchResultTryFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.frag_searchresult_try, container, false);
-
         unbinder= ButterKnife.bind(this, rootView);
 
-        examPeriod_y= getActivity().getIntent().getStringExtra("period_y");
-        examPeriod_m= getActivity().getIntent().getStringExtra("period_m");
-        examInstitute= getActivity().getIntent().getStringExtra("institute");
-        examSubject= getActivity().getIntent().getStringExtra("subject");
-        examNumber= getActivity().getIntent().getStringExtra("number");
+        initAdView();
+        initPassedData();
+        initAnswerType();
 
-        titleText= examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 "+ examPeriod_m+ "월 시험 "+ examNumber+ "번 문제";
+        convertSubject_toCode();
+        convertInstitute_toCode();
 
-        examTypeCheck();
-        setExamIdentifier();
+        loadPotential();
+        return rootView;
+    }
 
-        //Load Potential
-        Log.i("Path", "potential/" + examPeriod_y + "/" + examInstitute+ "/"+ examPeriod_m + "/" + examSubject + "/" + examNumber);
+    //Will be called init() after finish load potential
+    private void loadPotential(){
+        Log.i("Potential Path", "potential/" + examPeriod_y + "/" + examInstitute+ "/"+ examPeriod_m + "/" + examSubject + "/" + examNumber);
         FirebaseConnection.getInstance().loadData("potential/" + examPeriod_y + "/" + examInstitute+ "/"+ examPeriod_m + "/" + examSubject + "/" + examNumber, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 examPotential= snapshot.getValue().toString();
-                init();
+                loadQuestionImage();
             }
 
             @Override
@@ -101,25 +97,16 @@ public class SearchResultTryFragment extends Fragment {
                 getActivity().finish();
             }
         });
-
-        setAdView();
-        return rootView;
     }
-
-    private void init(){
-        title.setText(titleText);
-
-        setPotentialText();
+    private void loadQuestionImage(){
 
         Intent intent= getActivity().getIntent();
         String imagePath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
-        Log.i("PATH: ", imagePath);
+        Log.i("Question Path", imagePath);
         FirebaseConnection.getInstance().loadImage("exam/" + imagePath, question, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success(Bitmap bitmap) {
-                loadingContainer.setVisibility(View.GONE);
-                mainContainer.setVisibility(View.VISIBLE);
-                startTimer();
+                init();
             }
 
             @Override
@@ -130,12 +117,21 @@ public class SearchResultTryFragment extends Fragment {
         });
     }
 
-    private void setAdView(){
+    private void init(){
+        loadingContainer.setVisibility(View.GONE);
+        mainContainer.setVisibility(View.VISIBLE);
+        title.setText(titleText);
+
+        startTimer();
+        initPotentialText();
+    }
+
+    private void initAdView(){
         MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
-    private void setPotentialText(){
+    private void initPotentialText(){
         int _potential= Integer.valueOf(examPotential);
         String potentialText= "정답률: ";
         if(_potential>= 80){
@@ -151,22 +147,35 @@ public class SearchResultTryFragment extends Fragment {
         }
         potential.setText(potentialText);
     }
-    private void setExamIdentifier(){
+    private void initAnswerType(){
+        if(Integer.valueOf(examNumber)>=22){
+            //주관식
+            answer_text.setVisibility(View.VISIBLE);
+            answerType = inputType;
+        }else{
+            //객관식
+            answer_radio.setVisibility(View.VISIBLE);
+            answerType = choiceType;
+        }
+    }
+    private void initPassedData(){
+        examPeriod_y= getActivity().getIntent().getStringExtra("period_y");
+        examPeriod_m= getActivity().getIntent().getStringExtra("period_m");
+        examInstitute= getActivity().getIntent().getStringExtra("institute");
+        examSubject= getActivity().getIntent().getStringExtra("subject");
+        examNumber= getActivity().getIntent().getStringExtra("number");
+        titleText= examPeriod_y+"년 "+ examInstitute+ "\n"+ examSubject+ "과목 "+ examPeriod_m+ "월 시험 "+ examNumber+ "번 문제";
+    }
+
+    private void convertSubject_toCode(){
         // exam code change
         if (examSubject.equals("수학(이과)")) {
             examSubject= "imath";
         }else if (examSubject.equals("수학(문과)")) {
             examSubject= "mmath";
-        }else if (examSubject.equals("국어")) {
-            examSubject= "korean";
-        }else if (examSubject.equals("영어")) {
-            examSubject= "english";
-        }else if (examSubject.equals("사회탐구")) {
-            examSubject= "social";
-        }else if (examSubject.equals("과학탐구")) {
-            examSubject= "science";
         }
-
+    }
+    private void convertInstitute_toCode(){
         if(examInstitute.equals("대학수학능력평가시험")){
             examInstitute= "sunung";
         }else if(examInstitute.equals("교육청")){
@@ -176,24 +185,6 @@ public class SearchResultTryFragment extends Fragment {
         }
     }
 
-    private void examTypeCheck(){
-        //Type Check
-        if(examSubject.equals("수학(이과)") || examSubject.equals("수학(문과)")){
-            if(Integer.valueOf(examNumber)>=22){
-                //주관식
-                answer_text.setVisibility(View.VISIBLE);
-                examType= inputType;
-            }else{
-                //객관식
-                answer_radio.setVisibility(View.VISIBLE);
-                examType= choiceType;
-            }
-        }else{
-            //객관식
-            answer_radio.setVisibility(View.VISIBLE);
-            examType= choiceType;
-        }
-    }
 
     private void startTimer(){
         final Handler handler= new Handler(){
@@ -245,7 +236,7 @@ public class SearchResultTryFragment extends Fragment {
 
     private String getUserAnswer(){
         String result= "";
-        if(examType== choiceType){
+        if(answerType == choiceType){
             //객관식
             int answer=0;
             int checkedAnswer= answer_radio.getCheckedRadioButtonId();
@@ -268,7 +259,7 @@ public class SearchResultTryFragment extends Fragment {
             }
             result= String.valueOf(answer);
             result= result+ "번";
-        }else if(examType== inputType){
+        }else if(answerType == inputType){
             //주관식
             result= answer_text.getText().toString();
         }
@@ -288,7 +279,7 @@ public class SearchResultTryFragment extends Fragment {
             @Override
             public void callbackMethod() {
                 //submit user's answer. move solution page
-                submitSolution();
+                submit();
                 dialog.dismiss();
             }
         };
@@ -301,12 +292,11 @@ public class SearchResultTryFragment extends Fragment {
         dialog.setValue("선택하신 답안은 "+ getUserAnswer()+ "입니다.\n제출하시겠습니까?", "제출", "취소", pos_callback, nag_callback);
         dialog.show(getActivity().getSupportFragmentManager(), "AnswerSubmit");
     }
-
-    private void submitSolution(){
+    private void submit(){
         stopTimer();
 
         String answer= getUserAnswer();
-        if(examType== choiceType){
+        if(answerType == choiceType){
             if(answer.charAt(answer.length()-1)== '번'){
                 answer= String.valueOf(answer.charAt(0));
             }

@@ -23,12 +23,12 @@ public class MonthReportFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.frag_mystatuschecker, container, false);
-        setGraph(rootView);
+        initGraph(rootView);
 
         return rootView;
     }
 
-    private void setGraph(ViewGroup rootView){
+    private void initGraph(ViewGroup rootView){
         GraphView graph= rootView.findViewById(R.id.graph);
 
         LineGraphSeries<DataPoint> number= new LineGraphSeries<>(getNumberReports().toArray(new DataPoint[getNumberReports().size()]));

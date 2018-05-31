@@ -56,10 +56,58 @@ public class RecheckQuestionActivity extends AppCompatActivity {
         init();
     }
 
+    //Will be called after finishing load examImage
+    private void loadExamImage(){
+        String basicPath= "";
+        StringTokenizer token= new StringTokenizer(getIntent().getStringExtra("fileName"), "_", false);
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken();
+
+        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + "q_" + getIntent().getStringExtra("fileName"), examImage, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+            @Override
+            public void success(Bitmap bitmap) {
+                loadSolutionImage();
+            }
+
+            @Override
+            public void fail(Exception e) {
+                Toast.makeText(RecheckQuestionActivity.this, "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+    }
+    private void loadSolutionImage(){
+        String basicPath= "";
+        StringTokenizer token= new StringTokenizer(getIntent().getStringExtra("fileName"), "_", false);
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken()+"_";
+        basicPath+= token.nextToken();
+
+        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + "a_" + getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext(),
+                new FirebaseConnection.ImageLoadFinished() {
+                    @Override
+                    public void success(Bitmap bitmap) {
+                        loadingContainer.setVisibility(View.GONE);
+                        container.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void fail(Exception e) {
+                        Toast.makeText(RecheckQuestionActivity.this, "이미지를 불러올 수 없습니다\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+    }
+
     private void init(){
         title.setText(getIntent().getStringExtra("title"));
-
-        // Hide real potential
+        initPotentialText();
+        loadExamImage();
+    }
+    private void initPotentialText(){
         String examPotential= getIntent().getStringExtra("potential");
         int _potential= Integer.valueOf(examPotential);
         String potentialText= "정답률: ";
@@ -76,44 +124,10 @@ public class RecheckQuestionActivity extends AppCompatActivity {
         }
         potential.setText(potentialText);
 
-        String temp= getIntent().getStringExtra("fileName");
-        String basicPath= "";
-        StringTokenizer token= new StringTokenizer(temp, "_", false);
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken();
-
-        final String _basicPath= basicPath;
-        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + "q_" + getIntent().getStringExtra("fileName"), examImage, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
-            @Override
-            public void success(Bitmap bitmap) {
-                FirebaseConnection.getInstance().loadImage("exam/" + _basicPath + "/" + "a_" + getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext(),
-                        new FirebaseConnection.ImageLoadFinished() {
-                            @Override
-                            public void success(Bitmap bitmap) {
-                                loadingContainer.setVisibility(View.GONE);
-                                container.setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            public void fail(Exception e) {
-                                Toast.makeText(RecheckQuestionActivity.this, "이미지를 불러올 수 없습니다\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        });
-            }
-
-            @Override
-            public void fail(Exception e) {
-                Toast.makeText(RecheckQuestionActivity.this, "이미지를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
     }
 
     @OnClick(R.id.recheck_imageChange)
-    void changeImageBtn(){
+    void changeImage(){
         if(imageStatus== exam){
             examImage.setVisibility(View.GONE);
             solutionImage.setVisibility(View.VISIBLE);
@@ -129,7 +143,6 @@ public class RecheckQuestionActivity extends AppCompatActivity {
             imageChangeBtn.setText("해설 확인");
         }
     }
-
     @OnClick(R.id.recheck_searchSolution)
     void searchSolution(){
         Toast.makeText(getApplicationContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();

@@ -10,7 +10,6 @@ import android.widget.Spinner;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,11 +45,11 @@ public class HistoryListActivity extends AppCompatActivity {
     }
 
     private void init() {
-        setListView(convertFilterValue());
+        setListView(getFilterValue());
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setListView(convertFilterValue());
+                setListView(getFilterValue());
             }
 
             @Override
@@ -65,23 +64,27 @@ public class HistoryListActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
-
-    private String convertFilterValue() {
-        String subjectFilter = filter.getSelectedItem().toString();
-        //Converting...
-        if (subjectFilter.equals("상관없음")) {
-            subjectFilter = null;
-        } else if (subjectFilter.equals("수학(이과)")) {
-            subjectFilter = "imath";
-        } else if (subjectFilter.equals("수학(문과)")) {
-            subjectFilter = "mmath";
-        }
-
-        return subjectFilter;
-    }
-
-
     private void setListView(String subjectFilter) {
+
+        final ArrayList<Question> historyListData= getFilteredList(subjectFilter);
+
+        ListViewAdapter_HistoryList historyListAdapter = new ListViewAdapter_HistoryList(getApplicationContext(), R.layout.item_historylist, historyListData);
+        historyList.setAdapter(historyListAdapter);
+
+        // Set Listener
+        historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(), RecheckQuestionActivity.class);
+                intent.putExtra("fileName", historyListData.get(i).getFileName());
+                intent.putExtra("title", historyListData.get(i).getTitle());
+                intent.putExtra("potential", historyListData.get(i).getPotential());
+
+                startActivity(intent);
+            }
+        });
+    }
+    private ArrayList<Question> getFilteredList(String subjectFilter){
         ArrayList<Question> temp= new ArrayList();
         if(subjectFilter!= null){
             if(subjectFilter.equals("imath")){
@@ -100,30 +103,29 @@ public class HistoryListActivity extends AppCompatActivity {
         }else{
             temp= HistoryList.getInstance().getHistoryList();
         }
-        final ArrayList<Question> historyListData = temp;
 
-        Collections.sort(historyListData, new Comparator<Question>() {
+
+
+        Collections.sort(temp, new Comparator<Question>() {
             @Override
             public int compare(Question e1, Question e2) {
                 return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
             }
         });
 
-
-        ListViewAdapter_HistoryList historyListAdapter = new ListViewAdapter_HistoryList(getApplicationContext(), R.layout.item_historylist, historyListData);
-        historyList.setAdapter(historyListAdapter);
-
-        // Set Listener
-        historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), RecheckQuestionActivity.class);
-                intent.putExtra("fileName", historyListData.get(i).getFileName());
-                intent.putExtra("title", historyListData.get(i).getTitle());
-                intent.putExtra("potential", historyListData.get(i).getPotential());
-
-                startActivity(intent);
-            }
-        });
-        }
+        return temp;
     }
+    private String getFilterValue() {
+        String subjectFilter = filter.getSelectedItem().toString();
+        //Converting...
+        if (subjectFilter.equals("상관없음")) {
+            subjectFilter = null;
+        } else if (subjectFilter.equals("수학(이과)")) {
+            subjectFilter = "imath";
+        } else if (subjectFilter.equals("수학(문과)")) {
+            subjectFilter = "mmath";
+        }
+
+        return subjectFilter;
+    }
+}

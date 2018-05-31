@@ -10,7 +10,6 @@ import android.widget.Spinner;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,26 +45,25 @@ public class CheckListActivity extends AppCompatActivity {
     }
 
     private void init(){
-        setAdView();
-        setListView(getFilterValue());
+        initAdView();
+        initListView(getFilterValue());
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setListView(getFilterValue());
+                initListView(getFilterValue());
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
-    private void setAdView(){
+    private void initAdView(){
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
 
+    //return value is encoded
     private String getFilterValue(){
         String subjectFilter= filter.getSelectedItem().toString();
         //Converting...
@@ -79,38 +77,8 @@ public class CheckListActivity extends AppCompatActivity {
         return subjectFilter;
     }
 
-    private void setListView(String subjectFilter){
-        ArrayList<Question> temp= new ArrayList();
-        //Adjust Filter Option
-        if(subjectFilter!= null){
-            if(subjectFilter.equals("imath")){
-                //수학(이과)
-                for(Question q: CheckList.getInstance().getCheckList()){
-                    if(q.getSubject().equals("imath")){
-                        temp.add(q);
-                    }
-                }
-            }else if(subjectFilter.equals("mmath")){
-                //수학(문과)
-                for(Question q: CheckList.getInstance().getCheckList()){
-                    if(q.getSubject().equals("mmath")){
-                        temp.add(q);
-                    }
-                }
-            }
-        }else{
-            //상관없음
-            temp= CheckList.getInstance().getCheckList();
-        }
-        final ArrayList<Question> checkListData= temp;
-
-        //시간순으로 정렬
-        Collections.sort(checkListData, new Comparator<Question>() {
-            @Override
-            public int compare(Question e1, Question e2) {
-                return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
-            }
-        });
+    private void initListView(String subjectFilter){
+        final ArrayList<Question> checkListData= getFilteredList(subjectFilter);
 
         ListViewAdapter_CheckList CheckListAdapter=new ListViewAdapter_CheckList(getApplicationContext(), R.layout.item_checklist, checkListData);
         checkList.setAdapter(CheckListAdapter);
@@ -144,5 +112,40 @@ public class CheckListActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private ArrayList<Question> getFilteredList(String filter){
+        ArrayList<Question> temp= new ArrayList();
+        //Adjust Filter Option
+        if(filter!= null){
+            if(filter.equals("imath")){
+                //수학(이과)
+                for(Question q: CheckList.getInstance().getCheckList()){
+                    if(q.getSubject().equals("imath")){
+                        temp.add(q);
+                    }
+                }
+            }else if(filter.equals("mmath")){
+                //수학(문과)
+                for(Question q: CheckList.getInstance().getCheckList()){
+                    if(q.getSubject().equals("mmath")){
+                        temp.add(q);
+                    }
+                }
+            }
+        }else{
+            //상관없음
+            temp= CheckList.getInstance().getCheckList();
+        }
+
+        //시간순으로 정렬
+        Collections.sort(temp, new Comparator<Question>() {
+            @Override
+            public int compare(Question e1, Question e2) {
+                return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
+            }
+        });
+
+        return temp;
     }
 }

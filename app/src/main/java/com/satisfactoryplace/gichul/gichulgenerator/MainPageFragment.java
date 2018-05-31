@@ -52,7 +52,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "2.3";
+    private String appVersion= "2.4";
 
     BillingProcessor bp;
 

@@ -146,9 +146,8 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
                                                 ExamResultList.getInstance().loadExamResultListFromFirebase(new ExamResultList.Callback() {
                                                     @Override
                                                     public void success() {
-                                                        loadingText.setText("문제 기록 가져오는 중...");
+                                                        loadingText.setText("잠시만 기다려주세요...");
                                                         openFullSizeAd();
-                                                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                                                     }
 
                                                     @Override
@@ -196,7 +195,6 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
             }
         });
     }
-
     private void openFullSizeAd(){
         final InterstitialAd mInterstitialAd= new InterstitialAd(getContext());
         mInterstitialAd.setAdUnitId("ca-app-pub-5333091392909120/9585231317");
@@ -206,6 +204,12 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
             public void onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
                 mInterstitialAd.show();
+            }
+
+            @Override
+            public void onAdClosed() {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+                super.onAdClosed();
             }
         });
     }
@@ -251,7 +255,6 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
             mGoogleApiClient.connect();
         }
     }
-
     @Override
     public void onDestroy() {
         if(mGoogleApiClient!=null && mGoogleApiClient.isConnected()){
@@ -260,7 +263,6 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
         }
         super.onDestroy();
     }
-
     @Override
     public boolean onBackPressed() {
         return true;
