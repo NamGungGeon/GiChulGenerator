@@ -28,7 +28,6 @@
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ArticleActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ArticlePublishActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.CommentActivity"></activity>
-        <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.QnaBoardActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ExamActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ExamResultListActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.RecheckExamResultActivity"></activity>

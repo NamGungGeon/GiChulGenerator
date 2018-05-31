@@ -121,12 +121,6 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_margin="5dp"
-                    android:id="@+id/qna"
-                    android:background="@drawable/qna_icon"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
                     android:background="@drawable/donation_icon"
                     android:id="@+id/menuList_donation"/>
                 <Button
@@ -168,4 +162,5 @@
             ads:adUnitId="ca-app-pub-5333091392909120/6072450302">
         </com.google.android.gms.ads.AdView>
     </RelativeLayout>
+
 </RelativeLayout>

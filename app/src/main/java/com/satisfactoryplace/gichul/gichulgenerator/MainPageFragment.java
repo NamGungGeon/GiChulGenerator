@@ -557,39 +557,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         }
     }
 
-    @OnClick( R.id.qna)
-    void openQna(){
-        if(AppData.qnaStatus== null || AppData.qnaStatus.equals("close")){
-            Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
-        if(Status.canUseQna== false){
-            Toast.makeText(getContext(), "관리자에 의해 질문과 답변 게시판 이용이 정지되었습니다.", Toast.LENGTH_SHORT).show();
-        }else{
-            if(Status.nickName== null){
-                DialogMaker dialog= new DialogMaker();
-                final View childView= getLayoutInflater().inflate(R.layout.dialog_setnickname, null);
-                dialog.setValue("", "설정", "취소",
-                        new DialogMaker.Callback() {
-                            @Override
-                            public void callbackMethod() {
-                                EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
-                                if(checkNickName(inputNickname.getText().toString())){
-                                    //Success to set
-                                    Status.nickName= inputNickname.getText().toString();
-                                    startActivity(new Intent(getContext(), QnaBoardActivity.class));
-                                }
-                            }
-                        }, null, childView);
-                dialog.show(getActivity().getSupportFragmentManager(), "set NickName");
-            }else{
-                startActivity(new Intent(getContext(), QnaBoardActivity.class));
-            }
-        }
-    }
-
     @OnClick(R.id.goToExam)
     void goToExam(){
         final DialogMaker dialog= new DialogMaker();
