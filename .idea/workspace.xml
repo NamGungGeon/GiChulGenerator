@@ -68,8 +68,8 @@
       <file leaf-file-name="MainPageFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="558" column="0" lean-forward="false" selection-start-line="558" selection-start-column="0" selection-end-line="558" selection-end-column="0" />
+            <state relative-caret-position="391">
+              <caret line="54" column="35" lean-forward="false" selection-start-line="54" selection-start-column="35" selection-end-line="54" selection-end-column="35" />
               <folding>
                 <element signature="method#onCreateView#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#init#0;class#MainPageFragment#0" expanded="false" />
@@ -81,11 +81,10 @@
                 <element signature="method#isValidPeriod#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#checkAppVersion#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#deleteAllData#0;class#MainPageFragment#0" expanded="false" />
-                <element signature="method#searchExam#0;class#MainPageFragment#0" expanded="false" />
-                <element signature="method#goRandomQuestion#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#devInfo#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#openFreeboard#0;class#MainPageFragment#0" expanded="false" />
-                <element signature="class#26345:27591" expanded="false" />
+                <element signature="method#goToExam#0;class#MainPageFragment#0" expanded="false" />
+                <element signature="class#24544:25790" expanded="false" />
                 <element signature="method#openExamResult#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#clickHelpBtn#0;class#MainPageFragment#0" expanded="false" />
                 <element signature="method#onDestroyView#0;class#MainPageFragment#0" expanded="false" />
@@ -95,86 +94,54 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="frag_mainmenu.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/frag_mainmenu.xml">
+      <file leaf-file-name="MainPageLodingFragment.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageLodingFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="164" column="0" lean-forward="false" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+            <state relative-caret-position="667">
+              <caret line="90" column="5" lean-forward="false" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
               <folding>
-                <element signature="e#689#2302#0" expanded="false" />
-                <element signature="e#2337#6101#0" expanded="false" />
-                <element signature="e#6123#6856#0" expanded="false" />
+                <element signature="method#login_google#0;class#MainPageLodingFragment#0" expanded="false" />
+                <element signature="method#onActivityResult#0;class#MainPageLodingFragment#0" expanded="false" />
+                <element signature="method#loadDataFromServer#0;class#MainPageLodingFragment#0" expanded="false" />
+                <element signature="method#openFullSizeAd#0;class#MainPageLodingFragment#0" expanded="false" />
+                <element signature="method#firebaseAuthWithGoogle#0;class#MainPageLodingFragment#0" expanded="false" />
+                <element signature="method#onStart#0;class#MainPageLodingFragment#0" expanded="false" />
+                <element signature="method#onDestroy#0;class#MainPageLodingFragment#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ic_launcher_background.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-69">
-              <caret line="142" column="39" lean-forward="false" selection-start-line="142" selection-start-column="39" selection-end-line="142" selection-end-column="39" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="edittext_border.xml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/edittext_border.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="7" column="12" lean-forward="true" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="next.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/next.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="search_icon.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/search_icon.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="17" column="9" lean-forward="false" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
-              <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="activity_main.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
           <provider editor-type-id="android-designer2">
             <state />
           </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="207">
+              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
         </entry>
       </file>
-      <file leaf-file-name="RandomQuestionFragment.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="207">
+              <caret line="9" column="22" lean-forward="false" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RandomQuestionFragment.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/RandomQuestionFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1863">
-              <caret line="374" column="34" lean-forward="false" selection-start-line="374" selection-start-column="34" selection-end-line="374" selection-end-column="34" />
+            <state relative-caret-position="233">
+              <caret line="340" column="58" lean-forward="false" selection-start-line="340" selection-start-column="58" selection-end-line="340" selection-end-column="58" />
               <folding>
+                <element signature="method#onCreateView#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#loadPotentials#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#loadQuestionImage#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#initAdView#0;class#RandomQuestionFragment#0" expanded="false" />
@@ -183,17 +150,22 @@
                 <element signature="method#initPotentialText#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#init#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#startTimer#0;class#RandomQuestionFragment#0" expanded="false" />
+                <element signature="e#7292#7679#0" expanded="true" />
+                <element signature="e#7678#7679#0" expanded="true" />
+                <element signature="e#7702#8683#0" expanded="true" />
+                <element signature="e#8682#8683#0" expanded="true" />
                 <element signature="method#saveConvertedInfo#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#getNumberList_asPotential#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#convertSubject_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
-                <element signature="method#convertPeriod_y_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
-                <element signature="method#convertInstitute_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#convertSubject_toKorean#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#convertInstitute_toKorean#0;class#RandomQuestionFragment#0" expanded="false" />
+                <element signature="method#generateQuestionFileName#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#getUserAnswer#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#submit#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#regenerateQuestion#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#recheckAnswer#0;class#RandomQuestionFragment#0" expanded="false" />
+                <element signature="e#17538#17772#0" expanded="true" />
+                <element signature="e#17771#17772#0" expanded="true" />
                 <element signature="method#onBackPressed#0;class#RandomQuestionFragment#0" expanded="false" />
                 <element signature="method#onDestroy#0;class#RandomQuestionFragment#0" expanded="false" />
               </folding>
@@ -213,7 +185,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>goToStudyBtn</find>
       <find>checkListBtn</find>
       <find>encodedIn</find>
       <find>progressDialog</find>
@@ -243,6 +214,7 @@
       <find>init</find>
       <find>init()</find>
       <find>이</find>
+      <find>데이터베이스 통</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Android Studio Project\GichulGenerator\app\src\main\java\com\satisfactoryplace\gichul\gichulgenerator</dir>
@@ -2336,17 +2308,18 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/frag_examresult.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/ExamFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/ExamResultFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/RandomQuestionFragment.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/frag_mainmenu.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/edittext_border.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageFragment.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/RandomQuestionFragment.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="950" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="-1" />
+    <option name="y" value="465" />
     <option name="width" value="980" />
     <option name="height" value="1030" />
   </component>
@@ -2365,7 +2338,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -2430,7 +2403,7 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -2717,26 +2690,25 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="950" y="0" width="980" height="1030" extended-state="0" />
+    <frame x="-1" y="465" width="980" height="1030" extended-state="1" />
+    <editor active="true" />
     <layout>
-      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297491" sideWeight="0.48918918" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297491" sideWeight="0.50216216" order="14" side_tool="true" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2837838" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13739546" sideWeight="0.69027025" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.47072878" sideWeight="0.49351352" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.78494626" sideWeight="0.52216214" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12969697" sideWeight="0.52216214" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5788288" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19832736" sideWeight="0.7854054" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07030303" sideWeight="0.6956757" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31644145" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19474313" sideWeight="0.7854054" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
@@ -2752,6 +2724,8 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3046595" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="89" y="89" width="1742" height="842" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2837838" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07030303" sideWeight="0.6956757" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -2793,29 +2767,29 @@
           <option name="timeStamp" value="44" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="56" />
+      <option name="time" value="59" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_articlepublish.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="368">
           <caret line="25" column="60" lean-forward="false" selection-start-line="25" selection-start-column="60" selection-end-line="25" selection-end-column="60" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_article.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_article.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Desktop/release/app-release.apk" />
@@ -2974,22 +2948,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageLodingFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="667">
-          <caret line="90" column="5" lean-forward="false" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
-          <folding>
-            <element signature="method#login_google#0;class#MainPageLodingFragment#0" expanded="false" />
-            <element signature="method#onActivityResult#0;class#MainPageLodingFragment#0" expanded="false" />
-            <element signature="method#loadDataFromServer#0;class#MainPageLodingFragment#0" expanded="false" />
-            <element signature="method#openFullSizeAd#0;class#MainPageLodingFragment#0" expanded="false" />
-            <element signature="method#firebaseAuthWithGoogle#0;class#MainPageLodingFragment#0" expanded="false" />
-            <element signature="method#onStart#0;class#MainPageLodingFragment#0" expanded="false" />
-            <element signature="method#onDestroy#0;class#MainPageLodingFragment#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/RandomQuestionActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
@@ -3120,25 +3078,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/frag_examtry.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="9384">
           <caret line="408" column="50" lean-forward="false" selection-start-line="408" selection-start-column="50" selection-end-line="408" selection-end-column="50" />
-          <folding />
         </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/frag_examresult.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8602">
           <caret line="374" column="26" lean-forward="false" selection-start-line="374" selection-start-column="26" selection-end-line="374" selection-end-column="26" />
-          <folding />
         </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/SearchResultTryFragment.java">
@@ -3234,125 +3190,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/RandomQuestionFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1863">
-          <caret line="374" column="34" lean-forward="false" selection-start-line="374" selection-start-column="34" selection-end-line="374" selection-end-column="34" />
-          <folding>
-            <element signature="method#loadPotentials#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#loadQuestionImage#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#initAdView#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#initAnswerType#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#initTitle#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#initPotentialText#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#init#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#startTimer#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#saveConvertedInfo#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#getNumberList_asPotential#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#convertSubject_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#convertPeriod_y_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#convertInstitute_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#convertSubject_toKorean#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#convertInstitute_toKorean#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#getUserAnswer#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#submit#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#regenerateQuestion#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#recheckAnswer#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#RandomQuestionFragment#0" expanded="false" />
-            <element signature="method#onDestroy#0;class#RandomQuestionFragment#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="17" column="9" lean-forward="false" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/QnaBoardActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="54" column="32" lean-forward="false" selection-start-line="54" selection-start-column="32" selection-end-line="54" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="558" column="0" lean-forward="false" selection-start-line="558" selection-start-column="0" selection-end-line="558" selection-end-column="0" />
-          <folding>
-            <element signature="method#onCreateView#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#init#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#initAdView#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#initStatusPager#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#initDday#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#initBillProcess#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#checkNickName#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#isValidPeriod#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#checkAppVersion#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#deleteAllData#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#searchExam#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#goRandomQuestion#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#devInfo#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#openFreeboard#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="class#26345:27591" expanded="false" />
-            <element signature="method#openExamResult#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#clickHelpBtn#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#onDestroyView#0;class#MainPageFragment#0" expanded="false" />
-            <element signature="method#onBillingError#0;class#MainPageFragment#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/QnaBoardActivity.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/frag_mainmenu.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="164" column="0" lean-forward="false" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
-          <folding>
-            <element signature="e#689#2302#0" expanded="false" />
-            <element signature="e#2337#6101#0" expanded="false" />
-            <element signature="e#6123#6856#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/basicbar_right_border.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="644">
+          <caret line="164" column="0" lean-forward="false" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/menulist_top_divider.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/basicbar_right_border.xml" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/menulist_top_divider.xml" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-69">
+        <state relative-caret-position="3266">
           <caret line="142" column="39" lean-forward="false" selection-start-line="142" selection-start-column="39" selection-end-line="142" selection-end-column="39" />
           <folding />
         </state>
@@ -3368,16 +3221,110 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/list_icon.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/list_icon.png" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/edittext_border.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="12" lean-forward="true" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
+        <state relative-caret-position="230">
+          <caret line="10" column="8" lean-forward="true" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="9" column="22" lean-forward="false" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageLodingFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="667">
+          <caret line="90" column="5" lean-forward="false" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
+          <folding>
+            <element signature="method#login_google#0;class#MainPageLodingFragment#0" expanded="false" />
+            <element signature="method#onActivityResult#0;class#MainPageLodingFragment#0" expanded="false" />
+            <element signature="method#loadDataFromServer#0;class#MainPageLodingFragment#0" expanded="false" />
+            <element signature="method#openFullSizeAd#0;class#MainPageLodingFragment#0" expanded="false" />
+            <element signature="method#firebaseAuthWithGoogle#0;class#MainPageLodingFragment#0" expanded="false" />
+            <element signature="method#onStart#0;class#MainPageLodingFragment#0" expanded="false" />
+            <element signature="method#onDestroy#0;class#MainPageLodingFragment#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/MainPageFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="54" column="35" lean-forward="false" selection-start-line="54" selection-start-column="35" selection-end-line="54" selection-end-column="35" />
+          <folding>
+            <element signature="method#onCreateView#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#init#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#initAdView#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#initStatusPager#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#initDday#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#initBillProcess#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#checkNickName#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#isValidPeriod#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#checkAppVersion#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#deleteAllData#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#devInfo#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#openFreeboard#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#goToExam#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="class#24544:25790" expanded="false" />
+            <element signature="method#openExamResult#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#clickHelpBtn#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#onDestroyView#0;class#MainPageFragment#0" expanded="false" />
+            <element signature="method#onBillingError#0;class#MainPageFragment#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/satisfactoryplace/gichul/gichulgenerator/RandomQuestionFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="340" column="58" lean-forward="false" selection-start-line="340" selection-start-column="58" selection-end-line="340" selection-end-column="58" />
+          <folding>
+            <element signature="method#onCreateView#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#loadPotentials#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#loadQuestionImage#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#initAdView#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#initAnswerType#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#initTitle#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#initPotentialText#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#init#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#startTimer#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="e#7292#7679#0" expanded="true" />
+            <element signature="e#7678#7679#0" expanded="true" />
+            <element signature="e#7702#8683#0" expanded="true" />
+            <element signature="e#8682#8683#0" expanded="true" />
+            <element signature="method#saveConvertedInfo#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#getNumberList_asPotential#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#convertSubject_toCode#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#convertSubject_toKorean#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#convertInstitute_toKorean#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#generateQuestionFileName#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#getUserAnswer#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#submit#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#regenerateQuestion#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#recheckAnswer#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="e#17538#17772#0" expanded="true" />
+            <element signature="e#17771#17772#0" expanded="true" />
+            <element signature="method#onBackPressed#0;class#RandomQuestionFragment#0" expanded="false" />
+            <element signature="method#onDestroy#0;class#RandomQuestionFragment#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

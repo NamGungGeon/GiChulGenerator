@@ -52,7 +52,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "2.4";
+    private String appVersion= "2.5";
 
     BillingProcessor bp;
 
@@ -205,8 +205,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
             return false;
         }
 
-        // 이 버전에서는 2018년 4월 시험까지 지원
-        if(y== 2018 && m>4){
+        // 이 버전에서는 2018년 6월 시험까지 지원
+        if(y== 2018 && m>6){
             return false;
         }
 
@@ -273,7 +273,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     }
 
     @OnClick(R.id.searchExam)
-    void searchExam(){
+    void searchQuestion(){
         final DialogMaker dialog= new DialogMaker();
         View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
 
@@ -290,34 +290,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                 if(subject.getSelectedItem().equals("수학(이과)") || institute.getSelectedItem().equals("수학(문과)")){
                     ArrayList<String> numbers= new ArrayList<>();
                     for(int k=0; k<30; k++){
-                        numbers.add(String.valueOf(k+1));
-                    }
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
-                    number.setAdapter(adapter);
-                }else if(subject.getSelectedItem().equals("국어")){
-                    ArrayList<String> numbers= new ArrayList<>();
-                    for(int k=0; k<45; k++){
-                        numbers.add(String.valueOf(k+1));
-                    }
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
-                    number.setAdapter(adapter);
-                }else if(subject.getSelectedItem().equals("영어")){
-                    ArrayList<String> numbers= new ArrayList<>();
-                    for(int k=0; k<45; k++){
-                        numbers.add(String.valueOf(k+1));
-                    }
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
-                    number.setAdapter(adapter);
-                }else if(subject.getSelectedItem().equals("과학탐구")){
-                    ArrayList<String> numbers= new ArrayList<>();
-                    for(int k=0; k<20; k++){
-                        numbers.add(String.valueOf(k+1));
-                    }
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
-                    number.setAdapter(adapter);
-                }else if(subject.getSelectedItem().equals("사회탐구")){
-                    ArrayList<String> numbers= new ArrayList<>();
-                    for(int k=0; k<20; k++){
                         numbers.add(String.valueOf(k+1));
                     }
                     adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
@@ -361,7 +333,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                     @Override
                     public void callbackMethod() {
                         if(isValidPeriod(period_y.getSelectedItem().toString(), period_m.getSelectedItem().toString())== false){
-                            Toast.makeText(getContext(), "2018년 4월 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "2018년 6월 평가원 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
                             return;
                         }
 
@@ -445,8 +417,8 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                 String periodOption= (String)periodSpinner.getSelectedItem();
 
                 if(periodOption.equals("2018")){
-                    Toast.makeText(getContext(), "2018년 4월 교육청 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
-                    if(instOption.equals("교육청")==false && instOption.equals("상관없음")== false){
+                    Toast.makeText(getContext(), "2018년 6월 평가원 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
+                    if(instOption.equals("수능")){
                         return;
                     }
                 }
@@ -602,7 +574,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                     @Override
                     public void callbackMethod() {
                         if(isValidPeriod(period_y.getSelectedItem().toString(), period_m.getSelectedItem().toString())== false){
-                            Toast.makeText(getContext(), "2018년 4월 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "2018년 6월 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
                             return;
                         }
 

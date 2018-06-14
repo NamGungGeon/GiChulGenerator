@@ -70,6 +70,8 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
     private Unbinder unbinder;
 
+    //Flow
+    // convert_toCode-> loadPotentials-> init-> loadQuestionImage-> generateQuestionFileName(in loadQuestionImage())
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -331,9 +333,22 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
         //Case: period_y== 2018
         if(examPeriod_y.equals("2018")){
-            examInstitute= "gyoyuk";
-            String mList[] = {"3", "4"};
-            examPeriod_m = mList[new Random().nextInt(mList.length)];
+            if(examInstitute.equals("gyoyuk")){
+                String mList[] = {"3", "4"};
+                examPeriod_m = mList[new Random().nextInt(mList.length)];
+            }else if(examInstitute.equals("pyeong")){
+                examPeriod_m= "6";
+            }else if(getActivity().getIntent().getStringExtra("inst").equals("상관없음")){
+                String instList[]= {"gyoyuk", "pyeong"};
+                examInstitute= instList[new Random().nextInt(instList.length)];
+
+                if(examInstitute.equals("gyoyuk")){
+                    String mList[] = {"3", "4"};
+                    examPeriod_m = mList[new Random().nextInt(mList.length)];
+                }else if(examInstitute.equals("pyeong")){
+                    examPeriod_m= "6";
+                }
+            }
         }
     }
     private void convertInstitute_toCode(){
