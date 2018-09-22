@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.satisfactoryplace.gichul.gichulgenerator.adapter.ExamResultListAdapter;
+import com.satisfactoryplace.gichul.gichulgenerator.model.ExamResult;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +62,7 @@ public class ExamResultListActivity extends AppCompatActivity {
             }
         });
 
-        final ListViewAdapter_ExamResultList listViewAdapter= new ListViewAdapter_ExamResultList(getApplicationContext(), R.layout.item_examresultlist,
+        final ExamResultListAdapter listViewAdapter= new ExamResultListAdapter(getApplicationContext(), R.layout.item_examresultlist,
                 resultListData);
         examResultList.setAdapter(listViewAdapter);
         examResultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

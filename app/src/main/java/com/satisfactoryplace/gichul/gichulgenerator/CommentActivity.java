@@ -11,10 +11,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.satisfactoryplace.gichul.gichulgenerator.adapter.CommentAdapter;
+import com.satisfactoryplace.gichul.gichulgenerator.model.Comment;
+import com.satisfactoryplace.gichul.gichulgenerator.model.Status;
+import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
 
 import java.util.ArrayList;
 
@@ -78,8 +82,8 @@ public class CommentActivity extends AppCompatActivity {
                     loadedComments.add(comment);
                 }
 
-                ListViewAdapter_Comment listViewAdapter_comment= new ListViewAdapter_Comment(getApplicationContext(), R.layout.item_comment, loadedComments);
-                commentList.setAdapter(listViewAdapter_comment);
+                CommentAdapter _commentAdapter = new CommentAdapter(getApplicationContext(), R.layout.item_comment, loadedComments);
+                commentList.setAdapter(_commentAdapter);
                 commentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
@@ -153,8 +157,8 @@ public class CommentActivity extends AppCompatActivity {
                         loadedComments.add(comm);
                         ref.setValue(comm);
 
-                        ListViewAdapter_Comment listViewAdapter_comment= new ListViewAdapter_Comment(getApplicationContext(), R.layout.item_comment, loadedComments);
-                        commentList.setAdapter(listViewAdapter_comment);
+                        CommentAdapter _commentAdapter = new CommentAdapter(getApplicationContext(), R.layout.item_comment, loadedComments);
+                        commentList.setAdapter(_commentAdapter);
 
                         Toast.makeText(getApplicationContext(), "댓글이 등록되었습니다", Toast.LENGTH_SHORT).show();
                         newComment.setText("");

@@ -1,6 +1,5 @@
 package com.satisfactoryplace.gichul.gichulgenerator;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 
 import java.util.StringTokenizer;
 

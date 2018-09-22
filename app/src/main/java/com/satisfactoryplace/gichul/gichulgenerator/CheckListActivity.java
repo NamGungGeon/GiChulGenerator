@@ -10,6 +10,10 @@ import android.widget.Spinner;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.satisfactoryplace.gichul.gichulgenerator.adapter.CheckListAdapter;
+import com.satisfactoryplace.gichul.gichulgenerator.model.CheckList;
+import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +84,7 @@ public class CheckListActivity extends AppCompatActivity {
     private void initListView(String subjectFilter){
         final ArrayList<Question> checkListData= getFilteredList(subjectFilter);
 
-        ListViewAdapter_CheckList CheckListAdapter=new ListViewAdapter_CheckList(getApplicationContext(), R.layout.item_checklist, checkListData);
+        CheckListAdapter CheckListAdapter=new CheckListAdapter(getApplicationContext(), R.layout.item_checklist, checkListData);
         checkList.setAdapter(CheckListAdapter);
 
         // Set Listener

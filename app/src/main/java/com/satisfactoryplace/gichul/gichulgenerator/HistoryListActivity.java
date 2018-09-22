@@ -10,6 +10,9 @@ import android.widget.Spinner;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.satisfactoryplace.gichul.gichulgenerator.adapter.HistoryListAdapter;
+import com.satisfactoryplace.gichul.gichulgenerator.model.HistoryList;
+import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +71,7 @@ public class HistoryListActivity extends AppCompatActivity {
 
         final ArrayList<Question> historyListData= getFilteredList(subjectFilter);
 
-        ListViewAdapter_HistoryList historyListAdapter = new ListViewAdapter_HistoryList(getApplicationContext(), R.layout.item_historylist, historyListData);
+        HistoryListAdapter historyListAdapter = new HistoryListAdapter(getApplicationContext(), R.layout.item_historylist, historyListData);
         historyList.setAdapter(historyListAdapter);
 
         // Set Listener

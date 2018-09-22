@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.satisfactoryplace.gichul.gichulgenerator.fragment.RandomQuestionFragment;
+import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
+
 /**
  * Created by WINDOWS7 on 2018-01-20.
  */

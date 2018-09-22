@@ -9,6 +9,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.satisfactoryplace.gichul.gichulgenerator.fragment.MainPageLodingFragment;
+import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
 
 public class MainActivity extends AppCompatActivity {
 

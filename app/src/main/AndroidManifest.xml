@@ -32,7 +32,7 @@
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ExamResultListActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.RecheckExamResultActivity"></activity>
         <service
-            android:name="com.satisfactoryplace.gichul.gichulgenerator.FirebaseMessageService" android:enabled="true">
+            android:name="com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseMessageService" android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

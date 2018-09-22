@@ -3,6 +3,9 @@ package com.satisfactoryplace.gichul.gichulgenerator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.satisfactoryplace.gichul.gichulgenerator.fragment.ExamFragment;
+import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
+
 /**
  * Created by WINDOWS7 on 2018-02-28.
  */

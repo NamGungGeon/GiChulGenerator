@@ -2,6 +2,8 @@ package com.satisfactoryplace.gichul.gichulgenerator;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.satisfactoryplace.gichul.gichulgenerator.model.ExamResult;
+import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 
 import java.util.ArrayList;
 
