@@ -24,7 +24,6 @@
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.CheckListActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.RecheckQuestionActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.SearchResultActivity"></activity>
-        <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.FreeboardActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ArticleActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.ArticlePublishActivity"></activity>
         <activity android:name="com.satisfactoryplace.gichul.gichulgenerator.CommentActivity"></activity>

@@ -1,6 +1,5 @@
 package com.satisfactoryplace.gichul.gichulgenerator.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,9 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,16 +23,12 @@ import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.satisfactoryplace.gichul.gichulgenerator.CheckListActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.ExamActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.ExamResultList;
 import com.satisfactoryplace.gichul.gichulgenerator.ExamResultListActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.data.ExamNameBuilder;
 import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
-import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
-import com.satisfactoryplace.gichul.gichulgenerator.FreeboardActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.HistoryListActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
 import com.satisfactoryplace.gichul.gichulgenerator.R;
@@ -42,7 +37,7 @@ import com.satisfactoryplace.gichul.gichulgenerator.SearchResultActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.model.AppData;
 import com.satisfactoryplace.gichul.gichulgenerator.model.CheckList;
 import com.satisfactoryplace.gichul.gichulgenerator.model.HistoryList;
-import com.satisfactoryplace.gichul.gichulgenerator.model.Status;
+import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
 
 import java.text.ParseException;
@@ -50,8 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -166,54 +159,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         d_day.setText("수능까지 "+ between+ "일 남았습니다");
     }
     private void initBillProcess(){
-        String key= "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorXcU15UsFjV0tml82MbjXsz9b0VKfIfDQOaJpJwSu/TOph9pr+pxKvGchF90E5C/3TF6pqsPqlEDA6/iSYBI1ka1wOCE1YPIt1vzFhG6rfY8hNPwz/pT+JQSA42FoW+N/v5Y4UN5FGxA0RFT1I/jSME2IU9fRFFnArdiMoq0HRKUzeo8f9txnoYgKme5ItuAmD6VU94ddpKyUXkJ83mKOvqLiYTs/PR2y99y9NTd/a2R5Gb6lgBpbjTR8vSvK+0zCFYRydSPNnN/krNJ5h+ne0raMXFYnCp5ZOFZ9cR1KzwfcaLYg7c6cthzb+FNqDew8qY6quT6j7RhU5opuJukwIDAQAB";
+        String key= "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorXcU15UsFjV0tml82MbjXsz9b0VKfIfDQOaJpJwSu/TOph9pr+pxKvGchF90E5C/3TF6pqsPqlEDA6/" +
+                "iSYBI1ka1wOCE1YPIt1vzFhG6rfY8hNPwz/pT+JQSA42FoW+N/v5Y4UN5FGxA0RFT1I/jSME2IU9fRFFnArdiMoq0HRKUzeo8f9txnoYgKme5ItuAmD6VU94ddpKyUXkJ83mKOvqLiYTs/" +
+                "PR2y99y9NTd/a2R5Gb6lgBpbjTR8vSvK+0zCFYRydSPNnN/krNJ5h+ne0raMXFYnCp5ZOFZ9cR1KzwfcaLYg7c6cthzb+FNqDew8qY6quT6j7RhU5opuJukwIDAQAB";
         bp= new BillingProcessor(getContext(), key, this);
     }
 
-    private boolean checkNickName(String nickName){
-        if(nickName!= null){
-            //Check Length
-            if(nickName.length()>= 2 && nickName.length()<= 12){
-                if(nickName.contains(" ") || nickName.contains("\n")){
-                    Toast.makeText(getContext(), "공백과 개행은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-
-                //Literal Check
-                boolean isCanUsingNickName= true;
-                for(int i=0; i<nickName.length(); i++){
-                    if(nickName.charAt(i)>= 'a' && nickName.charAt(i)<= 'z'){
-
-                    }else if(nickName.charAt(i)>= 'A' && nickName.charAt(i)<= 'Z'){
-
-                    }else if(nickName.charAt(i)>= '가' && nickName.charAt(i)<= '힣'){
-
-                    }else{
-                        //Incldue literal Not allowed
-                        isCanUsingNickName= false;
-                    }
-                }
-
-                if(isCanUsingNickName== false){
-                    Toast.makeText(getContext(), "닉네임에는 한국어와 영어만 사용 가능합니다\n(한국어 자음/모음 단독사용 불가)", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-
-                if(nickName.equals("관리자")){
-                    Toast.makeText(getContext(), "해당 닉네임은 사용 불가능합니다.", Toast.LENGTH_SHORT).show();
-                    return false;
-                }else {
-                    return true;
-                }
-            }else{
-                Toast.makeText(getContext(), "닉네임은 2자 이상, 12자 이하로 설정해야 합니다.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }else{
-            Toast.makeText(getContext(), "사용할 닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    }
     private boolean isValidPeriod(String period_y, String period_m){
         int y= Integer.valueOf(period_y);
         int m= Integer.valueOf(period_m);
@@ -233,7 +184,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     }
     private void checkAppVersion(){
         if(appVersion.equals(AppData.currentVersion)== false){
-            String message= "";
+            String message;
             message= "앱이 최신 버전이 아닙니다.\n업데이트가 필요합니다.\n\n";
             message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
             message+= "최신 앱 버전: "+ AppData.currentVersion;
@@ -283,6 +234,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                 CheckList.getInstance().deleteAllData();
                 HistoryList.getInstance().deleteAllData();
                 ExamResultList.getInstance().deleteAllData();
+
                 Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 init();
                 dialog.dismiss();
@@ -301,44 +253,37 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         final Spinner period_y= childView.findViewById(R.id.searchPeriod_y);
         final Spinner period_m= childView.findViewById(R.id.searchPeriod_m);
         final Spinner number= childView.findViewById(R.id.searchNumber);
-        subject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                ArrayAdapter<String> adapter;
 
-                if(subject.getSelectedItem().equals("수학(이과)") || institute.getSelectedItem().equals("수학(문과)")){
-                    ArrayList<String> numbers= new ArrayList<>();
-                    for(int k=0; k<30; k++){
-                        numbers.add(String.valueOf(k+1));
-                    }
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
-                    number.setAdapter(adapter);
-                }
-            }
+        //문제 번호 추가
+        //1~30
+        ArrayList<String> numbers= new ArrayList<>();
+        for(int k=0; k<30; k++){
+            numbers.add(String.valueOf(k+1));
+        }
+        ArrayAdapter<String> adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, numbers);
+        number.setAdapter(adapter);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+        //선택된 기관 별, 기간(월) 조정
         institute.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 ArrayAdapter<String> adapter;
+                String list[]= {};
 
-                if(institute.getSelectedItem().equals("대학수학능력평가시험")){
-                    String list[]= {"11"};
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
-                    period_m.setAdapter(adapter);
-                }else if(institute.getSelectedItem().equals("교육청")){
-                    String list[]= {"3", "4", "7", "10"};
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
-                    period_m.setAdapter(adapter);
-                }else if(institute.getSelectedItem().equals("교육과정평가원")){
-                    String list[]= {"6", "9"};
-                    adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
-                    period_m.setAdapter(adapter);
+                switch(institute.getSelectedItem().toString()){
+                    case "대학수학능력평가시험":
+                        list= new String[]{"11"};
+                        break;
+                    case "교육청":
+                        list= new String[] {"3", "4", "7", "10"};
+                        break;
+                    case "교육과정평가원":
+                        list= new String[]{"6", "9"};
+                        break;
                 }
+
+                adapter=  new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                period_m.setAdapter(adapter);
             }
 
             @Override
@@ -348,68 +293,23 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         });
 
         dialog.setValue("문제 검색", "검색", "취소", ()-> {
-                        if (isValidPeriod(period_y.getSelectedItem().toString(), period_m.getSelectedItem().toString()) == false) {
-                            Toast.makeText(getContext(), "2018년 6월 평가원 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
-                            return;
-                        }
+                String selectedY = period_y.getSelectedItem().toString();
+                String selectedM = period_m.getSelectedItem().toString();
+                String selectedInst = institute.getSelectedItem().toString();
+                String selectedSubj = subject.getSelectedItem().toString();
+                String selectedNum = number.getSelectedItem().toString();
 
-                        //start search
-                        String basicFileName = "";
+                if (!isValidPeriod(selectedY, selectedM)) {
+                    Toast.makeText(getContext(), "2018년 6월 평가원 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                QuestionNameBuilder.inst= new QuestionNameBuilder(selectedY, selectedM, selectedInst, selectedSubj, selectedNum, QuestionNameBuilder.TYPE_KOR);
 
-                        //Decide period_y
-                        String filter_period_y = period_y.getSelectedItem().toString();
-                        if (filter_period_y.equals("2018")) {
-                            basicFileName += "2018";
-                        }
-                        if (filter_period_y.equals("2017")) {
-                            basicFileName += "2017";
-                        } else if (filter_period_y.equals("2016")) {
-                            basicFileName += "2016";
-                        } else if (filter_period_y.equals("2015")) {
-                            basicFileName += "2015";
-                        }
-                        basicFileName += "_";
+                Intent intent = new Intent(getActivity().getApplicationContext(), SearchResultActivity.class);
+                startActivityForResult(intent, SEARCH_ACTIVITY);
 
-                        //Decide period_m
-                        String filter_period_m = period_m.getSelectedItem().toString();
-                        basicFileName += filter_period_m;
-                        basicFileName += "_";
-
-                        //Decide institute
-                        String filter_institute = institute.getSelectedItem().toString();
-                        if (filter_institute.equals("대학수학능력평가시험")) {
-                            basicFileName += "sunung";
-                        } else if (filter_institute.equals("교육청")) {
-                            basicFileName += "gyoyuk";
-                        } else if (filter_institute.equals("교육과정평가원")) {
-                            basicFileName += "pyeong";
-                        }
-                        basicFileName += "_";
-
-                        // Decide Subject
-                        String filter_subj = subject.getSelectedItem().toString();
-                        if (filter_subj.equals("수학(이과)")) {
-                            basicFileName += "imath";
-                        } else if (filter_subj.equals("수학(문과)")) {
-                            basicFileName += "mmath";
-                        }
-
-                        //Decide Number
-                        String filter_number = number.getSelectedItem().toString();
-
-                        //Go to result page
-                        Intent intent = new Intent(getActivity().getApplicationContext(), SearchResultActivity.class);
-                        intent.putExtra("period_y", filter_period_y);
-                        intent.putExtra("period_m", filter_period_m);
-                        intent.putExtra("institute", filter_institute);
-                        intent.putExtra("subject", filter_subj);
-                        intent.putExtra("number", filter_number);
-                        // basicFileName is not include "Number"
-                        intent.putExtra("basicFileName", basicFileName);
-
-                        startActivityForResult(intent, SEARCH_ACTIVITY);
-                        dialog.dismiss();
-                    }, null, childView);
+                dialog.dismiss();
+            }, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
@@ -423,34 +323,29 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         final Spinner instituteSpinner= childView.findViewById(R.id.selectInstitute);
         final Spinner periodSpinner= childView.findViewById(R.id.selectPeriod);
 
-        DialogMaker.Callback pos_callback= new DialogMaker.Callback() {
-            @Override
-            public void callbackMethod() {
-                String subjectOption= (String)subjectSpinner.getSelectedItem();
-                String probOption= (String)probabilitySpinner.getSelectedItem();
-                String instOption= (String)instituteSpinner.getSelectedItem();
-                String periodOption= (String)periodSpinner.getSelectedItem();
+        dialog.setValue("문제 옵션 선택", "확인", "취소", () -> {
+            String subjectOption= (String)subjectSpinner.getSelectedItem();
+            String probOption= (String)probabilitySpinner.getSelectedItem();
+            String instOption= (String)instituteSpinner.getSelectedItem();
+            String periodOption= (String)periodSpinner.getSelectedItem();
 
-                if(periodOption.equals("2018")){
-                    Toast.makeText(getContext(), "2018년 6월 평가원 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
-                    if(instOption.equals("수능")){
-                        return;
-                    }
+            if(periodOption.equals("2018")){
+                Toast.makeText(getContext(), "2018년 6월 평가원 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
+                if(instOption.equals("수능")){
+                    return;
                 }
-
-                //move Activity
-                Intent intent= new Intent(getActivity(), RandomQuestionActivity.class);
-                intent.putExtra("subj", subjectOption);
-                intent.putExtra("prob", probOption);
-                intent.putExtra("inst", instOption);
-                intent.putExtra("peri", periodOption);
-
-                dialog.dismiss();
-                startActivityForResult(intent, EXAM_ACTIVITY);
             }
-        };
 
-        dialog.setValue("문제 옵션 선택", "확인", "취소", pos_callback, null, childView);
+            //move Activity
+            Intent intent= new Intent(getActivity(), RandomQuestionActivity.class);
+            intent.putExtra("subj", subjectOption);
+            intent.putExtra("prob", probOption);
+            intent.putExtra("inst", instOption);
+            intent.putExtra("peri", periodOption);
+
+            dialog.dismiss();
+            startActivityForResult(intent, EXAM_ACTIVITY);
+        }, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "Option Select!");
     }
 
@@ -459,14 +354,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         final DialogMaker dialog= new DialogMaker();
         View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_devinfo, null);
         final TextView blogLink= childView.findViewById(R.id.devInfo_blogLink);
-        blogLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = blogLink.getText().toString();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
+        blogLink.setOnClickListener(v -> {
+            String url = blogLink.getText().toString();
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
         });
         dialog.setValue(null, null, null, null, null, childView);
         dialog.show(getActivity().getSupportFragmentManager(), "Open Developer Information");
@@ -476,72 +368,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     void donation(){
         bp.initialize();
         bp.purchase(getActivity(), "donation");
-    }
-
-    @OnClick(R.id.freeboard)
-    void openFreeboard(){
-        if(AppData.freeboardStatus== null || AppData.freeboardStatus.equals("close")){
-            Toast.makeText(getContext(), "죄송합니다. 게시판 점검 중입니다.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(Status.canUseFreeboard== false){
-            Toast.makeText(getContext(), "관리자에 의해 자유게시판 이용이 정지되었습니다.", Toast.LENGTH_SHORT).show();
-        }else{
-            if(Status.nickName== null){
-                final DialogMaker dialog= new DialogMaker();
-                final View childView= getLayoutInflater().inflate(R.layout.dialog_setnickname, null);
-                dialog.setValue("", "설정", "취소",
-                        new DialogMaker.Callback() {
-                            @Override
-                            public void callbackMethod() {
-                                final EditText inputNickname= childView.findViewById(R.id.setNickName_nickName);
-                                if(checkNickName(inputNickname.getText().toString())== true){
-                                    final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "", "닉네임 설정 중입니다");
-                                    //Check if nickname is duplicated
-                                    FirebaseConnection.getInstance().loadData("nickNames/", new FirebaseConnection.Callback() {
-                                                @Override
-                                                public void success(DataSnapshot snapshot) {
-                                                    if(snapshot.getValue()!= null){
-                                                        //Case: Duplicated
-                                                        HashMap<String, String> loadedNicknames= ((HashMap<String, String>)snapshot.getValue());
-                                                        for(String value: loadedNicknames.keySet()){
-                                                            if(loadedNicknames.get(value).equals(inputNickname.getText().toString())){
-                                                                Toast.makeText(getContext(), "중복된 닉네임입니다.", Toast.LENGTH_SHORT).show();
-                                                                progressDialog.dismiss();
-                                                                return;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    //Case: Not Duplicated
-                                                    Status.nickName= inputNickname.getText().toString();
-
-                                                    //Save...
-                                                    FirebaseConnection.getInstance().getReference("nickNames").push().setValue(inputNickname.getText().toString());
-                                                    FirebaseConnection.getInstance().getReference("userdata/"+ FirebaseAuth.getInstance().getUid()+ "/status/nickName/")
-                                                            .setValue(inputNickname.getText().toString());
-                                                    Toast.makeText(getContext(), inputNickname.getText().toString()+ "(으)로 설정되었습니다.", Toast.LENGTH_SHORT).show();
-
-                                                    progressDialog.dismiss();
-                                                    dialog.dismiss();
-                                                    startActivity(new Intent(getContext(), FreeboardActivity.class));
-                                                }
-                                                @Override
-                                                public void fail(String errorMessage) {
-                                                    Toast.makeText(getContext(), "데이터베이스 통신 실패\n"+ errorMessage, Toast.LENGTH_SHORT).show();
-                                                    dialog.dismiss();
-                                                }
-                                            }
-                                    );
-                                }
-                            }
-                        }, null, childView);
-                dialog.show(getActivity().getSupportFragmentManager(), "set NickName");
-            }else{
-                startActivity(new Intent(getContext(), FreeboardActivity.class));
-            }
-        }
     }
 
     @OnClick(R.id.goToExam)
@@ -622,7 +448,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         startActivity(i);
     }
 
-    /* Override from Fragment */
     @Override
     public void onDestroyView() {
         if (bp != null) {
@@ -649,9 +474,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     }
 
     @Override
-    public void onPurchaseHistoryRestored() {
-
-    }
+    public void onPurchaseHistoryRestored() {}
 
     @Override
     public void onBillingError(int errorCode, @Nullable Throwable error) {
@@ -659,7 +482,5 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     }
 
     @Override
-    public void onBillingInitialized() {
-
-    }
+    public void onBillingInitialized() {}
 }

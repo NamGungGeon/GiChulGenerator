@@ -16,8 +16,9 @@ public class QuestionNameBuilder {
     public String k_sub;
     public String e_sub;
     public String number;
+    public String potential;
 
-    public QuestionNameBuilder(@NonNull String y, @NonNull String m, @NonNull String inst, @NonNull String sub, @NonNull String number, int type) {
+    public QuestionNameBuilder(@NonNull String y, @NonNull String m, @NonNull String inst, @NonNull String sub, @NonNull String number, @NonNull String potential, int type) {
         switch (type){
             case TYPE_KOR:
                 this.k_inst= inst;
@@ -36,6 +37,7 @@ public class QuestionNameBuilder {
         this.y = y;
         this.m = m;
         this.number = number;
+        this.potential= potential;
         initInstAndSub();
     }
 
@@ -45,12 +47,14 @@ public class QuestionNameBuilder {
         }else if(e_inst== null&& e_sub== null){
             //generate e_inst
             switch (k_inst){
+                case "수능":
                 case "대학수학능력평가시험":
                     e_inst= "sunung";
                     break;
                 case "교육청":
                     e_inst= "gyoyuk";
                     break;
+                case "평가원":
                 case "교육과정평가원":
                     e_inst= "pyeong";
                     break;
@@ -68,5 +72,8 @@ public class QuestionNameBuilder {
     }
     public String createFileName(){
         return y+ "_"+ m+ "_"+ e_inst+ "_"+ e_sub+ "_"+ number;
+    }
+    public String createTitileText(){
+        return y+ "년 "+ k_inst+ "\n"+ k_sub+ "과목 "+ m+ "월 시험 "+ number+ "번 문제";
     }
 }

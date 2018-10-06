@@ -183,15 +183,7 @@ public class ExamResultFragment extends Fragment {
         initResultReport();
         initSelectorBackground();
         initSelectorListener();
-
-        if(getActivity().getIntent().getStringExtra("type")!= null && getActivity().getIntent().getStringExtra("type").equals("recheck")){
-            //Case: From ExamResultListActivity
-            // Not do any action
-        }else{
-            //Case: From ExamFragment
-            saveToExamResultList();
-            saveToHistoryList();
-        }
+        saveToExamResultList();
     }
 
     private void initSelectorListener(){
@@ -257,16 +249,6 @@ public class ExamResultFragment extends Fragment {
         MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-    }
-
-    private void saveToHistoryList(){
-        for(int i=0; i<30; i++){
-            String titleText= title.getText().toString()+ " "+ (i+1)+ "번 문제";
-            String imageFileName= enBuilder.createFileName()+  "_"+ (i+1);
-            String potentialText= potentials.get((i+1)).toString();
-            HistoryList.getInstance().addToList(new Question(titleText, imageFileName, potentialText,
-                    inputAnswers.get(i).toString(), rightAnswers.get(i+1).toString(), String.valueOf(0), ""));
-        }
     }
     private void saveToExamResultList(){
         ArrayList<Long> inputAnswers_long= new ArrayList();

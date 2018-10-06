@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.satisfactoryplace.gichul.gichulgenerator.adapter.CommentAdapter;
-import com.satisfactoryplace.gichul.gichulgenerator.model.Comment;
 import com.satisfactoryplace.gichul.gichulgenerator.model.Status;
 import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;

@@ -52,8 +52,6 @@ public class RandomQuestionSolutionFragment extends Fragment{
     @BindView(R.id.recheck_examImage) ImageView recheckExamImage;
 
     @BindView(R.id.changeImageBtn) Button changeImageBtn;
-    @BindView(R.id.addToCheckListBtn) Button addToCheckListBtn;
-    @BindView(R.id.continueTryBtn) Button continueTryBtn;
 
     @BindView(R.id.randomQuestion_solution_ad)AdView adView;
 

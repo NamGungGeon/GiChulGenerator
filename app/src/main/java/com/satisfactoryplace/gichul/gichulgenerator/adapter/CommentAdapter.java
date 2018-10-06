@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.satisfactoryplace.gichul.gichulgenerator.R;
-import com.satisfactoryplace.gichul.gichulgenerator.model.Comment;
 
 import java.util.ArrayList;
 
