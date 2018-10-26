@@ -8,15 +8,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.satisfactoryplace.gichul.gichulgenerator.adapter.HistoryListAdapter;
-import com.satisfactoryplace.gichul.gichulgenerator.model.HistoryList;
+import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
 import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.HistoryListUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,9 +37,6 @@ public class HistoryListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Hide ActionBar
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().hide();
 
         setContentView(R.layout.activity_historylist);
         ButterKnife.bind(this);
@@ -48,87 +44,39 @@ public class HistoryListActivity extends AppCompatActivity {
     }
 
     private void init() {
-        setListView(getFilterValue());
+        initListView(Common.getFilterValue(filter));
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setListView(getFilterValue());
+                initListView(Common.getFilterValue(filter));
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-        setAdView();
+
+        initAdView();
     }
 
-    private void setAdView(){
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+    private void initAdView(){
+        Common.initAdView(adView);
     }
-    private void setListView(String subjectFilter) {
-
-        final ArrayList<Question> historyListData= getFilteredList(subjectFilter);
+    private void initListView(String subjectFilter) {
+        final ArrayList<Question> historyListData= HistoryListUtil.getFilteredList(subjectFilter);
 
         HistoryListAdapter historyListAdapter = new HistoryListAdapter(getApplicationContext(), R.layout.item_historylist, historyListData);
         historyList.setAdapter(historyListAdapter);
 
-        // Set Listener
-        historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), RecheckQuestionActivity.class);
-                intent.putExtra("fileName", historyListData.get(i).getFileName());
-                intent.putExtra("title", historyListData.get(i).getTitle());
-                intent.putExtra("potential", historyListData.get(i).getPotential());
+        // 클릭 시 문제 재확인 가능
+        historyList.setOnItemClickListener((adapterView, view, i, l) -> {
+            Question q= historyListData.get(i);
+            QuestionNameBuilder.inst= new QuestionNameBuilder(q.getPeriod_y(), q.getPeriod_m(), q.getInstitute()
+                    , q.getSubject(), q.getNumber(), q.getPotential(), QuestionNameBuilder.TYPE_ENG);
 
-                startActivity(intent);
-            }
+            Intent intent= new Intent(getApplicationContext(), RecheckQuestionActivity.class);
+            intent.putExtra("memo", q.getMemo());
+            startActivity(intent);
         });
     }
-    private ArrayList<Question> getFilteredList(String subjectFilter){
-        ArrayList<Question> temp= new ArrayList();
-        if(subjectFilter!= null){
-            if(subjectFilter.equals("imath")){
-                for(Question q: HistoryList.getInstance().getHistoryList()){
-                    if(q.getSubject().equals("imath")){
-                        temp.add(q);
-                    }
-                }
-            }else if(subjectFilter.equals("mmath")){
-                for(Question q: HistoryList.getInstance().getHistoryList()){
-                    if(q.getSubject().equals("mmath")){
-                        temp.add(q);
-                    }
-                }
-            }
-        }else{
-            temp= HistoryList.getInstance().getHistoryList();
-        }
 
-
-
-        Collections.sort(temp, new Comparator<Question>() {
-            @Override
-            public int compare(Question e1, Question e2) {
-                return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
-            }
-        });
-
-        return temp;
-    }
-    private String getFilterValue() {
-        String subjectFilter = filter.getSelectedItem().toString();
-        //Converting...
-        if (subjectFilter.equals("상관없음")) {
-            subjectFilter = null;
-        } else if (subjectFilter.equals("수학(이과)")) {
-            subjectFilter = "imath";
-        } else if (subjectFilter.equals("수학(문과)")) {
-            subjectFilter = "mmath";
-        }
-
-        return subjectFilter;
-    }
 }

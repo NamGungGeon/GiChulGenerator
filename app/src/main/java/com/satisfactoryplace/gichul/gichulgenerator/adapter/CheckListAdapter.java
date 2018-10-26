@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.satisfactoryplace.gichul.gichulgenerator.R;
 import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.QuestionUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,7 +82,8 @@ public class CheckListAdapter extends BaseAdapter {
             text.setTextColor(context.getResources().getColor(R.color.red));
     }
     private String getInfoText(Question q){
-        String result= getTimeInfo(q)+ "/"+ getPotenInfo(q) +"\n"+ getDateInfo(q);
+        String potentialText= QuestionUtil.getPotentialText(Integer.valueOf(q.getPotential()));
+        String result= getTimeInfo(q)+ "/"+ potentialText +"\n"+ getDateInfo(q);
         return result;
     }
 
@@ -90,24 +92,6 @@ public class CheckListAdapter extends BaseAdapter {
         int min= sec/60;
 
         return min+"분 "+ sec+ " 초 소요";
-    }
-    private String getPotenInfo(Question q){
-        int potential= Integer.valueOf(q.getPotential());
-
-        String potentialText= "정답률: ";
-        if(potential>= 80){
-            potentialText+= "매우높음.";
-        }else if(potential>= 60){
-            potentialText+= "높음.";
-        }else if(potential>= 40){
-            potentialText+= "보통.";
-        }else if(potential>= 20){
-            potentialText+= "낮음.";
-        }else{
-            potentialText+= "매우낮음.";
-        }
-
-        return potentialText;
     }
     private String getDateInfo(Question q){
         Calendar calendar= Calendar.getInstance();

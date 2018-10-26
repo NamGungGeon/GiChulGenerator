@@ -15,10 +15,6 @@ public class RecheckExamResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Hide ActionBar
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().hide();
-
         setContentView(R.layout.activity_recheckexam);
         getSupportFragmentManager().beginTransaction().replace(R.id.recheckExam_container, new ExamResultFragment()).commit();
     }

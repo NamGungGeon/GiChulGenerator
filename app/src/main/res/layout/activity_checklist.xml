@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
             android:textSize="25dp"
-            android:background="#444444"
+            android:background="@color/background"
             android:padding="15dp"
             android:text="오답노트"/>
         <LinearLayout
@@ -39,6 +39,15 @@
                 android:id="@+id/checkList_filter"
                 android:entries="@array/filter_subjectArray">
             </Spinner>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:gravity="right"
+                android:id="@+id/checkList_random"
+                android:textColor="@color/background"
+                android:text="랜덤으로 풀기>"/>
         </LinearLayout>
         <ScrollView
             android:layout_width="match_parent"
@@ -58,16 +67,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/checkListAdWrapper"
-            android:background="#444444"
+            android:background="@color/background"
             android:layout_alignParentBottom="true">
             <com.google.android.gms.ads.AdView
+                ads:adSize="SMART_BANNER"
+                ads:adUnitId="ca-app-pub-5333091392909120/9071628017"
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/checkListAd"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_centerHorizontal="true"
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-5333091392909120/8285897711">
+                android:layout_centerHorizontal="true">
             </com.google.android.gms.ads.AdView>
         </RelativeLayout>
     </RelativeLayout>

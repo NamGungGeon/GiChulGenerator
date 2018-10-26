@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,7 +14,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
 import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.QuestionUtil;
 
 import java.util.StringTokenizer;
 
@@ -44,29 +48,20 @@ public class RecheckQuestionActivity extends AppCompatActivity {
     private final int solution= 115223;
     private int imageStatus= exam;
 
+    private QuestionNameBuilder qn= QuestionNameBuilder.inst;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Hide ActionBar
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().hide();
-
         setContentView(R.layout.activity_recheckquestion);
         ButterKnife.bind(this);
+
         init();
     }
 
     //Will be called after finishing load examImage
     private void loadExamImage(){
-        String basicPath= "";
-        StringTokenizer token= new StringTokenizer(getIntent().getStringExtra("fileName"), "_", false);
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken();
-
-        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + "q_" + getIntent().getStringExtra("fileName"), examImage, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+        FirebaseConnection.getInstance().loadImage(qn.createImagePath(QuestionNameBuilder.TYPE_Q), examImage, getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success(Bitmap bitmap) {
                 loadSolutionImage();
@@ -80,14 +75,7 @@ public class RecheckQuestionActivity extends AppCompatActivity {
         });
     }
     private void loadSolutionImage(){
-        String basicPath= "";
-        StringTokenizer token= new StringTokenizer(getIntent().getStringExtra("fileName"), "_", false);
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken()+"_";
-        basicPath+= token.nextToken();
-
-        FirebaseConnection.getInstance().loadImage("exam/" + basicPath + "/" + "a_" + getIntent().getStringExtra("fileName"), solutionImage, getApplicationContext(),
+        FirebaseConnection.getInstance().loadImage(qn.createImagePath(QuestionNameBuilder.TYPE_A), solutionImage, getApplicationContext(),
                 new FirebaseConnection.ImageLoadFinished() {
                     @Override
                     public void success(Bitmap bitmap) {
@@ -104,27 +92,16 @@ public class RecheckQuestionActivity extends AppCompatActivity {
     }
 
     private void init(){
-        title.setText(getIntent().getStringExtra("title"));
+        initTitle();
         initPotentialText();
         loadExamImage();
     }
-    private void initPotentialText(){
-        String examPotential= getIntent().getStringExtra("potential");
-        int _potential= Integer.valueOf(examPotential);
-        String potentialText= "정답률: ";
-        if(_potential>= 80){
-            potentialText+= "매우높음";
-        }else if(_potential>=60){
-            potentialText+= "높음";
-        }else if(_potential>= 40){
-            potentialText+= "보통";
-        }else if(_potential>= 20){
-            potentialText+= "낮음";
-        }else{
-            potentialText+= "매우낮음";
-        }
-        potential.setText(potentialText);
 
+    private void initTitle(){
+        title.setText(qn.createTitileText());
+    }
+    private void initPotentialText(){
+        potential.setText(QuestionUtil.getPotentialText(Integer.valueOf(qn.potential)));
     }
 
     @OnClick(R.id.recheck_imageChange)
@@ -149,11 +126,18 @@ public class RecheckQuestionActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
 
         String url = "http://www.ebsi.co.kr/ebs/xip/xipa/retrieveSCVLastExamList.ebs";
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
+        Common.openUrl(getApplicationContext(), url);
     }
 
+    @OnClick(R.id.recheck_openMemo)
+    void openMemo(){
+        String memo= getIntent().getStringExtra("memo");
+        if(memo.equals("")){
+            Toast.makeText(this, "이 문제에 저장된 메모가 없습니다.", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, memo, Toast.LENGTH_SHORT).show();
+        }
+    }
     @Override
     protected void onDestroy() {
         if(examImage.getDrawable()!= null){

@@ -16,9 +16,6 @@ public class RandomQuestionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Hide ActionBar
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().hide();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionFragment(), "examTry").commit();
         setContentView(R.layout.activity_randomquestion);

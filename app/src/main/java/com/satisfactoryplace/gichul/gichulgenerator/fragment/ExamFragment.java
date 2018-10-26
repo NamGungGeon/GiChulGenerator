@@ -2,11 +2,7 @@ package com.satisfactoryplace.gichul.gichulgenerator.fragment;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,18 +14,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.satisfactoryplace.gichul.gichulgenerator.data.ExamNameBuilder;
 import com.satisfactoryplace.gichul.gichulgenerator.data.ExamResultSaver;
+import com.satisfactoryplace.gichul.gichulgenerator.model.ErrorInfo;
 import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
 import com.satisfactoryplace.gichul.gichulgenerator.R;
-import com.satisfactoryplace.gichul.gichulgenerator.utils.AnswerChecker;
-import com.satisfactoryplace.gichul.gichulgenerator.utils.AsyncTaskUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.AnswerUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.BitmapManager;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.ErrorReportUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.ProgressUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.TimerUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,6 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ExamFragment extends Fragment implements OnBackPressedListener {
     @BindViews({R.id.exam_1,R.id.exam_2,R.id.exam_3,R.id.exam_4,R.id.exam_5,R.id.exam_6,R.id.exam_7,R.id.exam_8,R.id.exam_9,R.id.exam_10,
@@ -54,24 +52,25 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
     @BindView(R.id.exam_saveAnswer)Button saveAnswerBtn;
     @BindView(R.id.exam_timer)Button timer;
 
-    @BindView(R.id.exam_ad)
-    AdView adView;
+    @BindView(R.id.exam_ad) AdView adView;
 
-    private final Bitmap examBitmap[]= new Bitmap[30];
+    private BitmapManager bManager= new BitmapManager();
 
     private ExamNameBuilder enBuilder= ExamNameBuilder.inst;
 
-    private int currentCursor= 0;
+    private int currentCursor= -1;
     private int[] answers= new int[30];
-    private int sec= 0;
-    private boolean isRunningTimer= true;
 
     private Unbinder unbinder;
+
+    private TimerUtil timerUtil;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.frag_examtry, container, false);
         unbinder= ButterKnife.bind(this, rootView);
+
         init();
+
         return rootView;
     }
 
@@ -83,36 +82,20 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
         saveAnswerBtn.setText("답안 저장");
 
         initTitle();
-        loadExamImage();
         initAnswerList();
         initListSelector();
         initAdView();
+        loadExamImage();
     }
 
     private void startTimer(){
-        AsyncTaskUtil.startAsyncTask(()->{
-            sec= -1;
-            while(isRunningTimer){
-                sec++;
-                getActivity().runOnUiThread(()->refreshTimer(sec));
-
-                try {
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    Toast.makeText(getContext(), "스레드 오류\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-            }
+        timerUtil= new TimerUtil(getActivity(), timer);
+        timerUtil.startTimer((Exception e)->{
+            ErrorReportUtil.report(new ErrorInfo(e.toString(), "타이머 스레드 오류", "ExamFragment"));
+            getActivity().runOnUiThread(()->{
+                Toast.makeText(getContext(), "타이머 스레드 오류\n"+ e.toString(), Toast.LENGTH_SHORT).show();
+            });
         });
-    }
-    private void refreshTimer(int sec){
-        int min= sec/60;
-        sec= sec%60;
-        timer.setText(String.valueOf(min)+ "분 "+ String.valueOf(sec%60)+ "초");
-    }
-
-    private void stopTimer(){
-        isRunningTimer= false;
     }
 
     private void initTitle(){
@@ -121,27 +104,20 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
     }
 
     private void initAdView(){
-        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        Common.initAdView(adView);
     }
     private void loadExamImage(){
-        for(int i=0; i<examBitmap.length; i++){
-            examBitmap[i]= null;
-        }
-
         final ProgressDialog progressDialog= DialogMaker.showProgressDialog(getActivity(), "시험지를 가져오는 중입니다...", "");
+        loadingCheck(progressDialog);
         for(int i=0; i<30; i++){
             final int _i= i;
-            String targetImageName= "exam/"+ enBuilder.createFileName()+ "/"
-                    + enBuilder.createFileName()+ String.valueOf(_i+1);
-            FirebaseConnection.getInstance().loadImage(targetImageName, null,
-                    getContext(), new FirebaseConnection.ImageLoadFinished() {
+            String targetImageName= enBuilder.createImagePath(ExamNameBuilder.TYPE_Q, String.valueOf(i+1));
+            FirebaseConnection.getInstance().loadImage(targetImageName, null, getContext()
+                    , new FirebaseConnection.ImageLoadFinished() {
                         @Override
                         public void success(Bitmap bitmap) {
-                            examBitmap[_i]= bitmap;
+                            bManager.addBitmap(bitmap, _i);
                         }
-
                         @Override
                         public void fail(Exception e) {
                             Toast.makeText(getContext(), "이미지를 가져올 수 없습니다.\n"+ e.getMessage(), Toast.LENGTH_LONG).show();
@@ -151,37 +127,14 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
                     });
         }
 
-        loadingCheck(progressDialog);
     }
     private void loadingCheck(final ProgressDialog progressDialog){
-        AsyncTaskUtil.startAsyncTask(()->{
-            while(true){
-                int progress= 0;
-                for(Bitmap bitmap: examBitmap){
-                    if(bitmap!= null){
-                        progress++;
-                    }
-                }
-                final int _progress= progress;
-
-                getActivity().runOnUiThread(()->progressDialog.setMessage("이미지 30개 중 "+ _progress+ "개 다운로드 완료"));
-
-                if(progress== 30){
-                    getActivity().runOnUiThread(()->{
-                        progressDialog.dismiss();
-                        init();
-                    });
-                    return;
-                }
-
-                try {
-                    Thread.sleep(500L);
-                } catch (InterruptedException e) {
-                    Toast.makeText(getContext(), "스레드 오류\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                    getActivity().finish();
-                }
-            }
+        ProgressUtil.loadingCheck(progressDialog, 30, ()->{
+            int finishNumber= bManager.getBitmaps().size();
+            getActivity().runOnUiThread(()->{
+                progressDialog.setMessage("이미지 30개 중 "+ finishNumber+ "개 로딩 완료");
+            });
+            return finishNumber;
         });
     }
 
@@ -189,7 +142,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
         for(int i=0; i<30; i++){
             answers[i]= -1;
         }
-}
+    }
     private void initListSelector(){
         for(int i=0; i< listSelector.size(); i++){
             final int _i= i;
@@ -197,11 +150,11 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
                     startMessage.setVisibility(View.GONE);
                     examImage.setVisibility(View.VISIBLE);
 
-                    PhotoViewAttacher attacher= new PhotoViewAttacher(examImage);
+                    ViewUtil.makeCanMagnify(examImage);
                     inputAnswer.setVisibility(View.VISIBLE);
                     saveAnswerBtn.setVisibility(View.VISIBLE);
 
-                    if(currentCursor!= 0){
+                    if(currentCursor!= -1){
                         saveAnswer(inputAnswer.getText().toString());
                     }else{
                         // timer is started when user click exam firstly.
@@ -216,40 +169,48 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
     private void flushInputAnswer(){
         inputAnswer.setText("");
     }
-    private void setExamAnswer(int _i){
-        if(answers[_i]== -1){
+
+    /**
+     * Set Exam answer to inputBox text
+     * @param idx: idx is index. not question number.
+     */
+    private void setExamAnswer(int idx){
+        if(answers[idx]== -1)
             flushInputAnswer();
-        }else{
-            inputAnswer.setText(String.valueOf(answers[_i]));
-        }
-        currentCursor= _i+1;
+        else
+            inputAnswer.setText(String.valueOf(answers[idx]));
+
+        currentCursor= idx;
     }
 
-    private void setExamImage(int _i){
-        examImage.setImageBitmap(examBitmap[_i]);
-
-        float magnifyScale= (float)getActivity().getWindowManager().getDefaultDisplay().getWidth()/(float)examBitmap[_i].getWidth();
-        examImage.getLayoutParams().height= (int)((float)examBitmap[_i].getHeight()* magnifyScale);
-        examImage.getLayoutParams().width= (int)((float)examBitmap[_i].getWidth()* magnifyScale);
-        examImage.requestLayout();
-
-        PhotoViewAttacher attacher= new PhotoViewAttacher(examImage);
-        attacher.update();
+    /**
+     * Set Exam answer to inputBox text
+     * @param idx: idx is index. not question number.
+     */
+    private void setExamImage(int idx){
+        examImage.setImageBitmap(bManager.getBitmap(idx));
+        int displayWidth= getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        ViewUtil.imageViewResize_fillDisplayWidth(displayWidth, bManager.getBitmap(idx), examImage);
+        ViewUtil.makeCanMagnify(examImage);
     }
 
     private void submit(){
-        stopTimer();
+        if(timerUtil!= null){
+            int sec= timerUtil.stopTimer();
 
-        //Convert inputAnswers to ArrayList type
-        ArrayList<Integer> inputAnswerArray= new ArrayList<>();
-        for(int i=0; i<answers.length; i++)
-            inputAnswerArray.add(answers[i]);
+            //Convert inputAnswers to ArrayList type
+            ArrayList<Integer> inputAnswerArray= new ArrayList<>();
+            for(int i=0; i<answers.length; i++)
+                inputAnswerArray.add(answers[i]);
 
-        ExamResultSaver.inst= new ExamResultSaver(inputAnswerArray, sec);
+            ExamResultSaver.inst= new ExamResultSaver(inputAnswerArray, sec);
 
-        //change fragment to resultFragment
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examActivity_container, new ExamResultFragment()).commit();
-        recycleAllBitmaps();
+            //change fragment to resultFragment
+            getActivity().getIntent().putExtra("resultType", "examTry");
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examActivity_container, new ExamResultFragment()).commit();
+        }else{
+            Toast.makeText(getContext(), "아직 첫 문제에 시도하지 않으셨습니다", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void refreshListSelector(){
@@ -259,24 +220,18 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
             }
         }
     }
+
     private void saveAnswer(String input){
+        //Check input is not empty
         if(!input.equals("")){
-            //input is not empty
             String answerString= inputAnswer.getText().toString();
             //Check input is valid
-            if(!AnswerChecker.isValidAnswer(answerString))
+            if(!AnswerUtil.isValidAnswer(answerString))
                 return;
 
-            answers[currentCursor-1]= Integer.valueOf(input);
+            answers[currentCursor]= Integer.valueOf(input);
             refreshListSelector();
-            Toast.makeText(getContext(), currentCursor+ "번 문제의 입력한 답안이 "+ input+ "(으)로 저장되었습니다", Toast.LENGTH_LONG).show();
-        }
-    }
-    private void recycleAllBitmaps(){
-        for(int i=0; i< examBitmap.length; i++){
-            if(examBitmap[i]!= null && !examBitmap[i].isRecycled()){
-                examBitmap[i].recycle();
-            }
+            Toast.makeText(getContext(), (currentCursor+1)+ "번 문제의 입력한 답안이 "+ input+ "(으)로 저장되었습니다", Toast.LENGTH_LONG).show();
         }
     }
     private boolean isAnswerAllChecked(){
@@ -302,8 +257,8 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
         final DialogMaker dialogMaker=  new DialogMaker();
         dialogMaker.setValue(message, "예", "아니오",
                 ()-> {
-                    dialogMaker.dismiss();
                     submit();
+                    dialogMaker.dismiss();
                 }, null);
         dialogMaker.show(getActivity().getSupportFragmentManager(), "Exam Submit?");
     }
@@ -315,13 +270,12 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
     @Override
     public boolean onBackPressed() {
         final DialogMaker dialog= new DialogMaker();
-        dialog.setValue("정말 시험을 그만두고 나가시겠습니까?", "예", "아니오", new DialogMaker.Callback() {
-            @Override
-            public void callbackMethod() {
-                stopTimer();
-                dialog.dismiss();
-                getActivity().finish();
+        dialog.setValue("정말 시험을 그만두고 나가시겠습니까?", "예", "아니오", () -> {
+            if(timerUtil!= null){
+                timerUtil.stopTimer();
             }
+            dialog.dismiss();
+            getActivity().finish();
         }, null);
         dialog.show(getActivity().getSupportFragmentManager(), "Check really want to exit");
         return false;
@@ -329,6 +283,7 @@ public class ExamFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onDestroy() {
         unbinder.unbind();
+        bManager.recycleAllBitmaps();
         super.onDestroy();
     }
 }

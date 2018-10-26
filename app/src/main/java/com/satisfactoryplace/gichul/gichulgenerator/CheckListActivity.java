@@ -8,19 +8,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.satisfactoryplace.gichul.gichulgenerator.adapter.CheckListAdapter;
-import com.satisfactoryplace.gichul.gichulgenerator.model.CheckList;
+import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.CheckListUtil;
 import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by WINDOWS7 on 2018-02-09.
@@ -39,9 +39,6 @@ public class CheckListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Hide ActionBar
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().hide();
 
         setContentView(R.layout.activity_checklist);
         ButterKnife.bind(this);
@@ -50,11 +47,11 @@ public class CheckListActivity extends AppCompatActivity {
 
     private void init(){
         initAdView();
-        initListView(getFilterValue());
+        initListView(Common.getFilterValue(filter));
         filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                initListView(getFilterValue());
+                initListView(Common.getFilterValue(filter));
             }
 
             @Override
@@ -63,93 +60,48 @@ public class CheckListActivity extends AppCompatActivity {
     }
 
     private void initAdView(){
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    //return value is encoded
-    private String getFilterValue(){
-        String subjectFilter= filter.getSelectedItem().toString();
-        //Converting...
-        if(subjectFilter.equals("상관없음")){
-            subjectFilter= null;
-        }else if(subjectFilter.equals("수학(이과)")){
-            subjectFilter= "imath";
-        }else if(subjectFilter.equals("수학(문과)")){
-            subjectFilter= "mmath";
-        }
-        return subjectFilter;
+        Common.initAdView(adView);
     }
 
     private void initListView(String subjectFilter){
-        final ArrayList<Question> checkListData= getFilteredList(subjectFilter);
+        final ArrayList<Question> checkListData= CheckListUtil.getFilteredList(subjectFilter);
 
         CheckListAdapter CheckListAdapter=new CheckListAdapter(getApplicationContext(), R.layout.item_checklist, checkListData);
         checkList.setAdapter(CheckListAdapter);
 
-        // Set Listener
-        checkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent= new Intent(getApplicationContext(), RecheckQuestionActivity.class);
-                intent.putExtra("fileName", checkListData.get(i).getFileName());
-                intent.putExtra("title", checkListData.get(i).getTitle());
-                intent.putExtra("potential", checkListData.get(i).getPotential());
+        // 클릭 시 문제 재확인 가능
+        checkList.setOnItemClickListener((adapterView, view, i, l) -> {
+            Question q= checkListData.get(i);
+            QuestionNameBuilder.inst= new QuestionNameBuilder(q.getPeriod_y(), q.getPeriod_m(), q.getInstitute()
+                    , q.getSubject(), q.getNumber(), q.getPotential(), QuestionNameBuilder.TYPE_ENG);
 
-                startActivity(intent);
-            }
+            Intent intent= new Intent(getApplicationContext(), RecheckQuestionActivity.class);
+            intent.putExtra("memo", q.getMemo());
+            startActivity(intent);
         });
-        checkList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(final AdapterView<?> adapterView, final View view, final int i, long l) {
-                final DialogMaker dialog= new DialogMaker();
-                dialog.setValue("오답노트에서 삭제하시겠습니까?", "예", "아니오",
-                        new DialogMaker.Callback() {
-                            @Override
-                            public void callbackMethod() {
-                                CheckList.getInstance().deleteFromList(checkListData.get(i));
-                                init();
-                                dialog.dismiss();
-                            }
-                        }, null);
-                dialog.show(getSupportFragmentManager(), "Ask to user: Delete this exam?");
-                return true;
-            }
+
+        //삭제 시도
+        checkList.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            final DialogMaker dialog= new DialogMaker();
+            dialog.setValue("오답노트에서 삭제하시겠습니까?", "예", "아니오",
+                    () -> {
+                        CheckListUtil.getInstance().deleteFromList(checkListData.get(i));
+                        init();
+                        dialog.dismiss();
+                    }, null);
+            dialog.show(getSupportFragmentManager(), "Ask to user: Delete this exam?");
+            return true;
         });
     }
 
-    private ArrayList<Question> getFilteredList(String filter){
-        ArrayList<Question> temp= new ArrayList();
-        //Adjust Filter Option
-        if(filter!= null){
-            if(filter.equals("imath")){
-                //수학(이과)
-                for(Question q: CheckList.getInstance().getCheckList()){
-                    if(q.getSubject().equals("imath")){
-                        temp.add(q);
-                    }
-                }
-            }else if(filter.equals("mmath")){
-                //수학(문과)
-                for(Question q: CheckList.getInstance().getCheckList()){
-                    if(q.getSubject().equals("mmath")){
-                        temp.add(q);
-                    }
-                }
-            }
-        }else{
-            //상관없음
-            temp= CheckList.getInstance().getCheckList();
-        }
+    @OnClick(R.id.checkList_random)
+    void clickedRandomBtn(){
+        Question randomQuestion= CheckListUtil.getInstance().getRandomQuestion();
+        QuestionNameBuilder.inst= new QuestionNameBuilder(randomQuestion.getPeriod_y(), randomQuestion.getPeriod_m(), randomQuestion.getInstitute()
+                , randomQuestion.getSubject(), randomQuestion.getNumber(), randomQuestion.getPotential(), QuestionNameBuilder.TYPE_ENG);
 
-        //시간순으로 정렬
-        Collections.sort(temp, new Comparator<Question>() {
-            @Override
-            public int compare(Question e1, Question e2) {
-                return Long.valueOf(e2.getTimeStamp()).compareTo(Long.valueOf(e1.getTimeStamp()));
-            }
-        });
-
-        return temp;
+        Intent intent= new Intent(getApplicationContext(), RecheckQuestionActivity.class);
+        intent.putExtra("memo", randomQuestion.getMemo());
+        startActivity(intent);
     }
 }

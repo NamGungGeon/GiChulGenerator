@@ -1,154 +1,304 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#313131"
-    >
-    <!-- Title -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="수능 수학 종결자"
-        android:gravity="center"
-        android:textSize="25dp"
-        android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:background="#444444"
-        android:layout_alignParentTop="true"
-        android:id="@+id/mainmenu_title"/>
-
-    <!-- Status and Scheduler -->
-    <RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/mainmenu_pagerWrapper"
-        android:layout_below="@id/mainmenu_title"
-        android:layout_above="@+id/bottomMenuWrapper">
-        <ImageView
-            android:id="@+id/status_back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/back"/>
-        <android.support.v4.view.ViewPager
-            android:id="@+id/main_statusPager"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"
-            android:layout_margin="30dp">
-        </android.support.v4.view.ViewPager>
-        <ImageView
-            android:id="@+id/status_next"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:background="@drawable/next"
-            android:layout_alignParentRight="true"/>
-
-        <!-- Schedular -->
-        <TextView
-            android:id="@+id/scheduler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="수능 D-day"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/main_statusPager"
-            android:textSize="21dp"/>
-    </RelativeLayout>
-
-    <!-- Bottom Menu List-->
-    <HorizontalScrollView
-        android:paddingBottom="10dp"
         android:layout_above="@+id/mainmenu_adWrapper"
-        android:scrollbars="none"
-        android:background="#444444"
-        android:id="@+id/bottomMenuWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:fitsSystemWindows="true">
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/htab_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-            <!-- Image Icon -->
-                <Button
-                    android:id="@+id/goToStudy"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/gotostudy_icon"/>
-                <Button
-                    android:id="@+id/searchExam"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/search_icon"/>
-                <Button
-                    android:id="@+id/goToExam"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/goexam_icon"/>
-                <Button
-                    android:id="@+id/examResultBtn"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/examresult_icon"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:id="@+id/checkListBtn"
-                    android:background="@drawable/checklist_icon"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:id="@+id/historyListBtn"
-                    android:background="@drawable/checkhistory_icon"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:id="@+id/freeboard"
-                    android:background="@drawable/freeboard_icon"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/donation_icon"
-                    android:id="@+id/menuList_donation"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/delete_icon"
-                    android:id="@+id/menuList_allHistoryDelete"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:id="@+id/menuList_devInfo"
-                    android:background="@drawable/devinfo_icon"/>
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="5dp"
-                    android:id="@+id/help"
-                    android:background="@drawable/help_icon"/>
-        </LinearLayout>
-    </HorizontalScrollView>
+            android:fitsSystemWindows="true">
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/htab_collapse_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="360dp"
+                android:paddingTop="20dp"
+                android:background="@color/background"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll"
+                app:titleEnabled="false">
 
+                <!-- Status and Scheduler -->
+                <RelativeLayout
+                    android:fitsSystemWindows="true"
+                    app:layout_collapseMode="parallax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mainmenu_pagerWrapper">
+                    <ImageView
+                        android:id="@+id/status_back"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/back"/>
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/main_statusPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="20dp">
+                    </android.support.v4.view.ViewPager>
+                    <ImageView
+                        android:id="@+id/status_next"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/next"
+                        android:layout_alignParentRight="true"/>
+
+                    <!-- Schedular -->
+                    <TextView
+                        android:id="@+id/scheduler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="수능 D-day"
+                        android:textColor="@color/whiteGray"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/main_statusPager"
+                        android:textStyle="bold"
+                        android:textSize="24dp"/>
+                </RelativeLayout>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <!-- Bottom Menu List-->
+        <android.support.v4.widget.NestedScrollView
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/whiteGray"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/goToStudy"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/gotostudy_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="원하는 조건의 문제를 받아 풀어보세요!!"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/searchExam"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/search_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="문제를 검색할 수 있습니다!"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/goToExam"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/goexam_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="시험에 응시하세요!"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/examResultBtn"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/examresult_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="응시한 시험의 결과를 볼 수 있습니다!"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/checkListBtn"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/checklist_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="표시해둔 문제를 다시 풀어보세요!"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/historyListBtn"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/checkhistory_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="지금까지 푼 모든 문제를 확인 할 수 있습니다!"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/menuList_donation"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/donation_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="이 앱이 유용하셨나요?"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/menuList_allHistoryDelete"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/delete_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="모든 기록을 초기화하고 싶으세요?"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/menuList_devInfo"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/devinfo_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="제작자의 정보가 궁금하세요?"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/help"
+                    style="@style/buttonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/help_icon"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="left"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp"
+                        android:text="앱 사용법을 알아보고 싶으세요?"/>
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.CoordinatorLayout>
     <!-- AD -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#444444"
+        android:background="@color/whiteGray"
         android:layout_centerInParent="true"
         android:layout_alignParentBottom="true"
         android:id="@+id/mainmenu_adWrapper">
@@ -156,11 +306,10 @@
             xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:id="@+id/mainmenu_ad"
             android:layout_width="wrap_content"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="ca-app-pub-5333091392909120/9071628017"
             android:layout_height="50dp"
-            android:layout_centerInParent="true"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-5333091392909120/6072450302">
+            android:layout_centerInParent="true">
         </com.google.android.gms.ads.AdView>
     </RelativeLayout>
-
 </RelativeLayout>

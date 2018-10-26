@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,20 +24,26 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.satisfactoryplace.gichul.gichulgenerator.CheckListActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.ExamActivity;
-import com.satisfactoryplace.gichul.gichulgenerator.ExamResultList;
+import com.satisfactoryplace.gichul.gichulgenerator.data.AppDataKeeper;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.ExamResultListUtil;
 import com.satisfactoryplace.gichul.gichulgenerator.ExamResultListActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.data.ExamNameBuilder;
+import com.satisfactoryplace.gichul.gichulgenerator.data.MonthReportGraphDefine;
 import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
 import com.satisfactoryplace.gichul.gichulgenerator.HistoryListActivity;
+import com.satisfactoryplace.gichul.gichulgenerator.data.Schedule;
+import com.satisfactoryplace.gichul.gichulgenerator.data.TodayReportGraphDefine;
+import com.satisfactoryplace.gichul.gichulgenerator.data.TotalReportGraphDefine;
 import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
 import com.satisfactoryplace.gichul.gichulgenerator.R;
 import com.satisfactoryplace.gichul.gichulgenerator.RandomQuestionActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.SearchResultActivity;
 import com.satisfactoryplace.gichul.gichulgenerator.model.AppData;
-import com.satisfactoryplace.gichul.gichulgenerator.model.CheckList;
-import com.satisfactoryplace.gichul.gichulgenerator.model.HistoryList;
-import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.CheckListUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.HistoryListUtil;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.QuestionUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,7 +69,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     private final int SEARCH_ACTIVITY= 1336;
 
     private Unbinder unbinder;
-    private String appVersion= "2.5.1";
+    private String appVersion= "3.0";
 
     BillingProcessor bp;
 
@@ -73,6 +78,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         ViewGroup rootView= (ViewGroup)inflater.inflate(R.layout.frag_mainmenu, container, false);
         unbinder= ButterKnife.bind(this, rootView);
         init();
+
         return rootView;
     }
 
@@ -82,22 +88,36 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         initAdView();
         initBillProcess();
         checkAppVersion();
+        msgCheck();
+    }
+    private void msgCheck(){
+        if(!AppDataKeeper.inst.msg.equals("")){
+            DialogMaker dialog= new DialogMaker();
+            dialog.setValue("알림사항\n\n"+ AppDataKeeper.inst.msg, "닫기", null, null, null);
+            dialog.show(getFragmentManager(), "Notice!!");
+        }
     }
     private void initAdView(){
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        Common.initAdView(adView);
     }
     private void initStatusPager(){
-        statusPager.setAdapter(new FragmentStatePagerAdapter(getActivity().getSupportFragmentManager()) {
+        statusPager.setAdapter(new FragmentStatePagerAdapter(getFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
+                GraphReportFragment gf= new GraphReportFragment();
                 switch(position){
+                    //일별 그래프
                     case 0:
-                        return new TodayReportFragment();
+                        gf.setGraphDefine(new TodayReportGraphDefine());
+                        return gf;
+                    //월별 문제풀이 분석
                     case 1:
-                        return new MonthReportFragment();
+                        gf.setGraphDefine(new MonthReportGraphDefine());
+                        return gf;
+                    //전체 문제풀이 분석
                     case 2:
-                        return new TotalReportFragment();
+                        gf.setGraphDefine(new TotalReportGraphDefine());
+                        return gf;
                     default:
                         return null;
                 }
@@ -141,7 +161,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         String between= "";
         SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
         try {
-            String sunung= getActivity().getIntent().getStringExtra("schedule");
+            String sunung= Schedule.sunungDate;
             Date sunungDate= format.parse(sunung);
 
             long currentDate= Calendar.getInstance().getTime().getTime();
@@ -165,29 +185,12 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
         bp= new BillingProcessor(getContext(), key, this);
     }
 
-    private boolean isValidPeriod(String period_y, String period_m){
-        int y= Integer.valueOf(period_y);
-        int m= Integer.valueOf(period_m);
-        if(y> 2018 || y< 2015){
-            return false;
-        }
-        if(m> 11 || m<3){
-            return false;
-        }
-
-        // 이 버전에서는 2018년 6월 시험까지 지원
-        if(y== 2018 && m>6){
-            return false;
-        }
-
-        return true;
-    }
     private void checkAppVersion(){
-        if(appVersion.equals(AppData.currentVersion)== false){
+        if(appVersion.equals(AppDataKeeper.inst.currentVersion)== false){
             String message;
             message= "앱이 최신 버전이 아닙니다.\n업데이트가 필요합니다.\n\n";
             message+= "현재 설치된 앱 버전: "+ appVersion+ "\n";
-            message+= "최신 앱 버전: "+ AppData.currentVersion;
+            message+= "최신 앱 버전: "+ AppDataKeeper.inst.currentVersion;
 
             final DialogMaker dialog= new DialogMaker();
             dialog.setValue(message, "업데이트", "닫기", new DialogMaker.Callback() {
@@ -228,23 +231,21 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     @OnClick(R.id.menuList_allHistoryDelete)
     void deleteAllData(){
         final DialogMaker dialog= new DialogMaker();
-        dialog.setValue("사용자의 모든 정보를 삭제하시겠습니까? (복구 불가)", "예", "아니오", new DialogMaker.Callback() {
-            @Override
-            public void callbackMethod() {
-                CheckList.getInstance().deleteAllData();
-                HistoryList.getInstance().deleteAllData();
-                ExamResultList.getInstance().deleteAllData();
+        dialog.setValue("정말로 사용자의 모든 정보를 삭제하시겠습니까?\n(복구 불가)", "예", "아니오", () -> {
+            CheckListUtil.getInstance().deleteAllData();
+            HistoryListUtil.getInstance().deleteAllData();
+            ExamResultListUtil.getInstance().deleteAllData();
 
-                Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                init();
-                dialog.dismiss();
-            }
+            Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+            init();
+            dialog.dismiss();
         }, null);
         dialog.show(getActivity().getSupportFragmentManager(), "");
     }
 
     @OnClick(R.id.searchExam)
     void searchQuestion(){
+
         final DialogMaker dialog= new DialogMaker();
         View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_search, null);
 
@@ -288,7 +289,6 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
@@ -299,11 +299,11 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
                 String selectedSubj = subject.getSelectedItem().toString();
                 String selectedNum = number.getSelectedItem().toString();
 
-                if (!isValidPeriod(selectedY, selectedM)) {
-                    Toast.makeText(getContext(), "2018년 6월 평가원 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
+                if (!QuestionUtil.isValidPeriod(selectedY, selectedM)) {
+                    Toast.makeText(getContext(), "2018년 10월 교육청 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                QuestionNameBuilder.inst= new QuestionNameBuilder(selectedY, selectedM, selectedInst, selectedSubj, selectedNum, QuestionNameBuilder.TYPE_KOR);
+                QuestionNameBuilder.inst= new QuestionNameBuilder(selectedY, selectedM, selectedInst, selectedSubj, selectedNum, "NOT_DEFINED", QuestionNameBuilder.TYPE_KOR);
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), SearchResultActivity.class);
                 startActivityForResult(intent, SEARCH_ACTIVITY);
@@ -330,7 +330,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
             String periodOption= (String)periodSpinner.getSelectedItem();
 
             if(periodOption.equals("2018")){
-                Toast.makeText(getContext(), "2018년 6월 평가원 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "2018년 10월 교육청 시험까지 지원됩니다.", Toast.LENGTH_SHORT).show();
                 if(instOption.equals("수능")){
                     return;
                 }
@@ -351,17 +351,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
 
     @OnClick(R.id.menuList_devInfo)
     void devInfo(){
-        final DialogMaker dialog= new DialogMaker();
-        View childView= getActivity().getLayoutInflater().inflate(R.layout.dialog_devinfo, null);
-        final TextView blogLink= childView.findViewById(R.id.devInfo_blogLink);
-        blogLink.setOnClickListener(v -> {
-            String url = blogLink.getText().toString();
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
-        });
-        dialog.setValue(null, null, null, null, null, childView);
-        dialog.show(getActivity().getSupportFragmentManager(), "Open Developer Information");
+        Common.openUrl(getContext(), "http://satisfaction.dothome.co.kr/MyWebPage/MainPage.html");
     }
 
     @OnClick(R.id.menuList_donation)
@@ -421,7 +411,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
 
                     ExamNameBuilder.inst= new ExamNameBuilder(selectedY, selectedM, selectedInst, selectedSubj, QuestionNameBuilder.TYPE_KOR);
 
-                    if(!isValidPeriod(selectedY, selectedM)){
+                    if(!QuestionUtil.isValidPeriod(selectedY, selectedM)){
                         Toast.makeText(getContext(), "2018년 6월 시험까지만 지원됩니다.", Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -443,9 +433,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     @OnClick(R.id.help)
     void clickHelpBtn(){
         String url = "http://satisfactoryplace.tistory.com/47";
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
+        Common.openUrl(getContext(), url);
     }
 
     @Override
@@ -458,7 +446,7 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        init();
+        initStatusPager();
     }
     @Override
     public boolean onBackPressed() {
@@ -478,7 +466,9 @@ public class MainPageFragment extends Fragment implements OnBackPressedListener,
 
     @Override
     public void onBillingError(int errorCode, @Nullable Throwable error) {
-        Toast.makeText(getContext(), "결제 시스템에 에러가 발생하였습니다.\n에러코드: "+ errorCode, Toast.LENGTH_SHORT).show();
+        getActivity().runOnUiThread(()->{
+            Toast.makeText(getContext(), "결제 시스템에 에러가 발생하였습니다.\n에러코드: "+ errorCode, Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override

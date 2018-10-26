@@ -7,8 +7,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         multiDexEnabled true  // this line will solve this problem
-        versionCode 14
-        versionName "2.5.1"
+        versionCode 15
+        versionName "3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

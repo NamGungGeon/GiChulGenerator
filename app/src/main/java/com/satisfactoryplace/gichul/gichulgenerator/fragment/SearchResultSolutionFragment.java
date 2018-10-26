@@ -2,12 +2,10 @@ package com.satisfactoryplace.gichul.gichulgenerator.fragment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +20,15 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
+import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
+import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionResultSaver;
 import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 import com.satisfactoryplace.gichul.gichulgenerator.R;
-import com.satisfactoryplace.gichul.gichulgenerator.model.CheckList;
-import com.satisfactoryplace.gichul.gichulgenerator.model.HistoryList;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.CheckListUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.HistoryListUtil;
 import com.satisfactoryplace.gichul.gichulgenerator.model.Question;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.BitmapManager;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
 
 import butterknife.BindView;
@@ -59,26 +61,29 @@ public class SearchResultSolutionFragment extends Fragment {
     private final int EXAM= 1235;
     private int imageStatus= SOLUTION;
 
+    private BitmapManager bManager= new BitmapManager();
+
+    private QuestionNameBuilder qn= QuestionNameBuilder.inst;
+    private QuestionResultSaver qs= QuestionResultSaver.inst;
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.frag_searchresult_solution, container, false);
         unbinder= ButterKnife.bind(this, rootView);
-
-        loadAnswer();
+        init();
 
         return rootView;
     }
 
-    //Will be called after all load is finished
-    //load order: answer-> questionImage-> examImage
     private void loadAnswer(){
-        Intent intent= getActivity().getIntent();
-        String answerPath= "answer/" + intent.getStringExtra("period_y") + "/" +intent.getStringExtra("institute")+ "/"+ intent.getStringExtra("period_m") + "/" +intent.getStringExtra("subject") + "/" + intent.getStringExtra("number");
+        String answerPath= qn.createRightAnswerPath();
         FirebaseConnection.getInstance().loadData(answerPath, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 rightAnswer= snapshot.getValue().toString();
-                inputAnswer= getActivity().getIntent().getStringExtra("inputAnswer");
-                loadSolutionImage();
+                inputAnswer= qs.input;
+
+                checkAnswer();
+                saveHistory();
             }
 
             @Override
@@ -87,15 +92,18 @@ public class SearchResultSolutionFragment extends Fragment {
             }
         });
     }
+    private void loadImages(){
+        loadQuestionImage();
+        loadSolutionImage();
+    }
     private void loadSolutionImage(){
-        Intent intent= getActivity().getIntent();
-        String solutionPath= intent.getStringExtra("basicFileName")+"/"+ "a_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
-        Log.i("Solution Image Path", solutionPath);
+        String solutionPath= qn.createImagePath(QuestionNameBuilder.TYPE_A);
 
-        FirebaseConnection.getInstance().loadImage("exam/" + solutionPath, solution, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+        FirebaseConnection.getInstance().loadImage(solutionPath, solution, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success(Bitmap bitmap) {
-                loadQuestionImage();
+                loadingOff();
+                bManager.addBitmap(bitmap);
             }
 
             @Override
@@ -106,14 +114,11 @@ public class SearchResultSolutionFragment extends Fragment {
         });
     }
     private void loadQuestionImage(){
-        Intent intent= getActivity().getIntent();
-        String questionPath= intent.getStringExtra("basicFileName")+"/"+ "q_"+ intent.getStringExtra("basicFileName")+ "_"+ intent.getStringExtra("number");
-        FirebaseConnection.getInstance().loadImage("exam/" + questionPath, question, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
+        String questionPath= qn.createImagePath(QuestionNameBuilder.TYPE_Q);
+        FirebaseConnection.getInstance().loadImage(questionPath, question, getActivity().getApplicationContext(), new FirebaseConnection.ImageLoadFinished() {
             @Override
             public void success(Bitmap bitmap) {
-                loadingContainer.setVisibility(View.GONE);
-                solutionContainer.setVisibility(View.VISIBLE);
-                init();
+                bManager.addBitmap(bitmap);
             }
 
             @Override
@@ -123,18 +128,22 @@ public class SearchResultSolutionFragment extends Fragment {
             }
         });
     }
+    private void loadingOff(){
+        loadingContainer.setVisibility(View.GONE);
+        solutionContainer.setVisibility(View.VISIBLE);
+    }
 
     private void init(){
-        title.setText(getActivity().getIntent().getStringExtra("title"));
-
+        initTitle();
         initAdView();
-        checkAnswer();
-        saveHistory();
+        loadAnswer();
+        loadImages();
+    }
+    private void initTitle(){
+        title.setText(qn.createTitileText());
     }
     private void initAdView(){
-        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        Common.initAdView(adView);
     }
 
     private void checkAnswer(){
@@ -149,12 +158,9 @@ public class SearchResultSolutionFragment extends Fragment {
         }
     }
     private void saveHistory(){
-        int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-        String basicFileName= getActivity().getIntent().getStringExtra("basicFileName");
-
-        HistoryList.getInstance().addToList(
-                new Question(getActivity().getIntent().getStringExtra("title"), basicFileName+ "_"+ getActivity().getIntent().getStringExtra("number"),
-                getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), ""));
+        HistoryListUtil.getInstance().addToList(
+                new Question(qn.createTitileText(), qn.createFileName(),
+                qn.potential, inputAnswer, rightAnswer, String.valueOf(qs.t_sec), ""));
     }
 
     @OnClick(R.id.searchResult_solution_changeImageBtn)
@@ -173,42 +179,22 @@ public class SearchResultSolutionFragment extends Fragment {
     }
     @OnClick(R.id.searchResult_solution_addToCheckListBtn)
     void saveCheckList(){
-        final DialogMaker dialog= new DialogMaker();
-        final View childView= getLayoutInflater().inflate(R.layout.dialog_addtochecklist, null);
-
-        dialog.setValue("문제를 오답노트에 추가합니다.", "저장", "취소", new DialogMaker.Callback() {
-            @Override
-            public void callbackMethod() {
-                EditText memoBox= childView.findViewById(R.id.memoBox);
-                int totalTime_sec= getActivity().getIntent().getIntExtra("min", 0)*60+ getActivity().getIntent().getIntExtra("sec", 0);
-                CheckList.getInstance()
-                        .addToList(new Question(getActivity().getIntent().getStringExtra("title"), getActivity().getIntent().getStringExtra("basicFileName")+ "_"+ getActivity().getIntent().getStringExtra("number"),
-                                getActivity().getIntent().getStringExtra("potential"), inputAnswer, rightAnswer, String.valueOf(totalTime_sec), memoBox.getText().toString()));
-                dialog.dismiss();
-                Toast.makeText(getContext(), "오답노트에 저장되었습니다", Toast.LENGTH_SHORT).show();
-            }
-        }, null, childView);
-        dialog.show(getActivity().getSupportFragmentManager(), "addToCheckList");
+        Question currentQuestion= new Question(qn.createTitileText(), qn.createFileName(),
+                qn.potential, inputAnswer, rightAnswer, String.valueOf(qs.t_sec), "");
+        CheckListUtil.saveQuestion(currentQuestion, this);
     }
+
     @OnClick(R.id.searchResult_searchSolution)
     void searchSolution(){
         Toast.makeText(getContext(), "ebs 강의 검색 페이지로 이동합니다. (로그인 필요)", Toast.LENGTH_SHORT).show();
 
         String url = "http://www.ebsi.co.kr/ebs/xip/xipa/retrieveSCVLastExamList.ebs";
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
+        Common.openUrl(getContext(), url);
     }
 
     @Override
     public void onDestroy() {
-        if(question.getDrawable()!= null){
-            ((BitmapDrawable)question.getDrawable()).getBitmap().recycle();
-        }
-        if(question.getDrawable()!= null){
-            ((BitmapDrawable)question.getDrawable()).getBitmap().recycle();
-        }
-
+        bManager.recycleAllBitmaps();
         unbinder.unbind();
         super.onDestroy();
     }

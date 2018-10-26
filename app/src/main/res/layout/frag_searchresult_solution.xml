@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/searchResult_solution_loadingContainer"
         android:layout_width="match_parent"
-        android:background="#444444"
+        android:background="@color/background"
         android:layout_height="match_parent">
         <ProgressBar
             android:layout_width="60dp"
@@ -33,11 +33,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title"
             android:layout_marginBottom="15dp"
             android:textColor="#FFFFFF"
             android:textSize="20dp"
-            android:background="#444444"
+            android:background="@color/background"
             android:padding="15dp"
             android:id="@+id/searchResult_solution_title"/>
         <ScrollView
@@ -78,12 +77,12 @@
             android:layout_above="@+id/searchResult_solution_adWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#444444"
+            android:background="@color/background"
             android:orientation="horizontal">
             <Button
                 android:layout_weight="1"
                 android:id="@+id/searchResult_searchSolution"
-                android:background="#444444"
+                android:background="@color/background"
                 android:textColor="#FFFFFF"
                 android:text= "해설강의 검색"
                 android:layout_width="wrap_content"
@@ -91,7 +90,7 @@
             <Button
                 android:layout_weight="1"
                 android:id="@+id/searchResult_solution_addToCheckListBtn"
-                android:background="#444444"
+                android:background="@color/background"
                 android:textColor="#FFFFFF"
                 android:text= "오답노트에 추가"
                 android:layout_width="wrap_content"
@@ -101,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/searchResult_solution_changeImageBtn"
-                android:background="#444444"
+                android:background="@color/background"
                 android:textColor="#FFFFFF"
                 android:text="문제 다시 확인"/>
         </LinearLayout>
@@ -110,17 +109,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="#444444"
+            android:background="@color/background"
             android:id="@+id/searchResult_solution_adWrapper">
             <com.google.android.gms.ads.AdView
+                ads:adSize="SMART_BANNER"
+                ads:adUnitId="ca-app-pub-5333091392909120/9071628017"
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/searchResultSolution_ad"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-5333091392909120/7880734576">
+                android:layout_centerHorizontal="true">
             </com.google.android.gms.ads.AdView>
         </RelativeLayout>
     </RelativeLayout>

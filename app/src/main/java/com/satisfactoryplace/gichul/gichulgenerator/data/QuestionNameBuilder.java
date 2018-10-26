@@ -9,6 +9,11 @@ public class QuestionNameBuilder {
     public static final int TYPE_KOR= 2222;
     public static final int TYPE_ENG= 3333;
 
+    public static final int TYPE_Q= 13324;
+    public static final int TYPE_A= 12233;
+
+    public static final String UNDEFINED= "UNDEFINED";
+
     public String y;
     public String m;
     public String k_inst;
@@ -26,11 +31,7 @@ public class QuestionNameBuilder {
                 break;
             case TYPE_ENG:
                 this.e_inst= inst;
-                this.e_inst= sub;
-                break;
-            default:
-                Log.d("Invalid String type", "QuestionNameBuilder's constructor parameter is invalid");
-                System.exit(-1);
+                this.e_sub= sub;
                 break;
         }
 
@@ -43,7 +44,25 @@ public class QuestionNameBuilder {
 
     public void initInstAndSub(){
         if(k_inst== null && k_sub== null){
-
+            switch (e_inst){
+                case "sunung":
+                    k_inst= "대학수학능력평가시험";
+                    break;
+                case "gyoyuk":
+                    k_inst= "교육청";
+                    break;
+                case "pyeong":
+                    k_inst= "교육과정평가원";
+                    break;
+            }
+            switch (e_sub){
+                case "imath":
+                    k_sub= "수학(이과)";
+                    break;
+                case "mmath":
+                    k_sub= "수학(문과)";
+                    break;
+            }
         }else if(e_inst== null&& e_sub== null){
             //generate e_inst
             switch (k_inst){
@@ -70,10 +89,37 @@ public class QuestionNameBuilder {
             }
         }
     }
+    public String createImagePath(int type){
+        String path= "exam/"+ y+ "_"+ m+ "_"+ e_inst+ "_"+ e_sub+ "/"+ createFileName(type);
+        return path;
+    }
+    public String createFileName(int type){
+        switch (type){
+            case TYPE_A:
+                return "a_"+ createFileName();
+            case TYPE_Q:
+                return "q_"+ createFileName();
+            default:
+                return createFileName();
+        }
+    }
     public String createFileName(){
         return y+ "_"+ m+ "_"+ e_inst+ "_"+ e_sub+ "_"+ number;
     }
     public String createTitileText(){
         return y+ "년 "+ k_inst+ "\n"+ k_sub+ "과목 "+ m+ "월 시험 "+ number+ "번 문제";
+    }
+    public String createPotentialPath(){
+        String path;
+        if(number.equals(UNDEFINED)){
+            path= "potential/" + y + "/" + e_inst+ "/"+ m + "/" + e_sub;
+        }else{
+            path= "potential/" + y + "/" + e_inst+ "/"+ m + "/" + e_sub + "/" + number;
+        }
+        return path;
+    }
+    public String createRightAnswerPath(){
+        String path= "answer/" + y + "/" + e_inst+ "/"+ m + "/" + e_sub + "/" + number;
+        return path;
     }
 }

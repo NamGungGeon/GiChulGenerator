@@ -25,13 +25,17 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DataSnapshot;
 import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionNameBuilder;
 import com.satisfactoryplace.gichul.gichulgenerator.data.QuestionResultSaver;
+import com.satisfactoryplace.gichul.gichulgenerator.model.ErrorInfo;
 import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
 import com.satisfactoryplace.gichul.gichulgenerator.R;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.AsyncTaskUtil;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.DialogMaker;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.ErrorReportUtil;
 import com.satisfactoryplace.gichul.gichulgenerator.utils.QuestionUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.TimerUtil;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,9 +60,7 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
     @BindView(R.id.randomQuestion_ad) AdView adView;
 
-    private int sec= 0;
-    private boolean isRunningTimer= true;
-
+    private TimerUtil timerUtil= null;
     private int questionType;
     private final int choiceType= 1511;
     private final int inputType= 1512;
@@ -84,23 +86,39 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
     //After end to load potentials, will call init().
     private void init(){
+        //Selected value in Spinner
         String selectedSubj= getActivity().getIntent().getStringExtra("subj");
         String selectedPoten= getActivity().getIntent().getStringExtra("prob");
         String selectedInst= getActivity().getIntent().getStringExtra("inst");
         String selectedY= getActivity().getIntent().getStringExtra("peri");
 
-        String e_inst= QuestionUtil.create_eInst(selectedInst);
-        String k_inst= QuestionUtil.create_kInst(e_inst);
-        String m= QuestionUtil.createPeriodM(e_inst);
+        if(selectedY.equals("2015~2017")){
+            String yList[]= {"2015", "2016", "2017"};
+            selectedY= yList[new Random().nextInt(yList.length)];
+        }
 
-        qnBuilder= new QuestionNameBuilder(selectedY, m, k_inst, selectedSubj, "NOT DEFINED", "NOT DEFINED", QuestionNameBuilder.TYPE_KOR);
-        String path= "potential/" + qnBuilder.y + "/" + qnBuilder.e_inst + "/" + qnBuilder.m + "/" + qnBuilder.e_sub;
+        String e_inst= QuestionUtil.create_eInst(selectedY, selectedInst);
+        String k_inst= QuestionUtil.create_kInst(e_inst);
+        String m= QuestionUtil.createPeriodM(selectedY, e_inst);
+
+        QuestionNameBuilder.inst= new QuestionNameBuilder(selectedY, m, k_inst, selectedSubj, QuestionNameBuilder.UNDEFINED
+                , QuestionNameBuilder.UNDEFINED, QuestionNameBuilder.TYPE_KOR);
+        qnBuilder= QuestionNameBuilder.inst;
 
         //Potential Load
-        loadPotentials(path, new FirebaseConnection.Callback() {
+        loadPotentials(selectedPoten);
+    }
+    private void initPotentialText(){
+        potential.setText(QuestionUtil.getPotentialText(Integer.valueOf(qnBuilder.potential)));
+    }
+
+    private void loadPotentials(String selectedPoten){
+        String path= qnBuilder.createPotentialPath();
+        FirebaseConnection.getInstance().loadData(path, new FirebaseConnection.Callback() {
             @Override
             public void success(DataSnapshot snapshot) {
                 ArrayList<Long> temp= (ArrayList<Long>)snapshot.getValue();
+
                 for(int i=1; i<temp.size(); i++){
                     potentialList.put(String.valueOf(i), String.valueOf(temp.get(i)));
                 }
@@ -124,19 +142,8 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
             }
         });
     }
-    private void initPotentialText(){
-        potential.setText(QuestionUtil.getPotentialText(Integer.valueOf(qnBuilder.potential)));
-    }
-
-    private void loadPotentials(String path, FirebaseConnection.Callback callback){
-        FirebaseConnection.getInstance().loadData(path, callback);
-    }
     private void loadQuestionImage(){
-        String examFileName= qnBuilder.createFileName();
-        String path= "exam" +
-                        "/" +qnBuilder.y + "_" + qnBuilder.m + "_" + qnBuilder.e_inst + "_" + qnBuilder.e_sub
-                        + "/q_" + examFileName;
-
+        String path= qnBuilder.createImagePath(QuestionNameBuilder.TYPE_Q);
         FirebaseConnection.getInstance().loadImage(path, questionImage, getContext(), new FirebaseConnection.ImageLoadFinished() {
                     @Override
                     public void success(Bitmap bitmap) {
@@ -151,13 +158,11 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
                         getActivity().finish();
                     }
                 });
-        Common.makeCanMagnify(questionImage);
+        ViewUtil.makeCanMagnify(questionImage);
     }
 
     private void initAdView(){
-        MobileAds.initialize(getContext(), "ca-app-pub-5333091392909120~5084648179");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        Common.initAdView(adView);
     }
 
     private void initAnswerType(){
@@ -175,29 +180,13 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         title.setText(qnBuilder.createTitileText());
     }
     private void startTimer(){
-        AsyncTaskUtil.startAsyncTask(()->{
-            sec= -1;
-            while(isRunningTimer){
-                sec++;
-                getActivity().runOnUiThread(()->refreshTimer(sec));
-
-                try {
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    Toast.makeText(getContext(), "스레드 오류\n"+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-            }
+        timerUtil= new TimerUtil(getActivity(), timer);
+        timerUtil.startTimer((Exception e)->{
+            ErrorReportUtil.report(new ErrorInfo(e.toString(), "타이머 스레드 오류", "ExamFragment"));
+            getActivity().runOnUiThread(()->{
+                Toast.makeText(getContext(), "타이머 스레드 오류\n"+ e.toString(), Toast.LENGTH_SHORT).show();
+            });
         });
-    }
-    private void refreshTimer(int sec){
-        int min= sec/60;
-        sec= sec%60;
-        timer.setText(String.valueOf(min)+ "분 "+ String.valueOf(sec%60)+ "초");
-    }
-
-    private void stopTimer(){
-        isRunningTimer= false;
     }
 
     @NonNull
@@ -237,20 +226,22 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
         return result;
     }
     private void submit(){
-        stopTimer();
-        QuestionResultSaver.inst= new QuestionResultSaver(getUserAnswer(), sec);
+        if(timerUtil!= null){
+            int sec= timerUtil.stopTimer();
+            QuestionResultSaver.inst= new QuestionResultSaver(getUserAnswer(), sec);
 
-        // Go ResultPage
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionSolutionFragment()).commit();
+            // Go ResultPage
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionSolutionFragment()).commit();
+        }
     }
 
     @OnClick(R.id.regenerateBtn)
     void regenerateQuestion(){
-        stopTimer();
+        timerUtil.stopTimer();
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.examContainer, new RandomQuestionFragment()).commit();
     }
     @OnClick(R.id.submit)
-    void recheckAnswer(){
+    void clickedSubmitBtn(){
         if(getUserAnswer().equals("")){
             //No exist inputAnswer
             Toast.makeText(getContext(), "아직 정답을 입력하지 않으셨습니다", Toast.LENGTH_SHORT).show();
@@ -267,14 +258,13 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
 
     @Override
     public boolean onBackPressed() {
-        stopTimer();
+        if(timerUtil!= null){
+            timerUtil.stopTimer();
+        }
         return true;
     }
     @Override
     public void onDestroy() {
-        if(questionImage.getDrawable()!= null && ((BitmapDrawable)questionImage.getDrawable()).getBitmap().isRecycled()== false){
-            ((BitmapDrawable)questionImage.getDrawable()).getBitmap().recycle();
-        }
         unbinder.unbind();
         super.onDestroy();
     }

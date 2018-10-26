@@ -36,7 +36,7 @@ public class ExamResultListAdapter extends BaseAdapter {
     @Override
     public int getCount(){return data.size();}
     @Override
-    public String getItem(int position){return data.get(position).getTitle();}
+    public String getItem(int position){return data.get(position).title;}
     @Override
     public long getItemId(int position){return position;}
     @Override
@@ -50,7 +50,7 @@ public class ExamResultListAdapter extends BaseAdapter {
 
         ExamResult er= data.get(position);
 
-        title.setText(er.getTitle());
+        title.setText(er.title);
         initInfoText(info, er);
 
         return convertView;
@@ -63,15 +63,15 @@ public class ExamResultListAdapter extends BaseAdapter {
     }
     private String getTimeInfo(ExamResult er){
 
-        int sec= er.getRunningTime()%60;
-        int min= er.getRunningTime()/60;
+        int sec= er.runningTime%60;
+        int min= er.runningTime/60;
 
         return min+ "분 "+ sec+ "초 소요";
     }
     private String getRightNumberInfo(ExamResult er){
         int rightAnswerNumber= 0;
         for(int i=0; i<30; i++){
-            if(er.getInputAnswers().get(i)== er.getRightAnswers().get(i+1)){
+            if(er.inputAnswers.get(i)== er.rightAnswers.get(i+1)){
                 rightAnswerNumber++;
             }
         }
@@ -79,7 +79,7 @@ public class ExamResultListAdapter extends BaseAdapter {
     }
     private String getDateInfo(ExamResult er){
         Calendar calendar= Calendar.getInstance();
-        calendar.setTimeInMillis(er.getTimeStamp());
+        calendar.setTimeInMillis(er.timeStamp);
         return calendar.get(Calendar.YEAR)+ "년 "+ (calendar.get(Calendar.MONTH)+1)+ "월 "
                 + calendar.get(Calendar.DAY_OF_MONTH)+ "일에 응시한 시험입니다.";
     }

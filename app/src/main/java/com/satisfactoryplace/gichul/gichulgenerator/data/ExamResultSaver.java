@@ -13,4 +13,5 @@ public class ExamResultSaver {
         this.inputAnswers = inputAnswers;
         this.t_sec = t_sec;
     }
+
 }

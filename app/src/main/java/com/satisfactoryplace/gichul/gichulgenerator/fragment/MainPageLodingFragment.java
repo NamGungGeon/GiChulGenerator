@@ -20,7 +20,6 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,17 +27,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.satisfactoryplace.gichul.gichulgenerator.ExamResultList;
-import com.satisfactoryplace.gichul.gichulgenerator.server.FirebaseConnection;
 import com.satisfactoryplace.gichul.gichulgenerator.model.OnBackPressedListener;
 import com.satisfactoryplace.gichul.gichulgenerator.R;
-import com.satisfactoryplace.gichul.gichulgenerator.model.AppData;
-import com.satisfactoryplace.gichul.gichulgenerator.model.CheckList;
-import com.satisfactoryplace.gichul.gichulgenerator.model.HistoryList;
-import com.satisfactoryplace.gichul.gichulgenerator.model.Status;
-
-import java.util.HashMap;
+import com.satisfactoryplace.gichul.gichulgenerator.utils.Common;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +40,7 @@ import butterknife.ButterKnife;
 
 public class MainPageLodingFragment extends Fragment implements OnBackPressedListener {
 
+    private int loadingNumber= 0;
     private final int LOGIN_GOOGLE=1235;
 
     private GoogleSignInOptions gso=null;
@@ -78,12 +70,9 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
         // options specified by gso.
 
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(getContext(), "로그인 실패. 다시 시도하세요.", Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
-                    }
+                .enableAutoManage(getActivity(), connectionResult -> {
+                    Toast.makeText(getContext(), "로그인 실패. 다시 시도하세요.", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
                 }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -113,86 +102,15 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
     }
 
     private void loadDataFromServer(){
-        //Start to connection firebase and Load data
-        //Load CheckList
-        loadingText.setText("오답노트 가져오는 중...");
-        CheckList.getInstance().loadCheckListFromServer(new CheckList.Callback() {
-            @Override
-            public void success() {
-                loadingText.setText("문제 기록 가져오는 중...");
-                //Load HistoryList
-                HistoryList.getInstance().loadHistoryListFromServer(new HistoryList.Callback() {
-                    @Override
-                    public void success() {
-                        //Load Schedule
-                        loadingText.setText("일정 가져오는 중...");
-                        FirebaseConnection.getInstance().loadData("appdata/schedule/sunung", new FirebaseConnection.Callback() {
-                            @Override
-                            public void success(DataSnapshot snapshot) {
-                                getActivity().getIntent().putExtra("schedule", (String)snapshot.getValue());
-                                loadingText.setText("사용자 정보 가져오는 중...");
-                                //Load UserStatus
-                                FirebaseConnection.getInstance().loadData("userdata/" + FirebaseAuth.getInstance().getUid() + "/status", new FirebaseConnection.Callback() {
-                                    @Override
-                                    public void success(DataSnapshot snapshot) {
-                                        Status.setValues((HashMap<String, String>)snapshot.getValue());
-                                        loadingText.setText("앱 정보 가져오는 중...");
-                                        //Load AppData
-                                        FirebaseConnection.getInstance().loadData("appdata/", new FirebaseConnection.Callback() {
-                                            @Override
-                                            public void success(DataSnapshot snapshot) {
-                                                AppData.setValue((HashMap<String, String>)snapshot.getValue());
-                                                loadingText.setText("시험 결과 가져오는 중...");
-                                                ExamResultList.getInstance().loadExamResultListFromFirebase(new ExamResultList.Callback() {
-                                                    @Override
-                                                    public void success() {
-                                                        loadingText.setText("잠시만 기다려주세요...");
-                                                        openFullSizeAd();
-                                                    }
+        openFullSizeAd();
 
-                                                    @Override
-                                                    public void fail() {
-                                                        Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                                                        getActivity().finish();
-                                                    }
-                                                });
-                                            }
-                                            @Override
-                                            public void fail(String errorMessage) {
-                                                Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                                                getActivity().finish();
-                                            }
-                                        });
-                                    }
+        loadingText.setText("데이터 로딩 중입니다... (6개 중 "+ loadingNumber+ "개 완료)");
 
-                                    @Override
-                                    public void fail(String errorMessage) {
-                                        Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                                        getActivity().finish();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void fail(String errorMessage) {
-                                Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                                getActivity().finish();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void fail() {
-                        Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
-                    }
-                });
-            }
-            @Override
-            public void fail() {
-                Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
-                getActivity().finish();
-            }
+        Common.loadBaseData(()->{
+            Toast.makeText(getContext(), "데이터베이스 통신 실패. 다시 시작하세요.", Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        }, ()->{
+            loadingProgress();
         });
     }
     private void openFullSizeAd(){
@@ -208,11 +126,21 @@ public class MainPageLodingFragment extends Fragment implements OnBackPressedLis
 
             @Override
             public void onAdClosed() {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
                 super.onAdClosed();
             }
         });
     }
+    private synchronized void loadingProgress(){
+        loadingNumber++;
+        loadingText.setText("데이터 로딩 중입니다... (6개 중 "+ loadingNumber+ "개 완료)");
+
+        if(loadingNumber== 6){
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.mainContainer, new MainPageFragment(), "mainPage").commit();
+        }
+    }
+
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Firebase Auth", "firebaseAuthWithGoogle:" + acct.getId());
 

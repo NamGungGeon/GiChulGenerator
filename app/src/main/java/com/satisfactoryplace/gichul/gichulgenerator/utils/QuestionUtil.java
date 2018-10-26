@@ -1,13 +1,35 @@
 package com.satisfactoryplace.gichul.gichulgenerator.utils;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.satisfactoryplace.gichul.gichulgenerator.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 public class QuestionUtil {
+
+    public static boolean isValidPeriod(String period_y, String period_m){
+        int y= Integer.valueOf(period_y);
+        int m= Integer.valueOf(period_m);
+        if(y> 2018 || y< 2015){
+            return false;
+        }
+        if(m> 11 || m<3){
+            return false;
+        }
+
+        // 이 버전에서는 2018년 6월 시험까지 지원
+        if(y== 2018 && m>10){
+            return false;
+        }
+
+        return true;
+    }
     public static String getPotentialText(int potential){
         String result;
         if(potential>=80){
@@ -21,55 +43,76 @@ public class QuestionUtil {
         }else{
             result= "매우낮음";
         }
-        return result;
+        return "정답률: "+ result;
     }
 
     @NonNull
-    public static String createPeriodM(@NonNull String inst){
+    public static String createPeriodM(@NonNull String y, @NonNull String inst){
         String m= null;
-        String mList[]= {};
-        switch (inst){
-            case "sunung":
-                m= "11";
-                break;
-            case "gyoyuk":
-                mList= new String[]{"3", "4", "7", "10"};
-                m= mList[new Random().nextInt(mList.length)];
-                break;
-            case "pyeong":
-                mList= new String[]{"6", "9"};
-                m= mList[new Random().nextInt(mList.length)];
-                break;
-            case "상관없음":
-
-            default:
-                Log.d("QuestionUtil", "createPeriodM's parameter inst is invalid");
-                break;
+        String mList[];
+        if(y.equals("2018")){
+            switch (inst){
+                case "gyoyuk":
+                    mList= new String[]{"3", "4", "7", "10"};
+                    m= mList[new Random().nextInt(mList.length)];
+                    break;
+                case "pyeong":
+                    mList= new String[]{"6", "9"};
+                    m= mList[new Random().nextInt(mList.length)];
+                    break;
+            }
+        }else{
+            switch (inst){
+                case "sunung":
+                    m= "11";
+                    break;
+                case "gyoyuk":
+                    mList= new String[]{"3", "4", "7", "10"};
+                    m= mList[new Random().nextInt(mList.length)];
+                    break;
+                case "pyeong":
+                    mList= new String[]{"6", "9"};
+                    m= mList[new Random().nextInt(mList.length)];
+                    break;
+            }
         }
         return m;
     }
 
     @NonNull
-    public static String create_eInst(@NonNull String k_inst){
+    public static String create_eInst(@NonNull String y, @NonNull String k_inst){
         String e_inst= null;
-        switch (k_inst){
-            case "상관없음":
-                String instList[]= {"sunung", "pyeong", "gyoyuk"};
-                e_inst= instList[new Random().nextInt(instList.length)];
-                break;
-            case "교육청":
-                e_inst= "gyoyuk";
-                break;
-            case "평가원":
-                e_inst= "pyeong";
-                break;
-            case "수능":
-                e_inst= "sunung";
-                break;
-            default:
-                Log.d("QuestionUtil", "create_eInst's parameter inst is invalid");
-                break;
+        if(y.equals("2018")){
+            switch (k_inst){
+                case "상관없음":
+                    String instList[]= {"pyeong", "gyoyuk"};
+                    e_inst= instList[new Random().nextInt(instList.length)];
+                    break;
+                case "교육청":
+                    e_inst= "gyoyuk";
+                    break;
+                case "평가원":
+                    e_inst= "pyeong";
+                    break;
+            }
+        }else{
+            switch (k_inst){
+                case "상관없음":
+                    String instList[]= {"sunung", "pyeong", "gyoyuk"};
+                    e_inst= instList[new Random().nextInt(instList.length)];
+                    break;
+                case "교육청":
+                    e_inst= "gyoyuk";
+                    break;
+                case "평가원":
+                    e_inst= "pyeong";
+                    break;
+                case "수능":
+                    e_inst= "sunung";
+                    break;
+            }
         }
+
 
         return e_inst;
     }
@@ -86,9 +129,6 @@ public class QuestionUtil {
                 break;
             case "sunung":
                 k_inst= "수능";
-                break;
-            default:
-                Log.d("QuestionUtil", "create_kInst's parameter inst is invalid");
                 break;
         }
 

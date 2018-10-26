@@ -123,4 +123,8 @@ public class Question {
         return memo;
     }
 
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
 }

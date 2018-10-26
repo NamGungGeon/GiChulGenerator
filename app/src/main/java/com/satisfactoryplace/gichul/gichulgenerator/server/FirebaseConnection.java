@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.satisfactoryplace.gichul.gichulgenerator.model.ErrorInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -118,6 +119,7 @@ public class FirebaseConnection {
         });
     }
 
+    //No Listener
     public void loadImage(String fileName, final ImageView imageView, Context context){
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
@@ -131,19 +133,20 @@ public class FirebaseConnection {
         });
     }
 
+    //With Listener
     public void loadImage(String fileName, final ImageView imageView, Context context, final ImageLoadFinished loadFinished){
         // Create a reference to a file from a Google Cloud Storage URI
         StorageReference gsReference = storage.getReferenceFromUrl(basicUrl+fileName+ ".png");
         Glide.with(context).using(new FirebaseImageLoader()).load(gsReference).asBitmap().skipMemoryCache(true).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                loadFinished.success(resource);
+
                 if(imageView!= null){
                     PhotoViewAttacher attacher= new PhotoViewAttacher(imageView);
                     imageView.setImageBitmap(resource);
                     attacher.update();
                 }
-
-                loadFinished.success(resource);
             }
 
             @Override
@@ -164,83 +167,9 @@ public class FirebaseConnection {
 
         mDatabase.setValue(o);
     }
-
-    public void uploadImage(/*Include Key*/String path, File localFile, final Callback callback){
-        if(localFile== null || localFile.exists()== false){
-            //Case: No exist File
-            callback.fail("파일이 존재하지 않습니다");
-            return;
-        }else if(localFile.length()>= 1024*512){
-            //Case: Need DownSizing
-            Bitmap bitmap= BitmapFactory.decodeFile(localFile.getAbsolutePath());
-
-            int width= bitmap.getWidth();
-            int height= bitmap.getHeight();
-            while(width>= 300 && height>= 300){
-                width/= 2;
-                height/= 2;
-            }
-            bitmap= Bitmap.createScaledBitmap(bitmap, width, height, false);
-
-            //Make Resized Image File
-            String tempFileName= String.valueOf(System.currentTimeMillis())+ ".png";
-            String tempPath= Environment.getExternalStorageDirectory().getPath();
-
-            OutputStream outputStream= null;
-            try{
-                outputStream= new FileOutputStream(tempPath+ File.separator+ tempFileName);
-            }catch (Exception e){
-                callback.fail("Cannot make Stream: "+ e.getMessage());
-                return;
-            }
-
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            final File imageFile= new File(tempPath+ File.separator+ tempFileName);
-            Uri file = Uri.fromFile(imageFile);
-            StorageReference riversRef = storage.getReference().child(path+".png");
-            UploadTask uploadTask = riversRef.putFile(file);
-
-            // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    callback.fail(exception.getMessage());
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    imageFile.delete();
-                    callback.success(null);
-                }
-            });
-        }else{
-            //Case: Normal Image
-            Uri file = Uri.fromFile(localFile);
-            StorageReference riversRef = storage.getReference().child(path+".png");
-            UploadTask uploadTask = riversRef.putFile(file);
-
-            // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    callback.fail(exception.getMessage());
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    callback.success(null);
-                }
-            });
-        }
-
+    public void saveErrorInfo(ErrorInfo error){
+        final DatabaseReference ref= getReference("error/").push();
+        ref.setValue(error);
+        mDatabase.push().setValue(error);
     }
-
-    public void deleteImage(String path){
-        path+= ".png";
-        StorageReference ref= storage.getReference().child(path);
-        ref.delete();
-    }
-
 }

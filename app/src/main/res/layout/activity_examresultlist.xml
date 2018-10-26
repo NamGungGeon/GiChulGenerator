@@ -6,7 +6,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#444444"
+        android:background="@color/background"
         android:textSize="25dp"
         android:padding="15dp"
         android:textColor="#FFFFFF"
@@ -27,13 +27,14 @@
         </ListView>
     </ScrollView>
     <com.google.android.gms.ads.AdView
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-5333091392909120/9071628017"
+        android:background="@color/background"
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/examResultListAd"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-5333091392909120/8999734652">
+        android:layout_alignParentBottom="true">
     </com.google.android.gms.ads.AdView>
 </RelativeLayout>
