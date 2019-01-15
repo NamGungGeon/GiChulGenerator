@@ -124,6 +124,11 @@ public class RandomQuestionFragment extends Fragment implements OnBackPressedLis
                 }
 
                 ArrayList<String> numberList= QuestionUtil.getNumberList_asPotential(potentialList, selectedPoten);
+                if(numberList.size()== 0){
+                    Toast.makeText(getContext(), "해당되는 조건의 문제가 없습니다\n다른 조건으로 다시 검색해보세요.", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                    return;
+                }
                 qnBuilder.number= QuestionUtil.getRandomNumber(numberList);
                 qnBuilder.potential= potentialList.get(qnBuilder.number);
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GichulGenerator.iml" filepath="$PROJECT_DIR$/GichulGenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SunungMathEnder.iml" filepath="$PROJECT_DIR$/SunungMathEnder.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
